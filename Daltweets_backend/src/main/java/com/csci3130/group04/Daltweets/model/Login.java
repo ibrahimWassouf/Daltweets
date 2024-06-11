@@ -2,7 +2,7 @@ package com.csci3130.group04.Daltweets.model;
 import jakarta.persistence.*;
 
 @Entity
-public class LogIn {
+public class Login {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,10 +13,10 @@ public class LogIn {
     @JoinColumn(name = "id")
     User userId;
 
-    public LogIn() {
+    public Login() {
     }
 
-    public LogIn(int id, String username, String password, User userId) {
+    public Login(int id, String username, String password, User userId) {
         this.id = id;
         this.username = username;
         this.password = password;
