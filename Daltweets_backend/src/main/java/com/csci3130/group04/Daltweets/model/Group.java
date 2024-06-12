@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class Group{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id ;
+    private int groupID ;
     private String name;
     private LocalDateTime dateCreated;
     private boolean isDeleted;
@@ -18,7 +18,7 @@ public class Group{
     }
 
     public Group(int id, String name, LocalDateTime dateCreated, boolean isPublic) {
-        this.id = id;
+        this.groupID = id;
         this.name = name;
         this.dateCreated = dateCreated;
         this.isDeleted = false;
@@ -26,11 +26,11 @@ public class Group{
     }
 
     public int getId() {
-        return id;
+        return groupID;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.groupID = id;
     }
 
     public String getName() {
