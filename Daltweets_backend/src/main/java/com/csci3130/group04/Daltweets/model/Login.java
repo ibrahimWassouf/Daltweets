@@ -10,7 +10,7 @@ public class Login {
     private String username;
     private String password;
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "userId")
     User userId;
 
     public Login() {
