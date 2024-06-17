@@ -11,7 +11,7 @@ public class Login {
     private String password;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
-    User userId;
+    User user;
 
     public Login() {
     }
@@ -20,7 +20,7 @@ public class Login {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.userId = userId;
+        this.user = userId;
     }
     
     public int getId() {
@@ -47,12 +47,12 @@ public class Login {
         this.password = password;
     }
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User userId) {
+        this.user = userId;
     }
 
 }
