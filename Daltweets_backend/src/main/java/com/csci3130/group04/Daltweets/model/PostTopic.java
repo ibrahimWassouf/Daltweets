@@ -9,11 +9,11 @@ public class PostTopic{
   private int id;
   
   @ManyToOne(fetch=FetchType.LAZY)
-  @JoinColumn(name="postID")
+  @JoinColumn(name="postId")
   private Post post;
 
   @ManyToOne(fetch=FetchType.LAZY)
-  @JoinColumn(name="id")
+  @JoinColumn(name="topicId")
   private Topic topic;
 
   public PostTopic(){
