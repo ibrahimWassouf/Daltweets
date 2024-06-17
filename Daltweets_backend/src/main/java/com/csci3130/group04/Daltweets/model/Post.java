@@ -10,10 +10,10 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int postID;
+    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "userId")
     private User user;
 
     private String text;
@@ -28,7 +28,7 @@ public class Post {
     }
 
     public Post(int id, User user, String text, LocalDateTime dateCreated, boolean isDeleted, boolean isEdited){
-        this.postID = id;
+        this.id = id;
         this.user = user;
         this.text = text;
         this.dateCreated = dateCreated;
@@ -37,11 +37,11 @@ public class Post {
     }
 
     public int getPostID(){
-        return postID;
+        return id;
     }
 
     public void setPostID(int id){
-        this.postID = id;
+        this.id = id;
     }
 
     public User getUser(){
