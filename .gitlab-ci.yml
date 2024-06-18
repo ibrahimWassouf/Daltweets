@@ -1,0 +1,27 @@
+stages:
+  - build 
+  - test
+  - deploy
+
+#variables
+variables:
+  MAVEN_CLI_OPTS: '-B -DskipTests'
+
+image: maven:3.8-openjdk-17
+
+build-backend: 
+  stage: build
+  script: 
+    - cd Daltweets_backend
+    - mvn $MAVEN_CLI_OPTS clean install package
+  artifacts:
+    paths:
+      - backend/target/*.jar
+
+  
+test-backend:
+  stage: test
+  script: 
+    - cd Daltweets_backend
+    - mvn clean test -Dspring.profiles.active=test
+  
