@@ -7,31 +7,31 @@ public class PostLikes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int likeID;
+    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "userId")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postID")
+    @JoinColumn(name = "postId")
     private Post post;
 
     public PostLikes(){
     }
 
     public PostLikes(int id, User user, Post post){
-        this.likeID = id;
+        this.id = id;
         this.user = user;
         this.post = post;
     }
 
-    public int getLikeID(){
-        return likeID;
+    public int getId(){
+        return id;
     }
 
-    public void setLikeID(int id){
-        this.likeID = id;
+    public void setId(int id){
+        this.id = id;
     }
 
     public User getUser(){

@@ -10,14 +10,14 @@ public class PostComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int commentID;
+    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userID")
+    @JoinColumn(name = "userId")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postID")
+    @JoinColumn(name = "postId")
     private Post post;
 
     private String comment;
@@ -28,20 +28,20 @@ public class PostComment {
     public PostComment() {
     }
 
-    public PostComment(int commentID, User user, Post post, String comment, LocalDateTime dateCreated) {
-        this.commentID = commentID;
+    public PostComment(int id, User user, Post post, String comment, LocalDateTime dateCreated) {
+        this.id = id;
         this.user = user;
         this.post = post;
         this.comment = comment;
         this.dateCreated = dateCreated;
     }
 
-    public int getCommentID() {
-        return commentID;
+    public int getId() {
+        return id;
     }
 
-    public void setCommentID(int commentID) {
-        this.commentID = commentID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public User getUser() {
