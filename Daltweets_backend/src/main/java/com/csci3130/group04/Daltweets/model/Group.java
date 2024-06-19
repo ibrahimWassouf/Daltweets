@@ -4,12 +4,16 @@ package com.csci3130.group04.Daltweets.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
+@Table(name="user_group")
 public class Group{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int groupID ;
+    private int id ;
     private String name;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime dateCreated;
     private boolean isDeleted;
     private boolean isPublic;
@@ -18,7 +22,7 @@ public class Group{
     }
 
     public Group(int id, String name, LocalDateTime dateCreated, boolean isPublic) {
-        this.groupID = id;
+        this.id = id;
         this.name = name;
         this.dateCreated = dateCreated;
         this.isDeleted = false;
@@ -26,11 +30,11 @@ public class Group{
     }
 
     public int getId() {
-        return groupID;
+        return id;
     }
 
     public void setId(int id) {
-        this.groupID = id;
+        this.id = id;
     }
 
     public String getName() {
