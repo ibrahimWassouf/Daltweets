@@ -14,7 +14,7 @@ public class PostTopic{
 
   @ManyToOne(fetch=FetchType.LAZY)
   @JoinColumn(name="topicId")
-  private Topic topic;
+ private Topic topic;
 
   public PostTopic(){
   }
