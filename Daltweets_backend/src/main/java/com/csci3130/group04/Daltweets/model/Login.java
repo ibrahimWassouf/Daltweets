@@ -9,6 +9,9 @@ public class Login {
     private int id;
     private String username;
     private String password;
+    private String securityQuestion;
+    private String securityAnswer;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     User user;
@@ -16,11 +19,13 @@ public class Login {
     public Login() {
     }
 
-    public Login(int id, String username, String password, User userId) {
+    public Login(int id, String username, String password, String securityQuestion, String securityAnswer, User user) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.user = userId;
+        this.securityQuestion = securityQuestion;
+        this.securityAnswer = securityAnswer;
+        this.user = user;
     }
     
     public int getId() {
@@ -55,4 +60,19 @@ public class Login {
         this.user = userId;
     }
 
+    public String getSecurityQuestion() {
+        return securityQuestion;
+    }
+
+    public void setSecurityQuestion(String securityQuestion) {
+        this.securityQuestion = securityQuestion;
+    }
+
+     public String getSecurityAnswer() {
+        return securityAnswer;
+    }
+
+    public void setSecurityAnswer(String securityAnswer) {
+        this.securityAnswer = securityAnswer;
+    }    
 }
