@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.csci3130.group04.Daltweets.model.Post;
 import com.csci3130.group04.Daltweets.model.User;
@@ -23,6 +24,7 @@ import com.csci3130.group04.Daltweets.repository.PostRepository;
 import com.csci3130.group04.Daltweets.service.Implementation.PostServiceImpl;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 class PostServiceUnitTests {
 
