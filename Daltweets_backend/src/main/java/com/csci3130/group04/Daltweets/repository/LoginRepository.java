@@ -7,5 +7,6 @@ import com.csci3130.group04.Daltweets.model.User;
 
 public interface LoginRepository extends JpaRepository<Login,Integer> {
     Login findLoginByUserId(User user);
+    Login findByUsername(String username);
     
 }
