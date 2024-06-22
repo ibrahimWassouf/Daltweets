@@ -22,9 +22,6 @@ public class LoginController {
 
     @Autowired
     LoginServiceImpl loginService;
-    
-    @Autowired
-    LoginRepository loginRepository;
 
     @PostMapping("/")
     ResponseEntity<String> authenticate(@RequestBody Map<String, String> login){
