@@ -38,7 +38,7 @@ class PostServiceUnitTests {
   @Test
   void test_create_post(){
     Post post = new Post();
-    post.setUser(new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN));
+    post.setUser(new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE));
     post.setText("This is the post text");
     
     Mockito.when(postRepository.save(post)).thenReturn(post);
@@ -61,7 +61,7 @@ class PostServiceUnitTests {
   @Test
   void test_create_post_with_null_text(){
     Post post = new Post();
-    post.setUser(new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN));
+    post.setUser(new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE));
 
     Post returnedVal = postService.createPost(post);
 
@@ -70,7 +70,7 @@ class PostServiceUnitTests {
 
   @Test
   void test_get_all_posts_by_user(){
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN);
+    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     Post post1 = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
     Post post2 = new Post(2, user, "my second post", LocalDateTime.now(), false, false);
     Post post3 = new Post(3, user, "my third post", LocalDateTime.now(), false, false);
@@ -93,9 +93,9 @@ class PostServiceUnitTests {
 
   @Test
   void test_get_all_post_by_users(){
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN);
-    User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN);
-    User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN);
+    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+    User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+    User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
 
     List<User> userList = new ArrayList<>();
     userList.add(user);
@@ -124,9 +124,9 @@ class PostServiceUnitTests {
   @Test
   void test_get_all_posts_by_users_with_null_in_user_list(){
     
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN);
+    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     User user2 = new User();
-    User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN);
+    User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
 
     List<User> userList = new ArrayList<>();
     userList.add(user);
