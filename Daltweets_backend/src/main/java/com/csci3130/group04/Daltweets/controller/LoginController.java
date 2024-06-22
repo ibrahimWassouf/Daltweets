@@ -63,7 +63,7 @@ public class LoginController {
       }
       
       loginEntry.setPassword(requestBody.get("new-password"));
-      loginRepository.save(loginEntry);
+      loginService.updatePassword(loginEntry);
 
       return new ResponseEntity<>("Password updated", HttpStatus.OK);
 

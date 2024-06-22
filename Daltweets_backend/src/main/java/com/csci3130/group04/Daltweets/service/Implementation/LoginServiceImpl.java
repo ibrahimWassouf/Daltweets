@@ -23,4 +23,7 @@ public class LoginServiceImpl implements LoginService{
       return loginRepository.findAll();
     }
 
+    public Login updatePassword(Login login){
+      return loginRepository.save(login);
+    }
 }
