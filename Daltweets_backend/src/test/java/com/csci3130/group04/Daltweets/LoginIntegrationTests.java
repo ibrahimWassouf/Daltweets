@@ -60,7 +60,7 @@ class LoginServiceIntegrationTests {
   @Test
   public void test_valid_login() throws Exception{
     
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN);
+    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     userRepository.save(user);
 
     Login login = new Login(1,"admin", "password", "security", "answer", user);
@@ -88,7 +88,7 @@ class LoginServiceIntegrationTests {
   @Test
   public void test_incorrect_password() throws Exception{
     
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN);
+    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     userRepository.save(user);
 
     Login login = new Login(1,"admin", "password", "security", "answer", user);
@@ -102,7 +102,7 @@ class LoginServiceIntegrationTests {
   }
 
   @Test void get_security_question() throws Exception{
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN);
+    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     userRepository.save(user);
 
     Login login = new Login(1,"admin", "password", "security question", "answer", user);
@@ -117,7 +117,7 @@ class LoginServiceIntegrationTests {
 
   @Test
   public void test_change_password() throws Exception{
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN);
+    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     userRepository.save(user);
 
     Login login = new Login(1,"admin", "password", "security", "answer", user);
