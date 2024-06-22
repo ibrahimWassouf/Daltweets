@@ -23,13 +23,23 @@ public class User {
     public enum Role{
         SUPERADMIN,
     }
+
+    public enum Status{
+        OFFLINE,
+        ONLINE,
+        BUSY,
+        AWAY,
+        DEACTIVATED
+    }
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
     public User() {
     }
 
-    public User(int id, String bio, String username, String email, LocalDateTime dateCreated, boolean accountDeleted, Role role) {
+    public User(int id, String bio, String username, String email, LocalDateTime dateCreated, boolean accountDeleted, Role role, Status status) {
         this.id = id;
         this.bio = bio;
         this.username = username;
@@ -37,6 +47,7 @@ public class User {
         this.dateCreated = dateCreated;
         this.accountDeleted = accountDeleted;
         this.role = role;
+        this.status = status;
     }
 
     public int getId() {
@@ -93,5 +104,13 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
