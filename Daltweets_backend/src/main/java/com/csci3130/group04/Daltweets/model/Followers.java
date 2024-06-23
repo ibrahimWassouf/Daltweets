@@ -14,10 +14,19 @@ public class Followers {
     @JoinColumn(name = "followerId")
     User follower;
 
-    public Followers(int id, User user, User follower) {
+    public enum Status{
+        PENDING,
+        ACCEPTED
+    }
+    
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    public Followers(int id, User user, User follower, Status status) {
         this.id = id;
         this.user = user;
         this.follower = follower;
+        this.status = status;
     }
 
     public Followers() {
@@ -45,5 +54,13 @@ public class Followers {
 
     public void setFollower(User followersID) {
         this.follower = followersID;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
