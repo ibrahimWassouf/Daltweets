@@ -35,11 +35,6 @@ class UserServiceIntegrationTests {
 
   @Autowired
   private UserRepository userRepository;
-  
-  @BeforeEach
-  void setup(){
-    userRepository.deleteAll();
-  }
 
   @Test
   void test_get_recommended(){
@@ -64,21 +59,3 @@ class UserServiceIntegrationTests {
 
   }
 }
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
