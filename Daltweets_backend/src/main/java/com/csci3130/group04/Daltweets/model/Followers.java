@@ -9,15 +9,15 @@ public class Followers {
     private int id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
-    User userID;
+    User user;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "followerId")
-    User followersID;
+    User follower;
 
-    public Followers(int id, User userID, User followersID) {
+    public Followers(int id, User user, User follower) {
         this.id = id;
-        this.userID = userID;
-        this.followersID = followersID;
+        this.user = user;
+        this.follower = follower;
     }
 
     public Followers() {
@@ -31,19 +31,19 @@ public class Followers {
         this.id = id;
     }
 
-    public User getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserID(User userID) {
-        this.userID = userID;
+    public void setUser(User userID) {
+        this.user = userID;
     }
 
-    public User getFollowersID() {
-        return followersID;
+    public User getFollower() {
+        return follower;
     }
 
-    public void setFollowersID(User followersID) {
-        this.followersID = followersID;
+    public void setFollower(User followersID) {
+        this.follower = followersID;
     }
 }
