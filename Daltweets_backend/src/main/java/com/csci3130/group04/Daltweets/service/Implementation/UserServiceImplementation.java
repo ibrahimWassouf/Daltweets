@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.csci3130.group04.Daltweets.repository.UserRepository;
 import com.csci3130.group04.Daltweets.service.UserService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,5 +47,11 @@ public class UserServiceImplementation implements UserService {
         user.setStatus(updateUser.getStatus());
         userRepository.save(user);
         return "Update success";
+    }
+
+    @Override
+    public List<User> getRecommendedUsers(String name){
+
+      return userRepository.findByUsernameNot(name);
     }
 }
