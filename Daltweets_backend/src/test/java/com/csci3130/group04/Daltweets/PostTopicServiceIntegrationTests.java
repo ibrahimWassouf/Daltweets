@@ -3,9 +3,10 @@ package com.csci3130.group04.Daltweets;
 import com.csci3130.group04.Daltweets.model.Post;
 import com.csci3130.group04.Daltweets.model.PostTopic;
 import com.csci3130.group04.Daltweets.model.Topic;
+import com.csci3130.group04.Daltweets.repository.PostRepository;
 import com.csci3130.group04.Daltweets.repository.PostTopicRepository;
+import com.csci3130.group04.Daltweets.repository.TopicRepository;
 import com.csci3130.group04.Daltweets.service.Implementation.PostTopicServiceImpl;
-import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,20 +28,26 @@ public class PostTopicServiceIntegrationTests {
     private PostTopicServiceImpl postTopicService;
 
     @Autowired
-    private UserServiceImplementation userServiceImplementation;
-
-    @Autowired
     private PostTopicRepository postTopicRepository;
+    @Autowired
+    private PostRepository postRepository;
+    @Autowired
+    private TopicRepository topicRepository;
 
     @Test
     public void testCreatePostTopic() {
         PostTopic postTopic = new PostTopic();
         Post post = new Post();
         post.setText("Test post");
+
+
         Topic topic = new Topic();
         topic.setName("Test topic");
         postTopic.setPost(post);
         postTopic.setTopic(topic);
+
+        postRepository.save(post);
+        topicRepository.save(topic);
 
         PostTopic createdPostTopic = postTopicService.createPostTopic(postTopic);
         assertEquals(createdPostTopic.getPost(),postTopic.getPost());
@@ -62,6 +69,9 @@ public class PostTopicServiceIntegrationTests {
         postTopic.setPost(post);
         postTopic.setTopic(topic);
 
+        postRepository.save(post);
+        topicRepository.save(topic);
+
         PostTopic createdPostTopic = postTopicService.createPostTopic(postTopic);
         List<Post> posts = postTopicService.getPostByTopic(topic);
         assertEquals(post.getText(),posts.get(0).getText());
@@ -82,6 +92,9 @@ public class PostTopicServiceIntegrationTests {
         postTopic.setPost(post);
         postTopic.setTopic(topic);
 
+        postRepository.save(post);
+        topicRepository.save(topic);
+
         List<Post> posts = postTopicService.getPostByTopic(topic);
         assertEquals(0,posts.size());
     }
@@ -95,14 +108,17 @@ public class PostTopicServiceIntegrationTests {
         postTopic.setPost(post);
         postTopic.setTopic(topic);
 
+        postRepository.save(post);
+        topicRepository.save(topic);
+
         PostTopic createdPostTopic = postTopicService.createPostTopic(postTopic);
-        List<Post> posts = postTopicService.getPostByTopic(topic);
-        assertEquals(post.getText(),posts.get(0).getText());
+        List<Topic> topics = postTopicService.getTopicByPost(post);
+        assertEquals(topic.getName(),topics.get(0).getName());
     }
 
     @Test
     public void testGetTopicByPostWithNull() {
-        assertThrows(Throwable.class,() -> postTopicService.getPostByTopic(null));
+        assertThrows(Throwable.class,() -> postTopicService.getTopicByPost(null));
     }
 
     @Test
@@ -115,8 +131,11 @@ public class PostTopicServiceIntegrationTests {
         postTopic.setPost(post);
         postTopic.setTopic(topic);
 
-        List<Post> posts = postTopicService.getPostByTopic(topic);
-        assertEquals(0,posts.size());
+        postRepository.save(post);
+        topicRepository.save(topic);
+
+        List<Topic> topics = postTopicService.getTopicByPost(post);
+        assertEquals(0,topics.size());
     }
 
     @Test
@@ -128,6 +147,9 @@ public class PostTopicServiceIntegrationTests {
         topic.setName("Test topic");
         postTopic.setPost(post);
         postTopic.setTopic(topic);
+
+        postRepository.save(post);
+        topicRepository.save(topic);
 
         PostTopic createdPostTopic = postTopicService.createPostTopic(postTopic);
 
@@ -147,6 +169,9 @@ public class PostTopicServiceIntegrationTests {
         postTopic.setPost(post);
         postTopic.setTopic(topic);
 
+        postRepository.save(post);
+        topicRepository.save(topic);
+
         PostTopic deletedTopic = postTopicService.deletePostTopic(topic,post);
 
         assertNull(deletedTopic);
@@ -164,6 +189,10 @@ public class PostTopicServiceIntegrationTests {
         Post new_post = new Post();
         new_post.setText("New post");
 
+        postRepository.save(post);
+        topicRepository.save(topic);
+        postRepository.save(new_post);
+
         PostTopic createdPostTopic = postTopicService.createPostTopic(postTopic);
         PostTopic deletedTopic = postTopicService.deletePostTopic(topic,new_post);
 
@@ -179,8 +208,9 @@ public class PostTopicServiceIntegrationTests {
         topic.setName("Test topic");
         postTopic.setPost(post);
         postTopic.setTopic(topic);
-        Post new_post = new Post();
-        new_post.setText("New post");
+
+        postRepository.save(post);
+        topicRepository.save(topic);
 
         assertThrows(Throwable.class,() -> postTopicService.deletePostTopic(null,post));
         assertThrows(Throwable.class,() -> postTopicService.deletePostTopic(topic,null));
