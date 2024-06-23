@@ -20,6 +20,11 @@ public class UserServiceImplementation implements UserService {
         if ( user == null || user.getUsername() == null || user.getEmail() == null) {
             throw new IllegalArgumentException("user is empty");
         }
+        User find_user = getUserByName(user.getUsername());
+        if ( find_user != null ) {
+            System.out.println("There is already an user with this name");
+            return find_user;
+        }
         userRepository.save(user);
         return user;
     }
