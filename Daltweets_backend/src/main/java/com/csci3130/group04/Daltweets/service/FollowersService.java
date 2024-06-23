@@ -7,6 +7,7 @@ import com.csci3130.group04.Daltweets.model.User;
 
 public interface FollowersService {
     List<User> getAllFollowers(User user);
+    List<User> getUserFollowing(User follower);
     Followers addFollower(User user, User follower);
     Boolean removeFollower(User user,User follower);   
 }
