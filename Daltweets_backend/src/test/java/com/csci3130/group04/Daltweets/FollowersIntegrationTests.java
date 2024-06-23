@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.csci3130.group04.Daltweets.model.Followers;
 import com.csci3130.group04.Daltweets.model.User;
+import com.csci3130.group04.Daltweets.model.Followers.Status;
 import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.repository.FollowersRepository;
 import com.csci3130.group04.Daltweets.repository.UserRepository;
@@ -121,8 +122,8 @@ public class FollowersIntegrationTests {
         following2 = userRepository.save(following2);
 
        
-        Followers followers = new Followers(1,following,user);
-        Followers followers2 = new Followers(2,following2,user);
+        Followers followers = new Followers(1,following,user,Status.ACCEPTED);
+        Followers followers2 = new Followers(2,following2,user,Status.ACCEPTED);
 
         followersRepository.save(followers);
         followersRepository.save(followers2);
