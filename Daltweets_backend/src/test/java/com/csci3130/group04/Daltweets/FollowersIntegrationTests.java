@@ -89,8 +89,8 @@ public class FollowersIntegrationTests {
         follower2 = userRepository.save(follower2);
 
        
-        Followers followers = new Followers(1,user,follower);
-        Followers followers2 = new Followers(2,user, follower2);
+        Followers followers = new Followers(1,user,follower, Followers.Status.ACCEPTED);
+        Followers followers2 = new Followers(2,user, follower2, Followers.Status.ACCEPTED);
 
         followersRepository.save(followers);
         followersRepository.save(followers2);
@@ -151,7 +151,7 @@ public class FollowersIntegrationTests {
         user = userRepository.save(user);
         follower = userRepository.save(follower);
 
-        Followers followers = new Followers(1,user,follower);
+        Followers followers = new Followers(1,user,follower, Followers.Status.ACCEPTED);
 
         followersRepository.save(followers);
         
