@@ -35,6 +35,20 @@ class UserServiceIntegrationTests {
 
   @Autowired
   private UserRepository userRepository;
+  @Test
+  void test_get_by_username_is_unique(){
+    User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+    User user2 = new User(1,"checkbio","Name","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+
+    userService.createUser(user);
+    userService.createUser(user2);
+
+    User queriedUser = userService.getUserByName("Name");
+
+    assertEquals("Name", queriedUser.getUsername());
+    assertEquals("firstmail", queriedUser.getEmail());
+
+  }
 
   @Test
   void test_get_recommended(){
