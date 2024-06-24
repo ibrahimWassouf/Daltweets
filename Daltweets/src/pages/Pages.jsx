@@ -11,11 +11,11 @@ import {
   } from "react-router-dom";
 const Pages = () => {
   return (
-    <div>
-        <NavBar/>
-        <Routes>
-            <Route path="/home" element={<HomePage/>} />
-        </Routes>
+    <div className = "flex ">
+            <NavBar/>
+            <Routes>
+                <Route path="/home" element={<HomePage/>} />
+            </Routes>
     </div>
   )
 }
