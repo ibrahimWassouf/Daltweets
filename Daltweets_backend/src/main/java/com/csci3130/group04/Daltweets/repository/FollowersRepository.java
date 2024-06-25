@@ -12,9 +12,12 @@ import com.csci3130.group04.Daltweets.model.User;
 
 @Repository
 public interface FollowersRepository extends JpaRepository<Followers,Integer>{
-    @Query("SELECT f.follower FROM Followers f WHERE f.user.id = :userId and status='ACCEPTED'")
+   @Query("SELECT f.follower FROM Followers f WHERE f.user.id = :userId and status='ACCEPTED'")
     List<User> findFollowerIdsByUserId(@Param("userId") int userId);
 
+    @Query("SELECT f.user FROM Followers f WHERE f.follower.id = :followerId")
+    List<User> findUserIdsByFollowerId(@Param("followerId") int followerId);
+    
     User findUserByFollowerId(User Follower);
 
     Followers findByUserAndFollower(User user, User follower);

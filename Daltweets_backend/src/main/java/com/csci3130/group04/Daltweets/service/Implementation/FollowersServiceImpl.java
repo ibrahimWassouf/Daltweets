@@ -43,6 +43,11 @@ public class FollowersServiceImpl implements FollowersService{
         }
         return false;
     }
-    
+
+    @Override
+    public List<User> getUserFollowing(User follower) {
+        if (follower == null || follower.getId() < 1) return null;
+        return followersRepository.findUserIdsByFollowerId(follower.getId());
+    }    
 
 }

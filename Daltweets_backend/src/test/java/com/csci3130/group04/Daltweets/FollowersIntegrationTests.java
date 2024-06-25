@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.csci3130.group04.Daltweets.model.Followers;
 import com.csci3130.group04.Daltweets.model.User;
+import com.csci3130.group04.Daltweets.model.Followers.Status;
 import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.repository.FollowersRepository;
 import com.csci3130.group04.Daltweets.repository.UserRepository;
@@ -97,7 +98,7 @@ public class FollowersIntegrationTests {
 
         List<User> followersList = followersService.getAllFollowers(user);
 
-        assertNotNull(followers);
+        assertNotNull(followersList);
         assertEquals(followersList.size(), 2);
     }
 
@@ -109,6 +110,39 @@ public class FollowersIntegrationTests {
         assertNull(followersList);
     }
 
+    @Test
+    public void test_get_user_following()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User following = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User following2 = new User(3, "my bio", "follower2", "follower2@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);    
+        
+        user =  userRepository.save(user);
+        following = userRepository.save(following);
+        following2 = userRepository.save(following2);
+
+       
+        Followers followers = new Followers(1,following,user,Status.ACCEPTED);
+        Followers followers2 = new Followers(2,following2,user,Status.ACCEPTED);
+
+        followersRepository.save(followers);
+        followersRepository.save(followers2);
+
+        List<User> followingList = followersService.getUserFollowing(user);
+
+        assertNotNull(followingList);
+        assertEquals(followingList.size(), 2);
+    }
+
+   
+    @Test
+    public void test_user_following_with_null_arguments()
+    {
+        List<User> followingList = followersService.getUserFollowing(null);
+
+        assertNull(followingList);
+    }
+    
     @Test
     public void test_remove_follower()
     {
