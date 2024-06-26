@@ -53,7 +53,7 @@ public class FollowersController {
       return new ResponseEntity<>("Follower request deleted", HttpStatus.OK);
     }
     
-    @GetMapping("/{userName}/requests")
+    @GetMapping("/{username}/requests")
     ResponseEntity<List<Followers>> getFollowRequests(@PathVariable("username") String username)
     {
         User user = userService.getUserByName(username);
