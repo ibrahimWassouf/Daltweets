@@ -9,5 +9,7 @@ public interface FollowersService {
     List<User> getAllFollowers(User user);
     List<User> getUserFollowing(User follower);
     Followers addFollower(User user, User follower);
-    Boolean removeFollower(User user,User follower);   
+    Boolean removeFollower(User user,User follower);  
+    Boolean acceptFollowRequest(User user, User follower); 
+    List<Followers> getFollowRequests(User user);
 }

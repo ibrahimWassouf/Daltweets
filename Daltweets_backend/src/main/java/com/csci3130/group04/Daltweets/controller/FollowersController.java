@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,4 +52,20 @@ public class FollowersController {
 
       return new ResponseEntity<>("Follower request deleted", HttpStatus.OK);
     }
+    
+    @GetMapping("/{userName}/requests")
+    ResponseEntity<List<Followers>> getFollowRequests(@PathVariable("username") String username)
+    {
+        User user = userService.getUserByName(username);
+        return new ResponseEntity<List<Followers>>(followersService.getFollowRequests(user),HttpStatus.OK);
+    }
+    
+    @PostMapping("/accept")
+    ResponseEntity<Boolean> acceptFollowRequest(@RequestBody Map<String,String> request)
+    {
+        User user = userService.getUserByName(request.get("username"));
+        User follower = userService.getUserByName(request.get("followerName")); 
+        return new ResponseEntity<Boolean>(followersService.acceptFollowRequest(user, follower), HttpStatus.OK);
+    }
+
 }

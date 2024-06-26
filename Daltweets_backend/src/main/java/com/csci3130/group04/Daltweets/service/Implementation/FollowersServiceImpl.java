@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.csci3130.group04.Daltweets.model.Followers;
 import com.csci3130.group04.Daltweets.model.User;
+import com.csci3130.group04.Daltweets.model.Followers.Status;
 import com.csci3130.group04.Daltweets.repository.FollowersRepository;
 import com.csci3130.group04.Daltweets.service.FollowersService;
 
@@ -50,4 +51,23 @@ public class FollowersServiceImpl implements FollowersService{
         return followersRepository.findUserIdsByFollowerId(follower.getId());
     }    
 
+    @Override
+    public Boolean acceptFollowRequest(User user,User follower){
+        if (user == null || follower == null) return false;
+        Followers follow = followersRepository.findByUserAndFollower(user,follower);
+        if (follow != null)
+        {
+            follow.setStatus(Status.ACCEPTED);
+            follow = followersRepository.save(follow) ;
+            return follow != null;
+        }
+        
+        return false;
+    }
+
+    @Override
+    public List<Followers> getFollowRequests(User user) {
+       if (user == null) return null;
+        return followersRepository.findFollowerRequestsByUserId(user.getId());
+    }
 }
