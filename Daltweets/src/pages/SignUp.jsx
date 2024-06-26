@@ -5,10 +5,12 @@ function SignUp() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [securityQuestion, setSecurityQuestion] = useState("");
+  const [securityAnswer, setSecurityAnswer] = useState("");
   const [error, setError] = useState("");
 
   const handleSignUp = () => {
-    if (username === "" || password === "" || email === "") {
+    if (username === "" || password === "" || email === "" || securityQuestion === "" || securityAnswer === "") {
       setError("All fields are required");
       return;
     }
@@ -36,6 +38,8 @@ function SignUp() {
       },
       login: {
         password: password,
+        securityQuestion: securityQuestion,
+        securityAnswer: securityAnswer,
       },
     };
 
@@ -108,6 +112,45 @@ function SignUp() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="block w-full rounded-md border-0 py-1.5 ps-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <div>
+            <label
+              htmlFor="securityQuestion"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Security Question
+            </label>
+            <div className="mt-2">
+              <select
+                id="securityQuestion"
+                value={securityQuestion}
+                onChange={(e) => setSecurityQuestion(e.target.value)}
+                className="block w-full rounded-md border-0 py-1.5 ps-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              >
+                <option value="">Select a security question</option>
+                <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                <option value="What was the name of your first school?">What was the name of your first school?</option>
+                <option value="What is your favorite food?">What is your favorite food?</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label
+              htmlFor="securityAnswer"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Security Answer
+            </label>
+            <div className="mt-2">
+              <input
+                id="securityAnswer"
+                type="text"
+                value={securityAnswer}
+                onChange={(e) => setSecurityAnswer(e.target.value)}
                 className="block w-full rounded-md border-0 py-1.5 ps-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
