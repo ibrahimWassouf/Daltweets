@@ -179,4 +179,89 @@ public class FollowersIntegrationTests {
         assertFalse(deletedWithNullUser);
         assertFalse(deletedWithNullArguments);
     }
+
+    @Test
+    public void test_accept_follow_request()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+        follower = userRepository.save(follower);
+
+        Followers followers = new Followers(1,user,follower, Followers.Status.PENDING);
+
+        followers = followersRepository.save(followers);
+
+        Boolean acceptedRequest = followersService.acceptFollowRequest(user,follower);
+        
+        assertTrue(acceptedRequest,"Request should have been accepted and returned true");
+        assertEquals(followers.getStatus(), Status.ACCEPTED);
+    }
+
+    @Test void test_accept_non_existent_follow_request(){
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+        follower = userRepository.save(follower);
+
+        Boolean requestResult = followersService.acceptFollowRequest(user,follower);
+
+        assertFalse(requestResult,"Follow request is non existent so false should be returned");
+    }
+
+    @Test void test_accept_follow_request_with_null_args()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+        follower = userRepository.save(follower);
+
+        Followers followers = new Followers(1,user,follower, Followers.Status.PENDING);
+
+        followers = followersRepository.save(followers);
+
+        Boolean requestWithNullUser = followersService.acceptFollowRequest(null,follower);
+        Boolean requestWithNullFollower = followersService.acceptFollowRequest(user,null);
+        Boolean requestWithNullArgs = followersService.acceptFollowRequest(null,null);
+        
+        assertFalse(requestWithNullUser,"The user passed to accept follow request was null so the return should be false");
+        assertFalse(requestWithNullFollower,"The follower passed to acceptFollowRequest was null so the return should be false");
+        assertFalse(requestWithNullArgs,"The arguments passed to accept follow request were null so the return should be false");
+    }
+
+    @Test
+    public void test_get_follow_requests()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        User follower2 = new User(3, "my bio", "follower2", "follower2@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);    
+        
+        user =  userRepository.save(user);
+        follower = userRepository.save(follower);
+        follower2 = userRepository.save(follower2);
+
+       
+        Followers followers = new Followers(1,user,follower, Followers.Status.PENDING);
+        Followers followers2 = new Followers(2,user, follower2, Followers.Status.PENDING);
+
+        followersRepository.save(followers);
+        followersRepository.save(followers2);
+
+        List<Followers> followRequests = followersService.getFollowRequests(user);
+        
+        assertNotNull(followRequests);
+        assertEquals(followRequests.size(), 2,"Wrong Size of followRequests seen");
+    }
+
+    @Test
+    public void test_get_follow_requests_with_null_args()
+    {
+        List<Followers> followRequests = followersService.getFollowRequests(null);
+        
+        assertNull(followRequests,"The User passed to follow requests was null so the return should be false");
+    }
 }
