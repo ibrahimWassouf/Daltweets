@@ -51,6 +51,7 @@ class LoginServiceIntegrationTests {
   @AfterEach
   void teardown(){
     loginRepository.deleteAll();
+    userRepository.deleteAll();
   }
   
   @Test
