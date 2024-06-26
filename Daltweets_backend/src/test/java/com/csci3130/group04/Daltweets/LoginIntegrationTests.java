@@ -3,6 +3,7 @@ package com.csci3130.group04.Daltweets;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,12 +39,6 @@ class LoginServiceIntegrationTests {
   private LoginServiceImpl loginService;
 
   @Autowired
-  private LoginController loginController;
-
-  @Autowired
-  private UserServiceImplementation userService;
-
-  @Autowired
   private UserRepository userRepository;
 
   @Autowired
@@ -51,9 +46,9 @@ class LoginServiceIntegrationTests {
   
   @Autowired
   TestRestTemplate restTemplate;
-  
-  @BeforeEach
-  void setup(){
+
+  @AfterEach
+  void teardown(){
     loginRepository.deleteAll();
   }
   
