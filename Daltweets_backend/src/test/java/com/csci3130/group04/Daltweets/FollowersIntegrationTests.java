@@ -1,38 +1,43 @@
 package com.csci3130.group04.Daltweets;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-
-
-import com.csci3130.group04.Daltweets.model.Followers;
-import com.csci3130.group04.Daltweets.model.User;
-import com.csci3130.group04.Daltweets.model.Followers.Status;
-import com.csci3130.group04.Daltweets.model.User.Role;
-import com.csci3130.group04.Daltweets.repository.FollowersRepository;
-import com.csci3130.group04.Daltweets.repository.UserRepository;
-import com.csci3130.group04.Daltweets.service.FollowersService;
-
-import jakarta.transaction.Transactional;
-
+import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import com.csci3130.group04.Daltweets.model.Followers;
+import com.csci3130.group04.Daltweets.model.Followers.Status;
+import com.csci3130.group04.Daltweets.model.User;
+import com.csci3130.group04.Daltweets.model.User.Role;
+import com.csci3130.group04.Daltweets.repository.FollowersRepository;
+import com.csci3130.group04.Daltweets.repository.UserRepository;
+import com.csci3130.group04.Daltweets.service.FollowersService;
 
 
-@SpringBootTest
+@SpringBootTest(classes = DaltweetsApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@Transactional
+@ExtendWith(SpringExtension.class)
 public class FollowersIntegrationTests {
-
+    
+    @LocalServerPort
+    private int port;
+ 
     @Autowired 
     private FollowersService followersService;
 
@@ -42,6 +47,15 @@ public class FollowersIntegrationTests {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    TestRestTemplate restTemplate;
+   
+    @AfterEach
+    void setup(){
+      followersRepository.deleteAll();
+      userRepository.deleteAll();
+    }
+  
     @Test
     public void test_add_follower()
     {
@@ -179,4 +193,29 @@ public class FollowersIntegrationTests {
         assertFalse(deletedWithNullUser);
         assertFalse(deletedWithNullArguments);
     }
+
+       
+    @Test
+    public void test_valid_follow_request() throws Exception{
+      
+
+      User user = new User(2, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+      user = userRepository.save(user);
+
+      User follower = new User(3, "my bio2", "three", "me@email2", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+      follower = userRepository.save(follower);
+
+      System.out.println("this is the user ID: " +  user.getId());
+      System.out.println("this is the follower ID: " +  follower.getId());
+      assertNotNull(user);
+      assertNotNull(follower);
+      Map<String, String> requestBody = Map.ofEntries(Map.entry("user", "me"), Map.entry("follower", "three"));
+
+      ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/add", requestBody, String.class);
+      Followers following = followersService.addFollower(user, follower);
+      assertEquals("Follower request sent", response.getBody());
+      assertNotNull(following);
+    }
+
+
 }

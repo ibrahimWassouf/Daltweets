@@ -3,6 +3,8 @@ package com.csci3130.group04.Daltweets;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,12 +40,6 @@ class LoginServiceIntegrationTests {
   private LoginServiceImpl loginService;
 
   @Autowired
-  private LoginController loginController;
-
-  @Autowired
-  private UserServiceImplementation userService;
-
-  @Autowired
   private UserRepository userRepository;
 
   @Autowired
@@ -51,19 +47,20 @@ class LoginServiceIntegrationTests {
   
   @Autowired
   TestRestTemplate restTemplate;
-  
-  @BeforeEach
-  void setup(){
+
+  @AfterEach
+  void teardown(){
     loginRepository.deleteAll();
+    userRepository.deleteAll();
   }
   
   @Test
   public void test_valid_login() throws Exception{
     
     User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
-    userRepository.save(user);
+    User saved_user = userRepository.save(user);
 
-    Login login = new Login(1,"admin", "password", "security", "answer", user);
+    Login login = new Login(1,"admin", "password", "security", "answer", saved_user);
     loginRepository.save(login);
     
     Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "password"));
@@ -90,8 +87,9 @@ class LoginServiceIntegrationTests {
     
     User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     userRepository.save(user);
+    User saved_user = userRepository.save(user);
 
-    Login login = new Login(1,"admin", "password", "security", "answer", user);
+    Login login = new Login(1,"admin", "password", "security", "answer", saved_user);
     loginRepository.save(login);
 
     Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "not password"));
@@ -104,8 +102,9 @@ class LoginServiceIntegrationTests {
   @Test void get_security_question() throws Exception{
     User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     userRepository.save(user);
+    User saved_user = userRepository.save(user);
 
-    Login login = new Login(1,"admin", "password", "security question", "answer", user);
+    Login login = new Login(1,"admin", "password", "security question", "answer", saved_user);
     loginRepository.save(login);
 
     Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "password"));
@@ -119,8 +118,9 @@ class LoginServiceIntegrationTests {
   public void test_change_password() throws Exception{
     User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     userRepository.save(user);
+    User saved_user = userRepository.save(user);
 
-    Login login = new Login(1,"admin", "password", "security", "answer", user);
+    Login login = new Login(1,"admin", "password", "security", "answer", saved_user);
     loginRepository.save(login);
 
     Map<String, String> requestBody = Map.ofEntries(
