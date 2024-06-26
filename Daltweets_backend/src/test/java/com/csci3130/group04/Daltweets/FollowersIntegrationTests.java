@@ -233,6 +233,7 @@ public class FollowersIntegrationTests {
         followers = followersRepository.save(followers);
 
         Boolean acceptedRequest = followersService.acceptFollowRequest(user,follower);
+        followers = followersRepository.findById(followers.getId()).get();
         
         assertTrue(acceptedRequest,"Request should have been accepted and returned true");
         assertEquals(followers.getStatus(), Status.ACCEPTED);
