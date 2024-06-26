@@ -2,6 +2,7 @@ import React, { useState, useEffect} from 'react'
 import NavBar from '../components/NavBar'
 import axios from 'axios';
 import Post from '../components/Post';
+import { useParams } from 'react-router-dom';
 
 const HomePage = () => {
   const examplePosts = [
@@ -57,26 +58,34 @@ const HomePage = () => {
       isEdited: false
     }
   ];
-  const [posts,setPost] = useState([]);
+  const [posts,setPosts] = useState([]);
+  const name = 'user3';
   useEffect( () => {
     const fetchData = async() => {
       try {
-        const response = axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/{username}/all`)
-        console.log(response);
-        setPost(response.data);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/${name}/all`)
+        console.log(response.data);
+        setPosts(response.data);
       } catch (error) {
         console.error("Error get data", error);
       }
+      
     };
-    setPost(examplePosts);
+    fetchData();
+    //setPost(examplePosts);
+  
   },[])
+
   return (
     <div>
         HomePage
         <ul>
+          
           {posts ? ( posts.map((post,index) => (
+            console.log(posts),
             <Post key = {index} username={post.user.username} {...post}/>
           )) ) : (
+            console.log(posts),
             <p> Loading posts .... </p>
           )}
         </ul>
