@@ -3,9 +3,10 @@ package com.csci3130.group04.Daltweets;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +18,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import com.csci3130.group04.Daltweets.controller.LoginController;
 import com.csci3130.group04.Daltweets.model.Login;
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.repository.LoginRepository;
 import com.csci3130.group04.Daltweets.repository.UserRepository;
 import com.csci3130.group04.Daltweets.service.Implementation.LoginServiceImpl;
-import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 
 @SpringBootTest(classes = DaltweetsApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -57,17 +54,18 @@ class LoginServiceIntegrationTests {
   @Test
   public void test_valid_login() throws Exception{
     
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+    User user = new User(1, "my bio", "me", "me@email", null, false, Role.SUPERADMIN, User.Status.ONLINE);
     User saved_user = userRepository.save(user);
 
     Login login = new Login(1,"admin", "password", "security", "answer", saved_user);
-    loginRepository.save(login);
+    login = loginRepository.save(login);
     
     Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "password"));
 
-    ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/login/", requestBody, String.class);
-    
-    assertEquals("User Authenticated", response.getBody());
+    ResponseEntity<User> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/login/", requestBody, User.class);
+
+    assertNotNull(response.getBody());
+    assertEquals(response.getBody().getUsername(), "me");
   }
 
   @Test
@@ -78,7 +76,7 @@ class LoginServiceIntegrationTests {
     Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "password"));
     ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/login/", requestBody, String.class);
 
-    assertEquals("User not found", response.getBody());
+    assertNull(response.getBody());
     assertEquals("404 NOT_FOUND", response.getStatusCode().toString());
   }
 
@@ -93,9 +91,9 @@ class LoginServiceIntegrationTests {
     loginRepository.save(login);
 
     Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "not password"));
-    ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/login/", requestBody, String.class);
+    ResponseEntity<User> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/login/", requestBody, User.class);
 
-    assertEquals("Incorrect Password", response.getBody());
+    assertNull(response.getBody());
     assertEquals("400 BAD_REQUEST", response.getStatusCode().toString());
   }
 
