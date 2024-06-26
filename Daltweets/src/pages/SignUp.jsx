@@ -13,6 +13,22 @@ function SignUp() {
       return;
     }
 
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@dal\.ca$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!emailRegex.test(email)) {
+      setError("Email must be a valid @dal.ca address");
+      return;
+    }
+
+    if (!passwordRegex.test(password)) {
+      setError(
+        "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character"
+      );
+      return;
+    }
+
     const signUpData = {
       user: {
         username: username,
