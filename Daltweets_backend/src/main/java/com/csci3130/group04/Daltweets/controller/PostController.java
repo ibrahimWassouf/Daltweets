@@ -24,7 +24,11 @@ public class PostController {
 
     @Autowired
     FollowersService followersService;
-
+    @PostMapping("/create")
+    Post createPost(@RequestBody Post post) {
+        postService.createPost(post);
+        return post;
+    }
     @GetMapping("/{username}/all")
     List<Post> getAllPosts(@PathVariable("username") String username)
     {
