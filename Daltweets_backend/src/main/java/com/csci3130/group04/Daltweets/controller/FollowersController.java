@@ -53,7 +53,7 @@ public class FollowersController {
       return new ResponseEntity<>("Follower request deleted", HttpStatus.OK);
     }
     
-    @GetMapping("/{userName}/requests")
+    @GetMapping("/{username}/requests")
     ResponseEntity<List<Followers>> getFollowRequests(@PathVariable("username") String username)
     {
         User user = userService.getUserByName(username);
@@ -66,6 +66,20 @@ public class FollowersController {
         User user = userService.getUserByName(request.get("username"));
         User follower = userService.getUserByName(request.get("followerName")); 
         return new ResponseEntity<Boolean>(followersService.acceptFollowRequest(user, follower), HttpStatus.OK);
+    }
+
+    @GetMapping("/{username}/followers")
+    ResponseEntity<List<User>> getFollowers(@PathVariable("username") String username)
+    {
+        User user = userService.getUserByName(username);
+        return new ResponseEntity<List<User>>(followersService.getAllFollowers(user),HttpStatus.OK);
+    }
+
+    @GetMapping("/{username}/following")
+    ResponseEntity<List<User>> getFollowing(@PathVariable("username") String username)
+    {
+        User user = userService.getUserByName(username);
+        return new ResponseEntity<List<User>>(followersService.getUserFollowing(user),HttpStatus.OK);
     }
 
 }

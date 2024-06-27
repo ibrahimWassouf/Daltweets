@@ -27,9 +27,17 @@ public class FollowersServiceImpl implements FollowersService{
     @Override
     public Followers addFollower(User user, User follower) {
         if (user == null || follower == null) return null;
-        int LatestId = followersRepository.findLatestId() + 1;
-        Followers newFollower = new Followers(LatestId,user,follower, Followers.Status.PENDING);
-        return followersRepository.save(newFollower);
+        Followers foundFollower = followersRepository.findByUserAndFollower(user, follower);
+        if (foundFollower == null)
+        {
+            int LatestId = followersRepository.findLatestId() + 1;
+            Followers newFollower = new Followers(LatestId,user,follower, Followers.Status.PENDING);
+            return followersRepository.save(newFollower);
+        }
+        
+        foundFollower.setUser(user);
+        foundFollower.setFollower(follower);
+        return foundFollower;
     }
 
     @Override

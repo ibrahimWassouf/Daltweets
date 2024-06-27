@@ -128,19 +128,17 @@ public class FollowersIntegrationTests {
     public void test_get_user_following()
     {
         User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
-        User following = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
-        User following2 = new User(3, "my bio", "follower2", "follower2@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);    
-        
         user =  userRepository.save(user);
+        User following = new User(user.getId()+1, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
         following = userRepository.save(following);
+        User following2 = new User(following.getId()+1, "my bio", "follower2", "follower2@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);    
         following2 = userRepository.save(following2);
 
        
         Followers followers = new Followers(1,following,user,Status.ACCEPTED);
-        Followers followers2 = new Followers(2,following2,user,Status.ACCEPTED);
-
-        followersRepository.save(followers);
-        followersRepository.save(followers2);
+        followers = followersRepository.save(followers);
+        Followers followers2 = new Followers(followers.getId()+1,following2,user,Status.ACCEPTED);
+        followers2 = followersRepository.save(followers2);
 
         List<User> followingList = followersService.getUserFollowing(user);
 
