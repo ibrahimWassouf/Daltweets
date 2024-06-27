@@ -9,12 +9,15 @@ import {
     Routes,
     Navigate,
   } from "react-router-dom";
+import Friends from './Friends';
+
 const Pages = () => {
   return (
     <div className = "flex ">
             <NavBar/>
             <Routes>
                 <Route path="/home" element={<HomePage/>} />
+                <Route path="/friends" element={<Friends />} />
             </Routes>
     </div>
   )
