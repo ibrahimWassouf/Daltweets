@@ -17,6 +17,7 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import HomePage from "./pages/HomePage";
 import Pages from "./pages/Pages";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
 function App() {
   return (
@@ -26,7 +27,9 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         
-        <Route path="/pages/*" element={<Pages/>} />
+        <ProtectedRoutes>
+          <Route path="/pages/*" element={<Pages/>} />
+        </ProtectedRoutes>
       </Routes>
     </Router>
   );
