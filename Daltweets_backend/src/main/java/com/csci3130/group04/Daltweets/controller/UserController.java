@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.csci3130.group04.Daltweets.model.User;
+import com.csci3130.group04.Daltweets.model.Followers;
 import com.csci3130.group04.Daltweets.model.Login;
 import com.csci3130.group04.Daltweets.service.LoginService;
+import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 import com.csci3130.group04.Daltweets.utils.SignUpRequestDTO;
 
@@ -24,6 +26,9 @@ public class UserController {
 
     @Autowired
     UserServiceImplementation userService;
+
+    @Autowired
+    FollowersServiceImpl followerService;
 
     @Autowired
     LoginService loginService;
@@ -46,6 +51,19 @@ public class UserController {
     
     @PostMapping("/recommended-users")
     List<User> getRecommendedUsers(@RequestBody Map<String, String> requestBody){
-      return userService.getRecommendedUsers(requestBody.get("username"));
+      List<User> recommendList = userService.getRecommendedUsers(requestBody.get("username"));
+      User user = userService.getUserByName(requestBody.get("username"));
+      List<User> requests = followerService.getUserFollowing(user);
+      
+      for (int i = 0; i < recommendList.size(); i++){
+        User recommendedUser = recommendList.get(i);
+        for (int j = 0; j < requests.size(); j++){
+          if (recommendedUser.getUsername().equals(requests.get(j).getUsername())){
+            recommendList.remove(i);
+          }
+        }
+      }
+
+      return recommendList;
     }
 }
