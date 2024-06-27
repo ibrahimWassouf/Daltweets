@@ -68,4 +68,18 @@ public class FollowersController {
         return new ResponseEntity<Boolean>(followersService.acceptFollowRequest(user, follower), HttpStatus.OK);
     }
 
+    @GetMapping("/{username}/followers")
+    ResponseEntity<List<User>> getFollowers(@PathVariable("username") String username)
+    {
+        User user = userService.getUserByName(username);
+        return new ResponseEntity<List<User>>(followersService.getAllFollowers(user),HttpStatus.OK);
+    }
+
+    @GetMapping("/{username}/following")
+    ResponseEntity<List<User>> getFollowing(@PathVariable("username") String username)
+    {
+        User user = userService.getUserByName(username);
+        return new ResponseEntity<List<User>>(followersService.getUserFollowing(user),HttpStatus.OK);
+    }
+
 }
