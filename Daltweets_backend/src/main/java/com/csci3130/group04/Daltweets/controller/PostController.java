@@ -4,11 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.csci3130.group04.Daltweets.model.Post;
 import com.csci3130.group04.Daltweets.model.User;
@@ -16,7 +12,7 @@ import com.csci3130.group04.Daltweets.service.FollowersService;
 import com.csci3130.group04.Daltweets.service.PostService;
 import com.csci3130.group04.Daltweets.service.UserService;
 
-
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/post")
 public class PostController {
