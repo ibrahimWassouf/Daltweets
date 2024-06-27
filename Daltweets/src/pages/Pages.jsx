@@ -11,7 +11,7 @@ import {
 import Friends from './Friends';
 import Error from './Error';
 const Pages = () => {
-  const user = localStorage.getItem("user");
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
     <>
     {

@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 
 function Friend({username,followerName,action,onRemove}){
   const [accepted,setAccepted] = useState(false)
-  const user = {username : "Tobi"}
-  //JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleRemove = () => {
     onRemove(username,followerName)

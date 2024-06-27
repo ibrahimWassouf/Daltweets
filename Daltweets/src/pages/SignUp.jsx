@@ -54,7 +54,6 @@ function SignUp() {
         console.log(response);
         setError("");
         localStorage.setItem("user", JSON.stringify(response.data));
-        JSON.parse(localStorage.getItem("user"));
         navigate("/home")
       })
       .catch((error) => {
