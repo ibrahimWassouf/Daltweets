@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Login() {
@@ -13,6 +14,8 @@ function Login() {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState(
     "Password is required",
   );
+
+  let navigate = useNavigate();
 
   const handleLogin = () => {
     if (username === "") {
@@ -36,12 +39,16 @@ function Login() {
       .then((response) => {
         console.log(response);
         setPasswordError(false);
+        localStorage.setItem("user", JSON.stringify(response.data));
+        JSON.parse(localStorage.getItem("user"));
+        navigate("/homepage");
       })
       .catch((error) => {
         console.log(error);
         setPasswordError(true);
-        setPasswordErrorMessage(error.response.data);
-        console.log(passwordErrorMessage);
+        setPasswordErrorMessage("Incorrect Username or Password");
+        localStorage.setItem("user", null);
+        console.log(JSON.parse(localStorage.getItem("user")) ?? "user is null");
       });
   };
 
@@ -82,7 +89,7 @@ function Login() {
                 <div className="text-sm">
                   <a
                     href="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                    className="font-semibold text-black-600 hover:text-yellow-500"
                   >
                     Forgot password?
                   </a>
@@ -104,7 +111,7 @@ function Login() {
             <button
               type="submit"
               onClick={handleLogin}
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="mt-10 flex w-full justify-center rounded-md bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-yellow-500 shadow-sm hover:bg-yellow-500 hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Login
             </button>
@@ -113,7 +120,7 @@ function Login() {
         <p className="mt-10 text-center text-sm text-gray-500">
           <a
             href="/signup"
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+            className="font-semibold leading-6 text-black-600 hover:text-yellow-500"
           >
             Sign Up
           </a>
