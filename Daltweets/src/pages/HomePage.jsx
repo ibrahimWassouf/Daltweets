@@ -77,18 +77,16 @@ const HomePage = () => {
   },[])
 
   return (
-    <div>
+    <div className="w-screen h-screen">
         HomePage
-        <ul>
-          
+        
           {posts ? ( posts.map((post,index) => (
             console.log(posts),
-            <Post key = {index} username={post.user.username} {...post}/>
+            <Post key = {index} username={post.user.username} dateCreated={post.dateCreated}{...post}/>
           )) ) : (
             console.log(posts),
             <p> Loading posts .... </p>
           )}
-        </ul>
     </div>
   )
 }
