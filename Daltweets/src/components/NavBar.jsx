@@ -9,7 +9,7 @@ const NavBar = () => {
    <div className='flex justify-center items-center bg-gray-800 h-full px-4 py-2 min-h-screen mr-1 w-1/6 text-xl'>
         <ul className=' text-white font-bold'>
             <li className="mb-20 rounded hover:shadow hover:bg-blue-500 py-2"> 
-                <Link to={"/pages/home"}> 
+                <Link to={"/home"}> 
                     <FaHome className="inline-block w-6 h-6 mr-2 -mt-2"/> 
                     Home
                 </Link>
@@ -21,16 +21,16 @@ const NavBar = () => {
                 </a>
             </li>
             <li className="mb-20 rounded hover:shadow hover:bg-blue-500 py-2"> 
-                <Link to="/pages/create"> {/** When add the link change from a to Link component*/}
+                <Link to="/create"> {/** When add the link change from a to Link component*/}
                     <IoCreateOutline className="inline-block w-6 h-6 mr-2 -mt-2"/> 
                     Create
                 </Link>
             </li>
             <li className="mb-20 rounded hover:shadow hover:bg-blue-500 py-2"> 
-                <a href=""> {/** When add the link change from a to Link component*/}
+                <Link to="/friends"> {/** When add the link change from a to Link component*/}
                     <FaUserFriends className="inline-block w-6 h-6 mr-2 -mt-2"/> 
                     Friends
-                </a>
+                </Link>
             </li>
             <li className="mb-20 rounded hover:shadow hover:bg-blue-500 py-2"> 
                 <a href=""> {/** When add the link change from a to Link component*/}
