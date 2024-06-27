@@ -54,13 +54,13 @@ class LoginServiceIntegrationTests {
   @Test
   public void test_valid_login() throws Exception{
     
-    User user = new User(1, "my bio", "me", "me@email", null, false, Role.SUPERADMIN, User.Status.ONLINE);
+    User user = new User(1, "my bio", "me", "me@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     User saved_user = userRepository.save(user);
 
-    Login login = new Login(1,"admin", "password", "security", "answer", saved_user);
-    login = loginRepository.save(login);
+    Login login = new Login(1,"admin", "Password1!", "security", "answer", saved_user);
+    loginRepository.save(login);
     
-    Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "password"));
+    Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "Password1!"));
 
     ResponseEntity<User> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/login/", requestBody, User.class);
 
@@ -70,10 +70,10 @@ class LoginServiceIntegrationTests {
 
   @Test
   public void test_user_not_found_login() throws Exception{
-    Login login = new Login(1,"admin", "password", "security", "answer", null);
+    Login login = new Login(1,"admin", "Password1!", "security", "answer", null);
     loginRepository.save(login);
 
-    Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "password"));
+    Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "Password1!"));
     ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/login/", requestBody, String.class);
 
     assertNull(response.getBody());
@@ -83,11 +83,11 @@ class LoginServiceIntegrationTests {
   @Test
   public void test_incorrect_password() throws Exception{
     
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+    User user = new User(1, "my bio", "me", "me@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     userRepository.save(user);
     User saved_user = userRepository.save(user);
 
-    Login login = new Login(1,"admin", "password", "security", "answer", saved_user);
+    Login login = new Login(1,"admin", "Password1!", "security", "answer", saved_user);
     loginRepository.save(login);
 
     Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "not password"));
@@ -98,14 +98,14 @@ class LoginServiceIntegrationTests {
   }
 
   @Test void get_security_question() throws Exception{
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+    User user = new User(1, "my bio", "me", "me@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     userRepository.save(user);
     User saved_user = userRepository.save(user);
 
-    Login login = new Login(1,"admin", "password", "security question", "answer", saved_user);
+    Login login = new Login(1,"admin", "Password1!", "security question", "answer", saved_user);
     loginRepository.save(login);
 
-    Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "password"));
+    Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "Password1!"));
     ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/login/get-security-question", requestBody, String.class);
 
     assertEquals("security question", response.getBody());
@@ -114,16 +114,16 @@ class LoginServiceIntegrationTests {
 
   @Test
   public void test_change_password() throws Exception{
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+    User user = new User(1, "my bio", "me", "me@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
     userRepository.save(user);
     User saved_user = userRepository.save(user);
 
-    Login login = new Login(1,"admin", "password", "security", "answer", saved_user);
+    Login login = new Login(1,"admin", "Password1!", "security", "answer", saved_user);
     loginRepository.save(login);
 
     Map<String, String> requestBody = Map.ofEntries(
         Map.entry("username", "admin"), 
-        Map.entry("password", "password"), 
+        Map.entry("password", "Password1!"), 
         Map.entry("security-answer", "answer"), 
         Map.entry("new-password", "new password"));
 
