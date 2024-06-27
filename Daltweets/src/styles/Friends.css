@@ -1,0 +1,8 @@
+.friend {
+    overflow: auto; /* or scroll */
+    scrollbar-width: none; /* For Firefox */
+  }
+  
+  .friend::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+  }
