@@ -1,21 +1,20 @@
 package com.csci3130.group04.Daltweets.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.csci3130.group04.Daltweets.model.Login;
-import com.csci3130.group04.Daltweets.repository.LoginRepository;
+import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.service.Implementation.LoginServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*", maxAge = 3600)
 @RestController
@@ -25,19 +24,22 @@ public class LoginController {
     @Autowired
     LoginServiceImpl loginService;
 
+    @Autowired
+    UserServiceImplementation userService;
+
     @PostMapping("/")
-    ResponseEntity<String> authenticate(@RequestBody Map<String, String> login){
+    ResponseEntity<User> authenticate(@RequestBody Map<String, String> login){
 
       Login authentication = loginService.getLogin(login.get("username"));
 
       if (authentication == null || authentication.getUser() == null){
-        return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
       } else if (!authentication.getPassword().equals(login.get("password"))){
-        return new ResponseEntity<String>("Incorrect Password", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
       }
 
-
-      return new ResponseEntity<String>("User Authenticated", HttpStatus.OK);
+      User user = authentication.getUser();
+      return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/get-security-question")

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Login() {
@@ -13,6 +14,8 @@ function Login() {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState(
     "Password is required",
   );
+
+  let navigate = useNavigate();
 
   const handleLogin = () => {
     if (username === "") {
@@ -36,12 +39,16 @@ function Login() {
       .then((response) => {
         console.log(response);
         setPasswordError(false);
+        localStorage.setItem("user", JSON.stringify(response.data));
+        JSON.parse(localStorage.getItem("user"));
+        navigate("/homepage");
       })
       .catch((error) => {
         console.log(error);
         setPasswordError(true);
-        setPasswordErrorMessage(error.response.data);
-        console.log(passwordErrorMessage);
+        setPasswordErrorMessage("Incorrect Username or Password");
+        localStorage.setItem("user", null);
+        console.log(JSON.parse(localStorage.getItem("user")) ?? "user is null");
       });
   };
 
