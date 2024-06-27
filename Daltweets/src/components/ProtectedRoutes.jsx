@@ -1,23 +1,16 @@
 import React from "react";
-import { Alert } from "react-native";
-import { Outlet, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 // Note: This may need refactoring depending on how we want to handle authentication
-const user = localstorage.getItem("user");
+const user = localStorage.getItem("user");
 
 const ProtectedRoutes = () => {
 
     if(user === null){
-        Alert.alert("Error", "You are not logged in. Please log in or sign up.", [
-            {
-                text: 'OK',
-                onPress: () => console.log("Redirecting to log in page."),
-                style: 'default'
-            }
-        ])
+        alert('Error: You are not logged in. Please log in or sign up to access this page.');
         return <Navigate to="/login" replace={true} />;
     }
 
-    return <Outlet/>;
+    return <Pages/>;
 };
 export default ProtectedRoutes;
