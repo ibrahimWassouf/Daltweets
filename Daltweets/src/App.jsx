@@ -10,24 +10,21 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Navigate,
 } from "react-router-dom";
 
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
-import HomePage from "./pages/HomePage";
 import Pages from "./pages/Pages";
-import ProtectedRoutes from "./components/ProtectedRoutes";
 
 function App() {
   return (
     <Router>
-
       <Routes>
         <Route path="/signup" element={<SignUp />} />
+        <Route path="*" element={
+            <Pages/>
+        } />
         <Route path="/login" element={<Login />} />
-        
-        <Route path="/pages/*" element={<ProtectedRoutes/>} />
       </Routes>
     </Router>
   );
