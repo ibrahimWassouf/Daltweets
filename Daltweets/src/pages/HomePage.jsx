@@ -1,6 +1,7 @@
-import React, { useState, useEffect} from 'react'
-import axios from 'axios';
-import Post from '../components/Post';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Post from "../components/Post";
+import RecommendedUsers from "../components/RecommendedUsers";
 
 const HomePage = () => {
   const [posts,setPosts] = useState([]);
@@ -15,24 +16,37 @@ const HomePage = () => {
       } catch (error) {
         console.error("Error get data", error);
       }
-      
     };
-    fetchData();  
-  },[])
+    fetchData();
+  }, []);
 
   return (
     <div className="w-screen h-screen">
-        HomePage
-        
-          {posts ? ( posts.map((post,index) => (
-            console.log(posts),
-            <Post key = {index} username={post.user.username} dateCreated={post.dateCreated}{...post}/>
-          )) ) : (
-            console.log(posts),
-            <p> Loading posts .... </p>
-          )}
+      HomePage
+      <div className="flex flex-row flex-wrap ">
+        <div className="w-3/4">
+          {posts
+            ? posts.map(
+              (post, index) => (
+                console.log(post),
+                (
+                  <Post
+                    key={index}
+                    username={post.user.username}
+                    dateCreated={post.dateCreated}
+                    {...post}
+                  />
+                )
+              ),
+            )
+            : (console.log(posts), (<p> Loading posts .... </p>))}
+        </div>
+        <div className="m-auto">
+          <RecommendedUsers />
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;
