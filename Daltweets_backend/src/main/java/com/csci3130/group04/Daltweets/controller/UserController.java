@@ -4,12 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.model.Login;
@@ -48,4 +43,10 @@ public class UserController {
     List<User> getRecommendedUsers(@RequestBody Map<String, String> requestBody){
       return userService.getRecommendedUsers(requestBody.get("username"));
     }
+
+    @GetMapping("/profile/{username}")
+    User getUserProfile(@RequestBody Map<String, String> requestBody, @PathVariable String username){
+        return userService.getUserByName(requestBody.get(username)); //might change
+    }
+
 }
