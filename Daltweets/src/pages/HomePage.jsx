@@ -4,11 +4,12 @@ import Post from '../components/Post';
 
 const HomePage = () => {
   const [posts,setPosts] = useState([]);
-  const name = 'user3';
   useEffect( () => {
     const fetchData = async() => {
+      const name = JSON.parse(localStorage.getItem('user')).username;
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/${name}/all`)
+        console.log(name);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/${name}/all`);
         console.log(response.data);
         setPosts(response.data);
       } catch (error) {
