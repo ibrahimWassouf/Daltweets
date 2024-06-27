@@ -44,7 +44,7 @@ public class UserController {
        return createdUser;
     } 
     
-    @GetMapping("/recommended-users")
+    @PostMapping("/recommended-users")
     List<User> getRecommendedUsers(@RequestBody Map<String, String> requestBody){
       return userService.getRecommendedUsers(requestBody.get("username"));
     }
