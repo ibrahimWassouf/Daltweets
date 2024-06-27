@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import axios from "axios"; 
 
 function SignUp() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -51,10 +53,15 @@ function SignUp() {
       .then((response) => {
         console.log(response);
         setError("");
+        localStorage.setItem("user", JSON.stringify(response.data));
+        JSON.parse(localStorage.getItem("user"));
+        navigate("/home")
       })
       .catch((error) => {
         console.log(error);
         setError(error.response.data);
+        localStorage.setItem("user", null);
+        console.log(JSON.parse(localStorage.getItem("user")) ?? "user is null");
       });
   };
 
