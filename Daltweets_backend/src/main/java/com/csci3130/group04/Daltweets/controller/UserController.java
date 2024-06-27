@@ -44,9 +44,8 @@ public class UserController {
       return userService.getRecommendedUsers(requestBody.get("username"));
     }
 
-    @GetMapping("/profile/{username}")
-    User getUserProfile(@RequestBody Map<String, String> requestBody, @PathVariable String username){
-        return userService.getUserByName(requestBody.get(username)); //might change
+    @GetMapping("/")
+    User getUserProfile(@RequestBody Map<String, String> requestBody){
+        return userService.getUserByName(requestBody.get("username")); //might change
     }
-
 }
