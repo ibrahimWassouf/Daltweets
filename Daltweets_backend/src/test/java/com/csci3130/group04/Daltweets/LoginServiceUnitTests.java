@@ -33,8 +33,8 @@ public class LoginServiceUnitTests {
    @Test
    void test_create_login()
    {
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, null);
-    Login login = new Login(1,user.getEmail(),"password","is it me","yes",user);
+    User user = new User(1, "my bio", "me", "me@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN, null);
+    Login login = new Login(1,user.getEmail(),"Password1!","is it me","yes",user);
 
     when(loginRepository.save(login)).thenReturn(login);
     assertTrue(loginService.createLogin(login));
@@ -56,7 +56,7 @@ public class LoginServiceUnitTests {
    @Test 
    void test_create_login_with_invalid_user_name()
    {
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, null);
+    User user = new User(1, "my bio", "me", "me@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN, null);
     Login login = new Login(1,"invalid.com","password","is it me","yes",user);
 
     assertFalse(loginService.createLogin(login));
@@ -65,7 +65,7 @@ public class LoginServiceUnitTests {
    @Test
    void test_create_login_with_invalid_password()
    {
-    User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, null);
+    User user = new User(1, "my bio", "me", "me@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN, null);
     Login login = new Login(1,user.getEmail(),"pass","is it me","yes",user);
 
     assertFalse(loginService.createLogin(login));

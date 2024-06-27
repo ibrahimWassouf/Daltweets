@@ -31,7 +31,7 @@ public class UserController {
 
         Login login = createUserRequestDto.getLogin();
 
-        login.setUsername(createdUser.getUsername());
+        login.setUsername(createdUser.getEmail());
         login.setUser(createdUser);
 
         loginService.createLogin(login);
