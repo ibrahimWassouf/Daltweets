@@ -3,9 +3,7 @@ import ReactTimeAgo from 'react-time-ago';
 import TimeAgo from 'javascript-time-ago'
 
 import en from 'javascript-time-ago/locale/en'
-import { CommandLineIcon } from '@heroicons/react/16/solid';
-import { FaComment, FaRegComment, FaRegHeart } from 'react-icons/fa';
-import { CiHeart } from 'react-icons/ci';
+import { FaRegComment, FaRegHeart } from 'react-icons/fa';
 
 TimeAgo.addDefaultLocale(en)
 
