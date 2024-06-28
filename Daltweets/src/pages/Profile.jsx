@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import axios from "axios";
 import { GoDotFill } from "react-icons/go";
+import { FaGear } from "react-icons/fa6";
 
 
 function Profile() {
@@ -26,7 +27,7 @@ function Profile() {
                 <div className="grid-cols-1 ml-5 mt-10">
                     <div className="font-bold text-3xl">{user.username}
                         <button className="bg-blue-300 hover:bg-yellow-200 rounded-full ml-1 py-0 px-2 text-base">
-                            Edit
+                            <FaGear className="mr-1 inline-block mb-1"/>Edit
                         </button>
                     </div>
                     <div className="text-base">{user.email}</div>
