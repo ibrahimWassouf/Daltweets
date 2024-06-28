@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Link } from 'react-router-dom'
 
 
 function FriendRequest({username,followerName,onAccept,onRemove}){
+  const user = JSON.parse(localStorage.getItem("user")); 
   const [accepted,setAccepted] = useState(false)
   const isFollower = user.username === username
   
