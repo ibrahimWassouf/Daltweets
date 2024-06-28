@@ -45,8 +45,8 @@ const UpdateUser = () => {
             <form onSubmit={updateuser} className="flex flex-col gap-4 w-72">
               <input type="text" name="username" defaultValue={user.username} placeholder="Name" onChange={(e) => setUserName(e.target.value)} className="p-3 rounded-md border-slate-400 border-2"/>
               <input type="text" name="email" defaultValue={user.email} placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="p-3 rounded-md border-slate-400 border-2"/>
-              <input type="text" name="role" defaultValue={user.role} placeholder="Role" onChange={(e) => setRole(e.target.value)} className="p-3 rounded-md border-slate-400 border-2"/>
-              <input type="text" name="status" defaultValue={user.status} placeholder="Status" onChange={(e) => setStatus(e.target.value)} className="p-3 rounded-md border-slate-400 border-2"/>
+              <input type="text" name="role" defaultValue={user.role} placeholder="Role" onChange={(e) => setRole(e.target.value.toUpperCase())} className="p-3 rounded-md border-slate-400 border-2"/>
+              <input type="text" name="status" defaultValue={user.status} placeholder="Status" onChange={(e) => setStatus(e.target.value.toUpperCase())} className="p-3 rounded-md border-slate-400 border-2"/>
               <textarea name="bio" defaultValue={user.bio} placeholder="Bio" onChange={(e) => setBio(e.target.value)} className="p-3 rounded-md border-slate-400 border-2 h-36 " />
               <button type="submit" className="px-4 py-2 rounded bg-black text-gold font-bold cursor-pointer border-2 border-black">Submit</button>
             </form>

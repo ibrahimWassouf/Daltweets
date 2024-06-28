@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 
 function FriendRequest({username,followerName,onAccept,onRemove}){
   const [accepted,setAccepted] = useState(false)
-
+  const isFollower = user.username === username
+  
   const handleAccept = () => {
     onAccept(username,followerName)
   }
@@ -17,7 +18,13 @@ function FriendRequest({username,followerName,onAccept,onRemove}){
   return (
     <div className=" mt-8 mb-4  bg-black shadow-md rounded-lg flex items-center justify-between p-4">
       <div className="flex-1 mr-24">
-        <div className="font-bold text-white text-xl">{followerName}</div>
+      <Link 
+        to="/profile" 
+        state={{ username: followerName, isFollower  }}
+        className="text-blue-500 hover:text-blue-700"
+      >
+        <div className="font-bold text-white text-xl">{ followerName }</div>
+      </Link>
       </div>
       <div className="mr-4">
         <button

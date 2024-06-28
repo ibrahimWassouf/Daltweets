@@ -1,25 +1,54 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { GoDotFill } from "react-icons/go";
 import { FaGear } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Profile() {
+    const location = useLocation();
+    const { username, isFriend} = location.state || {};
+    const loggedInUser = JSON.parse(localStorage.getItem("user"));
+    const [backendUser,setBackendUser] = useState({})
+    const isLoggedInUser =   !backendUser || backendUser.username == loggedInUser.username 
+    const user = backendUser ? backendUser : loggedInUser  
+    let statusColor = ""
+    console.log(user.status)
+    switch(user.status){
+        case "ONLINE":
+            statusColor = "green"
+            break
+        case "OFFLINE":
+            statusColor = "red"
+            break
+        case "DEACTIVATED":
+            statusColor = "grey"
+            break
+        default:
+            statusColor="yellow"
+    }
+    console.log(user.status)
+    console.log(statusColor)
 
-    const user = JSON.parse(localStorage.getItem("user"));
 
     useEffect(() => {
+        console.log(username)
         getProfile();
     }, []);
 
     const getProfile = async() => {
         try{
-            const response = await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/user/${user.username}/profile`);
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/user/${username}/profile`);
+            setBackendUser(response.data)
             console.log(response.data)
         }catch (error){
             console.error("Error fetching profile.", error);
         }
     };
+
+    useEffect(() => {
+        getProfile()
+    }, []) 
+
     let navigae = useNavigate();
     const routeChange = () => {
         let path = "/updateUser";
@@ -30,12 +59,18 @@ function Profile() {
             <div className="grid">
                 <div className="grid-cols-1 ml-5 mt-10">
                     <div className="font-bold text-3xl">{user.username}
+                    {isLoggedInUser  ?   
                         <button className="bg-blue-300 hover:bg-yellow-200 rounded-full ml-1 py-0 px-2 text-base" onClick={routeChange}>
                             <FaGear className="mr-1 inline-block mb-1"/>Edit
-                        </button>
+                        </button> : (<></>)}
                     </div>
                     <div className="text-base">{user.email}</div>
-                    <div className="text-base italic flex">{user.status}<GoDotFill color="green" className="flex items-center justify-center"/></div>
+                    { 
+                      isFriend || isLoggedInUser  ?   
+                        ( <div className="text-base italic flex">{user.status}<GoDotFill color={statusColor} className="flex items-center justify-center"/></div>) 
+                     : 
+                     (<></>)
+                    }
                 </div>
                 <div className="grid-cols-1 border-right">
                     <div className="p-3 py-5">

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function UserDisplay({ username }) {
   const [isSent, setIsSet] = useState(false);
@@ -22,7 +23,13 @@ function UserDisplay({ username }) {
       <div className=" border border-black rounded-2xl m-auto border-gray-500 w-64 p-5">
         <div className="flex flex-row w-32">
           <div className="box-border h-min w-min p-2">
+            <Link
+          to="/profile" 
+          state={{ username, isFriend : false  }}
+          className="text-blue-500 hover:text-blue-700"
+        >
             <p className="text-black font-medium m-auto">{username}</p>
+            </Link>
           </div>
           <div className="box-border h32 w-24 ml-24">
             {!isSent ? (
