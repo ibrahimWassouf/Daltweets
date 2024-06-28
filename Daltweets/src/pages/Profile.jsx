@@ -3,7 +3,6 @@ import axios from "axios";
 import { GoDotFill } from "react-icons/go";
 import { FaGear } from "react-icons/fa6";
 
-
 function Profile() {
 
     const user = JSON.parse(localStorage.getItem("user"));
