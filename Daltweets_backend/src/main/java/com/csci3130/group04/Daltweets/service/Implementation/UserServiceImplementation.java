@@ -14,7 +14,7 @@ import java.util.Optional;
 public class UserServiceImplementation implements UserService {
     @Autowired
     UserRepository userRepository;
-    
+
     @Override
     public User createUser(User user) {
         if ( user == null || user.getUsername() == null || user.getEmail() == null) {
@@ -25,6 +25,7 @@ public class UserServiceImplementation implements UserService {
             System.out.println("There is already an user with this name");
             return find_user;
         }
+        user.setStatus(User.Status.ONLINE);
         userRepository.save(user);
         return user;
     }

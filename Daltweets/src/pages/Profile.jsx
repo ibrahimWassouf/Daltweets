@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { GoDotFill } from "react-icons/go";
 
+
 function Profile() {
 
     const user = JSON.parse(localStorage.getItem("user"));
@@ -13,7 +14,7 @@ function Profile() {
     const getProfile = async() => {
         try{
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/user/${user.username}/profile`);
-            console.log(response.data);
+            console.log(response.data)
         }catch (error){
             console.error("Error fetching profile.", error);
         }
@@ -25,7 +26,7 @@ function Profile() {
                 <div className="grid-cols-1 ml-5 mt-10">
                     <div className="font-bold text-3xl">{user.username}</div>
                     <div className="text-base">{user.email}</div>
-                    <div className="text-base italic flex">Online<GoDotFill color="green" className="flex items-center justify-center"/></div>
+                    <div className="text-base italic flex">{user.status}<GoDotFill color="green" className="flex items-center justify-center"/></div>
                 </div>
                 <div className="grid-cols-1 border-right">
                     <div className="p-3 py-5">
