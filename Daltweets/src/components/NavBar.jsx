@@ -33,10 +33,10 @@ const NavBar = () => {
                 </Link>
             </li>
             <li className="mb-20 rounded hover:shadow hover:bg-blue-500 py-2"> 
-                <a href="/profile"> {/** When add the link change from a to Link component*/}
+                <Link to="/profile"> {/** When add the link change from a to Link component*/}
                     <FaUserCircle className="inline-block w-6 h-6 mr-2 -mt-2"/> 
                     Profile
-                </a>
+                </Link>
             </li>
         </ul>
    </div>
