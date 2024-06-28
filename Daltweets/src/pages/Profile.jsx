@@ -11,7 +11,25 @@ function Profile() {
     const [backendUser,setBackendUser] = useState({})
     const isLoggedInUser =   !backendUser || backendUser.username == loggedInUser.username 
     const user = backendUser ? backendUser : loggedInUser  
-   
+    let statusColor = ""
+    console.log(user.status)
+    switch(user.status){
+        case "ONLINE":
+            statusColor = "green"
+            break
+        case "OFFLINE":
+            statusColor = "red"
+            break
+        case "DEACTIVATED":
+            statusColor = "grey"
+            break
+        default:
+            statusColor="yellow"
+    }
+    console.log(user.status)
+    console.log(statusColor)
+
+
     useEffect(() => {
         console.log(username)
         getProfile();
@@ -49,7 +67,7 @@ function Profile() {
                     <div className="text-base">{user.email}</div>
                     { 
                       isFriend || isLoggedInUser  ?   
-                        ( <div className="text-base italic flex">{user.status}<GoDotFill color="green" className="flex items-center justify-center"/></div>) 
+                        ( <div className="text-base italic flex">{user.status}<GoDotFill color={statusColor} className="flex items-center justify-center"/></div>) 
                      : 
                      (<></>)
                     }
