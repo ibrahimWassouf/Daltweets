@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import axios from "axios";
+import { GoDotFill } from "react-icons/go";
 
 function Profile() {
 
     const user = JSON.parse(localStorage.getItem("user"));
+
     useEffect(() => {
         getProfile();
     }, []);
@@ -20,26 +22,15 @@ function Profile() {
     return (
         <div className="container rounded bg-gray-100 mt-3 mb-3 mr-3 ml-3">
             <div className="grid">
-                <div className="grid-cols-3">
-                    <span className="grid">{user.username}</span>
-                    <span className="grid">{user.email}</span>
-                    <span className="grid">Online</span>
+                <div className="grid-cols-1 ml-5 mt-10">
+                    <div className="font-bold text-3xl">{user.username}</div>
+                    <div className="text-base">{user.email}</div>
+                    <div className="text-base italic flex">Online<GoDotFill color="green" className="flex items-center justify-center"/></div>
                 </div>
                 <div className="grid-cols-1 border-right">
                     <div className="p-3 py-5">
-                        <div className="d-flex justify-content-between align-items-center mb-3">
-                            <h1 className="text-center">Profile</h1>
-                        </div>
-                        <div className="row mt-2">
-                            <div className="col-md-6">
-                                <h2>FirstName</h2>
-                            </div>
-                            <div className="col-md-6">
-                                <h2>LastName</h2>
-                            </div>
-                        </div>
                         <div className="row mt-3">
-                            <div className="col-md-12">
+                            <div className="text-xl">
                                 <h2>About</h2>
                             </div>
                             <div className="col-md-12">
