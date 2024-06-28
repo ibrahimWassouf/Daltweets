@@ -103,10 +103,9 @@ class LoginServiceIntegrationTests {
     User saved_user = userRepository.save(user);
 
     Login login = new Login(1,"admin", "Password1!", "security question", "answer", saved_user);
-    loginRepository.save(login);
+    login = loginRepository.save(login);
 
-    Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "admin"), Map.entry("password", "Password1!"));
-    ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/login/get-security-question", requestBody, String.class);
+    ResponseEntity<String> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/login/get-security-question/" + login.getUsername(), String.class);
 
     assertEquals("security question", response.getBody());
     assertEquals("200 OK", response.getStatusCode().toString());

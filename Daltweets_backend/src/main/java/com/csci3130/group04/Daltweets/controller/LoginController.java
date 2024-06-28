@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,15 +44,32 @@ public class LoginController {
       return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping("/get-security-question")
-    ResponseEntity<String> getSecurityQ(@RequestBody Map<String, String> requestBody){
-      Login loginEntry = loginService.getLogin(requestBody.get("username"));
+    @GetMapping("/get-security-question/{username}")
+    ResponseEntity<String> getSecurityQ(@PathVariable String username){
+      Login loginEntry = loginService.getLogin(username);
 
       if (loginEntry == null || loginEntry.getUser() == null){
         return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
       }
 
       return new ResponseEntity<String>(loginEntry.getSecurityQuestion(), HttpStatus.OK);
+    }
+
+    
+    @PostMapping("/forgot-password-change")
+    ResponseEntity<String> forgotPasswordChange(@RequestBody Map<String, String> requestBody){
+      Login loginEntry = loginService.getLogin(requestBody.get("username"));
+
+      if (loginEntry == null ||
+          loginEntry.getUser() == null ||
+          !loginEntry.getSecurityAnswer().equals(requestBody.get("security-answer"))){
+        return new ResponseEntity<>("Could not change password, please try again", HttpStatus.BAD_REQUEST);
+      }
+
+      loginEntry.setPassword(requestBody.get("new-password"));
+      loginService.updatePassword(loginEntry);
+      
+      return new ResponseEntity<>("Password updated", HttpStatus.OK);
     }
 
     @PostMapping("/change-password")
