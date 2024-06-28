@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [usernameError, setUsernameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
 
-  const [usernameErrorMessage, setUsernameErrorMessage] = useState(
+  const [emailErrorMessage, setEmailErrorMessage] = useState(
     "Username is requied",
   );
   const [passwordErrorMessage, setPasswordErrorMessage] = useState(
@@ -18,11 +18,11 @@ function Login() {
   let navigate = useNavigate();
 
   const handleLogin = () => {
-    if (username === "") {
-      setUsernameError(true);
-      setUsernameErrorMessage("Username is required");
+    if (email === "") {
+      setEmailError(true);
+      setEmailErrorMessage("Username is required");
     } else {
-      setUsernameError(false);
+      setEmailError(false);
     }
 
     if (password === "") {
@@ -33,8 +33,8 @@ function Login() {
 
     axios
       .post(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/login/`, {
-        username,
-        password,
+        username: email,
+        password: password,
       })
       .then((response) => {
         console.log(response);
@@ -63,19 +63,19 @@ function Login() {
           <form className="space-y-6">
             <div>
               <label
-                htmlFor="username"
+                htmlFor="email"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Username
+                Email
               </label>
               <div>
                 <input
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="block w-full rounded-md border-0 py-1.5 ps-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                {usernameError && usernameErrorMessage}
+                {emailError && emailErrorMessage}
               </div>
             </div>
             <div>
@@ -98,6 +98,7 @@ function Login() {
               <div className="mt-2">
                 <input
                   id="password"
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="block w-full rounded-md border-0 py-1.5 ps-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"

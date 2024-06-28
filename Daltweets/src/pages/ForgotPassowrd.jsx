@@ -3,18 +3,22 @@ import axios from "axios";
 
 function ForgotPassword() {
   const [securityQ, setSecurityQ] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [qError, setQError] = useState(false);
   const [securityA, setSecurityA] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [securityAError, setSecurityAError] = useState(false);
   const [securityAErrorMessage, setSecurityAErrorMessage] = useState("");
   const [passwordChanged, setPasswordChanged] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const handleUserSubmit = (e) => {
     e.preventDefault();
 
-    if (username == "") {
+    if (email == "") {
       setQError(true);
       return;
     } else {
@@ -22,7 +26,7 @@ function ForgotPassword() {
     }
     axios
       .get(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/login/get-security-question/${username}`,
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/login/get-security-question/${email}`,
       )
       .then((response) => {
         setSecurityQ(response.data);
@@ -41,8 +45,18 @@ function ForgotPassword() {
       setSecurityAError(true);
       setSecurityAErrorMessage("Must include a security answer.");
       return;
-    } else if (newPassword == "") {
+    }
+    if (newPassword == "") {
       setSecurityAError(true);
+      setPasswordErrorMessage("Must submit a new password.");
+      return;
+    }
+
+    if (!passwordRegex.test(newPassword)) {
+      setSecurityAError(true);
+      setPasswordErrorMessage(
+        "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character",
+      );
       return;
     }
 
@@ -50,7 +64,7 @@ function ForgotPassword() {
       .post(
         `${import.meta.env.VITE_BACKEND_BASE_URL}/api/login/forgot-password-change`,
         {
-          username: username,
+          username: email,
           "new-password": newPassword,
           "security-answer": securityA,
         },
@@ -70,7 +84,7 @@ function ForgotPassword() {
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="box-border my-20 mx-52">
-        <div className="mt-10 lg:mx-auto lg:w-full lg:max-w-sm">
+        <div className="mt-10 mx-auto lg:w-full lg:max-w-sm">
           <h2 className="mt-10 text-left text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Forgot Password
           </h2>
@@ -79,8 +93,10 @@ function ForgotPassword() {
             <div className="w-full">
               {passwordChanged && (
                 <div>
-                  Password changed Successfully please got to{" "}
-                  <a href="/login">Login Page</a>
+                  Password changed Successfully please go to{" "}
+                  <a href="/login" className="font-bold text-blue-500">
+                    Login
+                  </a>
                 </div>
               )}
 
@@ -124,9 +140,7 @@ function ForgotPassword() {
                       />
                     </div>
 
-                    {securityAError && newPassword == "" && (
-                      <div>Must submit a new password. </div>
-                    )}
+                    {securityAError && <div>{passwordErrorMessage}</div>}
                     {}
                   </div>
 
@@ -142,22 +156,22 @@ function ForgotPassword() {
 
               {!securityQ && (
                 <div className="w-max">
-                  <h3>Please enter the username of the account.</h3>
+                  <h3>Please enter the email of the account.</h3>
                   <label
-                    htmlFor="username"
+                    htmlFor="email"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Username
+                    Email
                   </label>
                   <div>
                     <input
-                      id="username"
+                      id="email"
                       onChange={(e) => {
-                        setUsername(e.target.value);
+                        setEmail(e.target.value);
                       }}
                       className="block w-full rounded-md border-0 py-1.5 ps-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
-                    {qError && <div>Username not found</div>}
+                    {qError && <div>Email not found</div>}
                   </div>
 
                   <button
