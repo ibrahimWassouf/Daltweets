@@ -4,14 +4,13 @@ import axios from "axios";
 const CreatePost = () => {
   const [id,setId] = useState(1);
   const [text,setText] = useState('');
-  const [user,setUser] = useState(null);
   const [dateCreated,setDateCreated] = useState(null);
   const [isDeleted,setIsDeleted] = useState(false);
   const [isEdited,setIsEdited] = useState(false);
 
   const sendPost = (e) => {
     e.preventDefault();
-    setUser(JSON.parse(localStorage.getItem('user')));
+    const user = JSON.parse(localStorage.getItem('user'));
     const formData = {
       id,
       text,
