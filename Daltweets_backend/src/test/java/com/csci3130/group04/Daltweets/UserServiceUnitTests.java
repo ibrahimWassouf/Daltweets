@@ -73,8 +73,8 @@ public class UserServiceUnitTests {
 
         Mockito.when(userRepository.save(update_user)).thenReturn(update_user);
         Mockito.when(userRepository.findByUsername(update_user.getUsername())).thenReturn(update_user);
-        String status = userService.updateUser(update_user);
-        assertEquals("Update success",status);
+        User updated_user = userService.updateUser(update_user);
+        assertEquals(update_user,updated_user);
     }
     @Test
     public void tesUpdateUserWithNull() {
