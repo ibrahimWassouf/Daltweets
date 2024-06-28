@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.csci3130.group04.Daltweets.repository.UserRepository;
 import com.csci3130.group04.Daltweets.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,9 +26,11 @@ public class UserServiceImplementation implements UserService {
             System.out.println("There is already an user with this name");
             return find_user;
         }
+        if (user.getDateCreated() == null){
+            user.setDateCreated(LocalDateTime.now());
+        }
         user.setStatus(User.Status.ONLINE);
-        userRepository.save(user);
-        return user;
+        return userRepository.save(user);
     }
     
     @Override
@@ -39,20 +42,22 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public String updateUser(User updateUser) {
+    public User updateUser(User updateUser) {
         if ( updateUser == null  ) {
             throw new IllegalArgumentException("user in update is NULL");
         }
         User user = getUserByName(updateUser.getUsername());
         if ( user == null ) {
-            return "User not found to update";
+            throw new IllegalArgumentException("there is no user to update");
         }
         user.setBio(updateUser.getBio());
+        user.setUsername(updateUser.getUsername());
         user.setEmail(updateUser.getEmail());
         user.setAccountDeleted(updateUser.isAccountDeleted());
+        user.setRole(updateUser.getRole());
         user.setStatus(updateUser.getStatus());
-        userRepository.save(user);
-        return "Update success";
+        User updated_user = userRepository.save(user);
+        return updated_user;
     }
 
     @Override

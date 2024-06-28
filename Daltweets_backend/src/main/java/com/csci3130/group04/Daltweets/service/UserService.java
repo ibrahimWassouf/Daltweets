@@ -9,7 +9,7 @@ public interface UserService {
 
     public User getUserByName(String name);
 
-    public String updateUser(User user);
+    public User updateUser(User user);
 
     public List<User> getRecommendedUsers(String name);
 }
