@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 
 const NavBar = () => {
   return (
-   <div className='flex justify-center items-center bg-gray-800 px-4 py-2 mr-1 w-1/6 text-xl'>
+   <div className='min-h-screen flex justify-center items-center bg-gray-800 px-4 py-2 mr-1 w-1/6 text-xl'>
         <ul className=' text-white font-bold'>
             <li className="mb-20 rounded hover:shadow hover:bg-blue-500 py-2"> 
                 <Link to={"/home"}> 
