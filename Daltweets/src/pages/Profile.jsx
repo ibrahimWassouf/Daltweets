@@ -24,7 +24,11 @@ function Profile() {
         <div className="container rounded bg-gray-100 mt-3 mb-3 mr-3 ml-3">
             <div className="grid">
                 <div className="grid-cols-1 ml-5 mt-10">
-                    <div className="font-bold text-3xl">{user.username}</div>
+                    <div className="font-bold text-3xl">{user.username}
+                        <button className="bg-blue-300 hover:bg-yellow-200 rounded-full ml-1 py-0 px-2 text-base">
+                            Edit
+                        </button>
+                    </div>
                     <div className="text-base">{user.email}</div>
                     <div className="text-base italic flex">{user.status}<GoDotFill color="green" className="flex items-center justify-center"/></div>
                 </div>
