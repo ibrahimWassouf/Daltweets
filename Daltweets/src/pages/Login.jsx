@@ -88,7 +88,7 @@ function Login() {
                 </label>
                 <div className="text-sm">
                   <a
-                    href="#"
+                    href="/forgot-password"
                     className="font-semibold text-black-600 hover:text-yellow-500"
                   >
                     Forgot password?
