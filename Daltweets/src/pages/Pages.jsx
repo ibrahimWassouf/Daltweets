@@ -10,6 +10,7 @@ import {
   } from "react-router-dom";
 import Friends from './Friends';
 import Error from './Error';
+import UpdateUser from './UpdateUser';
 const Pages = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   return (
@@ -22,6 +23,7 @@ const Pages = () => {
                 <Route path="/home" element={<HomePage/>} />
                 <Route path="/friends" element={<Friends />} />
                 <Route path="/create" element = {<CreatePost/>} />
+                <Route path="/updateUser" element = {<UpdateUser/>} />
             </Routes>
     </div>) : 
     (
