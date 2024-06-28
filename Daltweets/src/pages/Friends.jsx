@@ -99,7 +99,7 @@ function FollowRequests()
       <div className="flex flex-col items-center w-full">
         <h1 className="text-4xl font-bold text-center"> Followers</h1>
         <div className="flex flex-col h-64 overflow-y-scroll w-full items-center friend"> 
-          { followers ? (followers.map((follower,i) => {
+          { followers.length > 0 ? (followers.map((follower,i) => {
               return (
                   <Friend onRemove = {onRemove} key={i} username={username} followerName={follower.username} />
               )
@@ -111,7 +111,7 @@ function FollowRequests()
       <div className="flex flex-col items-center w-full">
       <h1 className="text-4xl font-bold text-center"> Following</h1>
         <div className="flex flex-col h-64 overflow-y-scroll w-full items-center friend"> 
-        { followings ? (followings.map((following,i) => {
+        { followings.length > 0 ? (followings.map((following,i) => {
             return (
                 <Friend onRemove = {onRemove} key={i} username={following.username} followerName={username} />
             )
