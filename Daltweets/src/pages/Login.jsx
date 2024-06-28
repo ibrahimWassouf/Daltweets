@@ -41,7 +41,7 @@ function Login() {
         setPasswordError(false);
         localStorage.setItem("user", JSON.stringify(response.data));
         JSON.parse(localStorage.getItem("user"));
-        navigate("/homepage");
+        navigate("/home");
       })
       .catch((error) => {
         console.log(error);

@@ -9,10 +9,10 @@ import {
     Route,
     Routes,
   } from "react-router-dom";
-
+import Friends from './Friends';
 import Error from './Error';
 const Pages = () => {
-  const user = localStorage.getItem("user");
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
     <>
     {
@@ -21,6 +21,7 @@ const Pages = () => {
             <NavBar/>
             <Routes>
                 <Route path="/home" element={<HomePage/>} />
+                <Route path="/friends" element={<Friends />} />
                 <Route path="/create" element = {<CreatePost/>} />
                 <Route path="/profile" element = {<Profile/>} />
             </Routes>
