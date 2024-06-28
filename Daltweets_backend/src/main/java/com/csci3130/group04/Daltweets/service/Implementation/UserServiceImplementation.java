@@ -15,7 +15,7 @@ import java.util.Optional;
 public class UserServiceImplementation implements UserService {
     @Autowired
     UserRepository userRepository;
-    
+
     @Override
     public User createUser(User user) {
         if ( user == null || user.getUsername() == null || user.getEmail() == null) {
@@ -29,6 +29,7 @@ public class UserServiceImplementation implements UserService {
         if (user.getDateCreated() == null){
             user.setDateCreated(LocalDateTime.now());
         }
+        user.setStatus(User.Status.ONLINE);
         return userRepository.save(user);
     }
     

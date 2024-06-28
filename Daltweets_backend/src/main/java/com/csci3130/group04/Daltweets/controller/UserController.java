@@ -63,6 +63,11 @@ public class UserController {
       return recommendList;
     }
 
+    @GetMapping("/{username}/profile")
+    User getUserProfile(@PathVariable String username){
+        return userService.getUserByName(username);
+    }
+
     @PutMapping("/update")
     User updateUser(@RequestBody User user) {
         return userService.updateUser(user);
