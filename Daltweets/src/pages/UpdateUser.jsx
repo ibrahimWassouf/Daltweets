@@ -37,17 +37,20 @@ const UpdateUser = () => {
         });
     }
     return (
-      <div className="w-screen h-screen">
-          Update User
-          <form onSubmit={updateuser} style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '300px' }}>
-            
-            <input type="text" name="bio" placeholder="Bio" onChange={(e) => setBio(e.target.value) } style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}/>
-            <input type="text" name="username" placeholder="Name" onChange={(e) => setUserName(e.target.value)} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}/>
-            <input type="text" name="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}/>
-            <input type="text" name="role" placeholder="Role" onChange={(e) => setRole(e.target.value)} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}/>
-            <input type="text" name="status" placeholder="Status" onChange={(e) => setStatus(e.target.value)} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}/>
-            <button type="submit" style={{ padding: '10px', borderRadius: '5px', border: 'none', backgroundColor: '#007BFF', color: 'white', cursor: 'pointer' }}>Submit</button>
-          </form>
+      <div className="w-screen h-screen ">
+          <div className="justify-center flex h-12 ">
+            Update User
+          </div>
+          <div className="justify-center flex ">
+            <form onSubmit={updateuser} className="flex flex-col gap-4 w-72">
+              <input type="text" name="username" defaultValue={user.username} placeholder="Name" onChange={(e) => setUserName(e.target.value)} className="p-3 rounded-md border-slate-400 border-2"/>
+              <input type="text" name="email" defaultValue={user.email} placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="p-3 rounded-md border-slate-400 border-2"/>
+              <input type="text" name="role" defaultValue={user.role} placeholder="Role" onChange={(e) => setRole(e.target.value)} className="p-3 rounded-md border-slate-400 border-2"/>
+              <input type="text" name="status" defaultValue={user.status} placeholder="Status" onChange={(e) => setStatus(e.target.value)} className="p-3 rounded-md border-slate-400 border-2"/>
+              <textarea name="bio" defaultValue={user.bio} placeholder="Bio" onChange={(e) => setBio(e.target.value)} className="p-3 rounded-md border-slate-400 border-2 h-36 " />
+              <button type="submit" className="px-4 py-2 rounded bg-black text-gold font-bold cursor-pointer border-2 border-black">Submit</button>
+            </form>
+          </div>
       </div>
     )
 }
