@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.csci3130.group04.Daltweets.model.Login;
 import com.csci3130.group04.Daltweets.model.User;
+import com.csci3130.group04.Daltweets.model.User.Status;
 import com.csci3130.group04.Daltweets.service.Implementation.LoginServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 
@@ -38,6 +39,11 @@ public class LoginController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
       } else if (!authentication.getPassword().equals(login.get("password"))){
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+      } 
+      
+      Status userStatus = authentication.getUser().getStatus();
+      if (userStatus.equals(Status.DEACTIVATED) || userStatus.equals(Status.PENDING) ){
+        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
       }
 
       User user = authentication.getUser();
