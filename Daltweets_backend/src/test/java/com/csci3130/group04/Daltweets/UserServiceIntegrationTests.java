@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,21 +13,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.repository.UserRepository;
 import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 
-@SpringBootTest
+@SpringBootTest(classes = DaltweetsApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@Transactional
 class UserServiceIntegrationTests {
   
   @Autowired
@@ -35,6 +37,18 @@ class UserServiceIntegrationTests {
 
   @Autowired
   private UserRepository userRepository;
+
+  @Autowired
+  TestRestTemplate restTemplate;
+
+  @LocalServerPort
+  private int port;
+
+ @AfterEach
+  void teardown(){
+    userRepository.deleteAll();
+  }
+
   @Test
   void test_get_by_username_is_unique(){
     User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -71,5 +85,114 @@ class UserServiceIntegrationTests {
    assertEquals(list.get(2).getUsername(), queriedUsers.get(1).getUsername());
    assertEquals(list.get(3).getUsername(), queriedUsers.get(2).getUsername());
 
+  }
+
+  @Test
+  void test_add_existing_user(){
+    User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+    admin = userRepository.save(admin);
+    User user = new User(admin.getId()+1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.DEACTIVATED);
+    user = userRepository.save(user);
+    
+    Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName","admin"), Map.entry("username", "Name"));
+    ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/activate",requestBody, String.class);
+
+    assertEquals("true", response.getBody());
+    assertEquals("200 OK", response.getStatusCode().toString());
+  }
+
+  @Test
+  void test_add_existing_user_with_no_permission()
+  {
+    User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.ONLINE);
+    admin = userRepository.save(admin);
+    User user = new User(admin.getId()+1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.DEACTIVATED);
+    user = userRepository.save(user);
+
+    Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName","admin"), Map.entry("username", ""));
+    
+    assertThrows(Throwable.class, () -> {this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/activate",requestBody, String.class);});
+  }
+
+  @Test
+  void test_add_existing_user_with_empty_name()
+  {
+    User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+    admin = userRepository.save(admin);
+
+    Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName","admin"), Map.entry("username", ""));
+    ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/activate",requestBody, String.class);
+
+    assertEquals("false", response.getBody());
+    assertEquals(HttpStatus.NOT_IMPLEMENTED, response.getStatusCode());
+  }
+
+  @Test
+  void test_add_existing_user_with_non_existing_user()
+  {
+    User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+    admin = userRepository.save(admin);
+
+    Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName","admin"), Map.entry("username", "Name"));
+    ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/activate",requestBody, String.class);
+
+    assertEquals("false", response.getBody());
+    assertEquals(HttpStatus.NOT_IMPLEMENTED, response.getStatusCode());
+  }
+
+
+  @Test
+  void test_delete_existing_user(){
+    User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+    admin = userRepository.save(admin);
+    User user = new User(admin.getId()+1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.ONLINE);
+    user = userRepository.save(user);
+    
+    Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName","admin"), Map.entry("username", "Name"));
+    ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/activate",requestBody, String.class);
+
+    assertEquals("true", response.getBody());
+    assertEquals("200 OK", response.getStatusCode().toString());
+  }
+
+  @Test
+  void test_delete_existing_user_with_no_permission()
+  {
+    User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.ONLINE);
+    admin = userRepository.save(admin);
+    User user = new User(admin.getId()+1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.ONLINE);
+    user = userRepository.save(user);
+
+    Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName","admin"), Map.entry("username", ""));
+    
+    assertThrows(Throwable.class, () -> {this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/deactivate",requestBody, String.class);});
+  }
+
+  @Test
+  void test_delete_existing_user_with_empty_name()
+  {
+    User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+    admin = userRepository.save(admin);
+    User user = new User(admin.getId()+1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.ONLINE);
+    user = userRepository.save(user);
+
+    Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName","admin"), Map.entry("username", ""));
+    ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/deactivate",requestBody, String.class);
+
+    assertEquals("false", response.getBody());
+    assertEquals(HttpStatus.NOT_IMPLEMENTED, response.getStatusCode());
+  }
+
+  @Test
+  void test_delete_existing_user_with_non_existing_user()
+  {
+    User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+    admin = userRepository.save(admin);
+
+    Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName","admin"), Map.entry("username", "Name"));
+    ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/deactivate",requestBody, String.class);
+
+    assertEquals("false", response.getBody());
+    assertEquals(HttpStatus.NOT_IMPLEMENTED, response.getStatusCode());
   }
 }
