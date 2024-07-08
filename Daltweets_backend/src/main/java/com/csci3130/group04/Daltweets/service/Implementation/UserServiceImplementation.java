@@ -1,6 +1,8 @@
 package com.csci3130.group04.Daltweets.service.Implementation;
 
 import com.csci3130.group04.Daltweets.model.User;
+import com.csci3130.group04.Daltweets.model.User.Status;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +11,7 @@ import com.csci3130.group04.Daltweets.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class UserServiceImplementation implements UserService {
@@ -29,7 +31,7 @@ public class UserServiceImplementation implements UserService {
         if (user.getDateCreated() == null){
             user.setDateCreated(LocalDateTime.now());
         }
-        user.setStatus(User.Status.ONLINE);
+        user.setStatus(User.Status.PENDING);
         return userRepository.save(user);
     }
     
@@ -62,7 +64,24 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public List<User> getRecommendedUsers(String name){
-
       return userRepository.findByUsernameNot(name);
     }
+
+    @Override
+    public User addExistingUser(String name) {
+       if(name == null || name.isEmpty()) return null;
+       User user = userRepository.findByUsernameRawSearch(name);
+       if (user == null) return null;
+       user.setStatus(Status.ACTIVATED);
+       return userRepository.save(user);
+    }
+
+    @Override
+    public User deleteExistingUser(String name) {
+        if (name == null || name.isEmpty()) return null;
+        User user = userRepository.findByUsernameRawSearch(name);
+       if (user == null) return null;
+       user.setStatus(Status.DEACTIVATED);
+       return userRepository.save(user);
+    }   
 }
