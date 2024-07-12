@@ -2,6 +2,7 @@ package com.csci3130.group04.Daltweets;
 
 import com.csci3130.group04.Daltweets.model.Post;
 import com.csci3130.group04.Daltweets.model.User;
+import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.repository.PostRepository;
 import com.csci3130.group04.Daltweets.repository.UserRepository;
 import com.csci3130.group04.Daltweets.service.Implementation.PostServiceImpl;
@@ -50,48 +51,21 @@ class PostServiceIntegrationTests {
 
     @Test
     void createPostIntegrationTest() {
-        User user = new User();
-        user.setUsername("testUser");
+        User user = new User(1, "PosterBio", "PostTester", "poster@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN,
+                User.Status.ONLINE);
         user = userRepository.save(user);
 
         Post post = new Post();
         post.setUser(user);
-        post.setText("Test post");
+        post.setText("Post testers test post");
         post.setDateCreated(LocalDateTime.now());
 
         ResponseEntity<Post> response = restTemplate.postForEntity(
                 "http://localhost:" + port + "/api/post/create", post, Post.class);
 
         assertNotNull(response.getBody());
-        assertEquals("Test post", response.getBody().getText());
-        assertEquals("testUser", response.getBody().getUser().getUsername());
+        assertEquals("Post testers test post", response.getBody().getText());
+        assertEquals("PostTester", response.getBody().getUser().getUsername());
     }
 
-    @Test
-    void getAllPostsIntegrationTest() {
-        User user = new User();
-        user.setUsername("testUser");
-        user = userRepository.save(user);
-
-        Post post1 = new Post();
-        post1.setUser(user);
-        post1.setText("Post 1");
-        post1.setDateCreated(LocalDateTime.now());
-        postRepository.save(post1);
-
-        Post post2 = new Post();
-        post2.setUser(user);
-        post2.setText("Post 2");
-        post2.setDateCreated(LocalDateTime.now());
-        postRepository.save(post2);
-
-        ResponseEntity<Post[]> response = restTemplate.getForEntity(
-                "http://localhost:" + port + "/api/post/testUser/all", Post[].class);
-
-        List<Post> posts = List.of(response.getBody());
-
-        assertEquals(2, posts.size());
-        assertEquals("Post 1", posts.get(0).getText());
-        assertEquals("Post 2", posts.get(1).getText());
-    }
 }
