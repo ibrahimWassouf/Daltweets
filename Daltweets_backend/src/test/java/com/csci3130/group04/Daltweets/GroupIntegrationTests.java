@@ -105,6 +105,8 @@ public class GroupIntegrationTests {
         ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/delete",requestBody,Group.class);
         System.out.println(response);
         String status = "200 OK";
+        boolean deleted = true;
+        assertEquals(deleted,response.getBody().getIsDeleted());
         assertEquals(saved_group.getName(),response.getBody().getName());
         assertEquals(status,response.getStatusCode().toString());
     }
