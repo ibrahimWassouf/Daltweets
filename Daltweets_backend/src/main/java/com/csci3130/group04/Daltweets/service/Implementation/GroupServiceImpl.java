@@ -7,11 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class GroupServiceImpl implements GroupService {
     @Override
-    public Group getGroupById(Group group) {
-        return null;
-    }
-
-    @Override
     public Group getGroupByName(Group group) {
         return null;
     }
