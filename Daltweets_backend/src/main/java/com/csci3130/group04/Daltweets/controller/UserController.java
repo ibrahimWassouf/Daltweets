@@ -3,12 +3,14 @@ package com.csci3130.group04.Daltweets.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.csci3130.group04.Daltweets.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.csci3130.group04.Daltweets.model.User;
-import com.csci3130.group04.Daltweets.model.Followers;
+import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.model.Login;
 import com.csci3130.group04.Daltweets.service.LoginService;
 import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImpl;
@@ -71,5 +73,31 @@ public class UserController {
     @PutMapping("/update")
     User updateUser(@RequestBody User user) {
         return userService.updateUser(user);
+    }
+
+    @PostMapping("/activate")
+    ResponseEntity<Boolean> activateUser(@RequestBody Map<String, String> requestBody)
+    {
+      User admin = userService.getUserByName(requestBody.get("adminName"));
+      if (!(admin.getRole().equals(Role.SUPERADMIN))) return new ResponseEntity<>(Boolean.FALSE,HttpStatus.UNAUTHORIZED);
+      User activatedUser = userService.addExistingUser(requestBody.get("username"));
+      if (activatedUser == null)
+      {
+        return new ResponseEntity<>(Boolean.FALSE,HttpStatus.NOT_IMPLEMENTED);
+      }
+      return  new ResponseEntity<>(Boolean.TRUE,HttpStatus.OK);
+    }
+
+    @PostMapping("/deactivate")
+    ResponseEntity<Boolean> deactivateUser(@RequestBody Map<String, String> requestBody)
+    {
+      User admin = userService.getUserByName(requestBody.get("adminName"));
+      if (!(admin.getRole().equals(Role.SUPERADMIN))) return new ResponseEntity<>(Boolean.FALSE,HttpStatus.UNAUTHORIZED);
+      User deactivatedUser = userService.deleteExistingUser(requestBody.get("username"));
+      if (deactivatedUser == null)
+      {
+        return new ResponseEntity<>(Boolean.FALSE,HttpStatus.NOT_IMPLEMENTED);
+      }
+      return  new ResponseEntity<>(Boolean.TRUE,HttpStatus.OK);
     }
 }

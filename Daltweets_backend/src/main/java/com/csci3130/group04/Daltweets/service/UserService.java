@@ -12,4 +12,8 @@ public interface UserService {
     public User updateUser(User user);
 
     public List<User> getRecommendedUsers(String name);
+
+    public User addExistingUser(String name);
+
+    public User deleteExistingUser(String name);
 }
