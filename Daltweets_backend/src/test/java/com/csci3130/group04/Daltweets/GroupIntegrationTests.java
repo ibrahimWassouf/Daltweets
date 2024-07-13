@@ -36,6 +36,8 @@ public class GroupIntegrationTests {
     UserRepository userRepository;
 
     @Autowired
+    GroupMembersRepository groupMembersRepository;
+    @Autowired
     TestRestTemplate restTemplate;
 
     @LocalServerPort
@@ -43,7 +45,10 @@ public class GroupIntegrationTests {
 
     @AfterEach
     void teardown() {
+        groupMembersRepository.deleteAll();
         groupRepository.deleteAll();
+        userRepository.deleteAll();
+        
     }
 
     @Test
@@ -93,9 +98,12 @@ public class GroupIntegrationTests {
         User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
-        Map<String,String> requestBody = Map.ofEntries(Map.entry("username","Name"),Map.entry("name","group1"));
-        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "api/group/delete",requestBody,Group.class);
+        GroupMembers groupMembers = new GroupMembers(1,saved_group,saved_user,true);
+        GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
 
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("username","Name"),Map.entry("name","group1"));
+        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/delete",requestBody,Group.class);
+        System.out.println(response);
         String status = "200 OK";
         assertEquals(saved_group.getName(),response.getBody().getName());
         assertEquals(status,response.getStatusCode().toString());
@@ -109,8 +117,11 @@ public class GroupIntegrationTests {
         User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
+        GroupMembers groupMembers = new GroupMembers(1,saved_group,saved_user,false);
+        GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
+
         Map<String,String> requestBody = Map.ofEntries(Map.entry("username","Name"),Map.entry("name","group1"));
-        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "api/group/delete",requestBody,Group.class);
+        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/delete",requestBody,Group.class);
 
         String status = "400 BAD_REQUEST";
         assertNull(response.getBody());
@@ -124,9 +135,8 @@ public class GroupIntegrationTests {
         User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
-
         Map<String,String> requestBody = Map.ofEntries(Map.entry("username","Name"),Map.entry("name","group1"));
-        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "api/group/delete",requestBody,Group.class);
+        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/delete",requestBody,Group.class);
 
         String status = "400 BAD_REQUEST";
         assertNull(response.getBody());
