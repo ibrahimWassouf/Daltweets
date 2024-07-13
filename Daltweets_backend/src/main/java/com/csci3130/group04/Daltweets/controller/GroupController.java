@@ -1,7 +1,6 @@
 package com.csci3130.group04.Daltweets.controller;
 
 import com.csci3130.group04.Daltweets.model.Group;
-import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.service.Implementation.GroupServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,16 @@ public class GroupController {
 
     @PostMapping("/delete")
     ResponseEntity<Group> deleteGroup(@RequestBody Map<String,String> requestBody) {
-        Group group = new Group();
+        String user_name = requestBody.get("username");
+        String group_name = requestBody.get("name");
+        Group group = null;
+        if ( groupService.isValidToDelete(user_name,group_name) ) {
+            group = new Group();
+            group.setName(group_name);
+            group = groupService.deleteGroup(group);
+        } else {
+            return new ResponseEntity<>(group,HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(group, HttpStatus.OK);
     }
 }
