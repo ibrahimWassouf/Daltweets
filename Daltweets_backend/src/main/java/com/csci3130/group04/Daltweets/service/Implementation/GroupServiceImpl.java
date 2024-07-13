@@ -43,7 +43,7 @@ public class GroupServiceImpl implements GroupService {
         }
 
         Group group_found = getGroupByName(group);
-        group_found.setIsDeleted(false);
+        group_found.setIsDeleted(true);
         return groupRepository.save(group_found);
     }
 }
