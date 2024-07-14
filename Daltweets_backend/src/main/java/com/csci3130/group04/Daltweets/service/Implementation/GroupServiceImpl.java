@@ -7,6 +7,8 @@ import com.csci3130.group04.Daltweets.repository.GroupRepository;
 import com.csci3130.group04.Daltweets.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -49,6 +51,15 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<Group> getGroupsByUser( String username ) {
-        return null;
+        if ( username == null ) {
+            throw new IllegalArgumentException("username is NULL");
+        }
+        List<GroupMembers> groupMembers = groupMembersRepository.findGroupMembersByUsername(username);
+        List<Group> groups = new ArrayList<>();
+        for ( int i = 0 ; i < groupMembers.size() ; ++i ) {
+            GroupMembers groupMember = groupMembers.get(i);
+            groups.add(groupMember.getGroup());
+        }
+        return groups;
     }
 }

@@ -148,6 +148,10 @@ public class GroupIntegrationTests {
     }
 
     @Test
+    public void test_getGroupsByUser_with_NULL() {
+        assertThrows(Throwable.class,()->groupService.getGroupsByUser(null));
+    }
+    @Test
     public void test_get_groups() {
         Group group = new Group(1,"group1", LocalDateTime.now(),false);
         Group saved_group = groupRepository.save(group);
@@ -167,10 +171,10 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_get_group_members_with_no_user() {
-        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
-        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + user.getUsername() +"/groups", List.class);
+        User user = new User(1,"checkbio","","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + user.getUsername() + "/groups",List.class);
 
-        assertNull(response.getBody());
+
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
