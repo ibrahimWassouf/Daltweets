@@ -1,9 +1,11 @@
 package com.csci3130.group04.Daltweets.controller;
 
 import com.csci3130.group04.Daltweets.model.Group;
+import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.service.Implementation.GroupServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,4 +42,14 @@ public class GroupController {
         List<Group> groups = groupService.getGroupsByUser(username);
         return new ResponseEntity<>(groups,HttpStatus.OK);
     }
+
+    @GetMapping("/{groupName}/members")
+    ResponseEntity<List<User>> getGroupMembers(@PathVariable("groupName") String groupName)
+    {
+        if (groupName == null || groupName.isBlank()) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        List<User> groupMembers = groupService.getGroupMembers(groupName);  
+        if (groupMembers == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(groupMembers,HttpStatus.OK);
+    }
+    
 }

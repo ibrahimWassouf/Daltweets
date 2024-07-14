@@ -2,6 +2,7 @@ package com.csci3130.group04.Daltweets.service.Implementation;
 
 import com.csci3130.group04.Daltweets.model.Group;
 import com.csci3130.group04.Daltweets.model.GroupMembers;
+import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.repository.GroupMembersRepository;
 import com.csci3130.group04.Daltweets.repository.GroupRepository;
 import com.csci3130.group04.Daltweets.service.GroupService;
@@ -61,5 +62,13 @@ public class GroupServiceImpl implements GroupService {
             groups.add(groupMember.getGroup());
         }
         return groups;
+    }
+
+    @Override
+    public List<User> getGroupMembers(String groupName) {
+       if (groupName == null || groupName.isBlank()) return null;
+       Group foundGroup = groupRepository.findGroupByName(groupName);
+       if (foundGroup == null) return null;
+       return groupMembersRepository.findGroupMembersByGroupName(foundGroup.getName());
     }
 }

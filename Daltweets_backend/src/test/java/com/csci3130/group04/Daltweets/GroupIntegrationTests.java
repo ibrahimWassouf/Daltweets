@@ -105,7 +105,7 @@ public class GroupIntegrationTests {
 
         Map<String,String> requestBody = Map.ofEntries(Map.entry("username","Name"),Map.entry("name","group1"));
         ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/delete",requestBody,Group.class);
-        System.out.println(response);
+        
         String status = "200 OK";
         boolean deleted = true;
         assertEquals(deleted,response.getBody().getIsDeleted());
@@ -177,4 +177,37 @@ public class GroupIntegrationTests {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
+
+    @Test
+    public void test_get_group_members(){
+        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        group = groupRepository.save(group);
+
+        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        user = userRepository.save(user);
+
+        GroupMembers groupMembers = new GroupMembers(1,group, user,true);
+        groupMembers = groupMembersRepository.save(groupMembers);
+
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + group.getName()+"/members",List.class);
+       
+        assertNotNull(response);
+        assertEquals(1, response.getBody().size(),"Size of the group members list is incorrect");
+    }
+
+    @Test 
+    public void test_get_group_members_with_no_group_name()
+    {
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/ /members",List.class);
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    public void test_get_group_members_with_non_existent_group(){
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/group1/members",List.class);
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
 }
