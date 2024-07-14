@@ -29,7 +29,7 @@ build-backend:
     - mvn $MAVEN_CLI_OPTS clean install package
   artifacts:
     paths:
-      - backend/target/*.jar
+      - Daltweets_backend/target/*.jar
 
   
 test-backend:
