@@ -171,7 +171,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_get_group_members_with_no_user() {
-        User user = new User(1,"checkbio","","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(1,"checkbio"," ","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
         ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + user.getUsername() + "/groups",List.class);
 
 
