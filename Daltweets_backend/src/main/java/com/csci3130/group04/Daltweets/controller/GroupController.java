@@ -34,7 +34,10 @@ public class GroupController {
     }
     @GetMapping("/{username}/groups")
     ResponseEntity<List<Group>> getGroups(@PathVariable("username") String username) {
-        List<Group> Groups = new ArrayList<>();
-        return new ResponseEntity<>(Groups,HttpStatus.OK);
+        if ( username == null || username.equals("") ) {
+            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+        }
+        List<Group> groups = groupService.getGroupsByUser(username);
+        return new ResponseEntity<>(groups,HttpStatus.OK);
     }
 }
