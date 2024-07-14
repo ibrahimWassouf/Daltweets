@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @SpringBootTest(classes = DaltweetsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -143,5 +145,32 @@ public class GroupIntegrationTests {
         String status = "400 BAD_REQUEST";
         assertNull(response.getBody());
         assertEquals(status,response.getStatusCode().toString());
+    }
+
+    @Test
+    public void test_get_groups() {
+        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group saved_group = groupRepository.save(group);
+
+        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User saved_user = userRepository.save(user);
+
+        GroupMembers groupMembers = new GroupMembers(1,saved_group,saved_user,false);
+        GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
+
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + saved_user.getUsername() +"/groups", List.class);
+
+        assertNotNull(response);
+        assertEquals(1, response.getBody().size());
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+    }
+
+    @Test
+    public void test_get_group_members_with_no_user() {
+        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + user.getUsername() +"/groups", List.class);
+
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
