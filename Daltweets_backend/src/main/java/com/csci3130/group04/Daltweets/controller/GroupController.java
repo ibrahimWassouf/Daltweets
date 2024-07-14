@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*", maxAge = 3600)
@@ -29,5 +31,10 @@ public class GroupController {
             return new ResponseEntity<>(group,HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(group, HttpStatus.OK);
+    }
+    @GetMapping("/{username}/groups")
+    ResponseEntity<List<Group>> getGroups(@PathVariable("username") String username) {
+        List<Group> Groups = new ArrayList<>();
+        return new ResponseEntity<>(Groups,HttpStatus.OK);
     }
 }

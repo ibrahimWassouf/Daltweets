@@ -46,4 +46,9 @@ public class GroupServiceImpl implements GroupService {
         group_found.setIsDeleted(true);
         return groupRepository.save(group_found);
     }
+
+    @Override
+    public List<Group> getGroupsByUser( String username ) {
+        return null;
+    }
 }
