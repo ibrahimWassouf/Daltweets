@@ -16,7 +16,7 @@ build-frontend:
   script: 
     - cd Daltweets
     - npm install
-    - npm build
+    - npm run build
   artifacts:
     paths:
       - Daltweets/dist/*
