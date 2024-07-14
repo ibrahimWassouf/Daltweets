@@ -22,6 +22,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest(classes = DaltweetsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -66,6 +67,18 @@ class PostServiceIntegrationTests {
         assertNotNull(response.getBody());
         assertEquals("Post testers test post", response.getBody().getText());
         assertEquals("PostTester", response.getBody().getUser().getUsername());
+    }
+
+    @Test
+    void createPostWithNullUserIntegrationTest() {
+        Post post = new Post();
+        post.setText("Some text");
+        post.setDateCreated(LocalDateTime.now());
+
+        ResponseEntity<Post> response = restTemplate.postForEntity(
+                "http://localhost:" + port + "/api/post/create", post, Post.class);
+
+        assertNull(response.getBody());
     }
 
 }
