@@ -321,4 +321,23 @@ public class FollowersIntegrationTests {
             assertEquals(HttpStatus.OK,response.getStatusCode());
             assertEquals("Follower request sent", response.getBody());
     } 
+
+    @Test 
+    public void test_add_follower_with_non_existent_user_with_controller()
+    {  
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+        follower = userRepository.save(follower);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("user",""),Map.entry("follower",follower.getUsername()));
+        ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/add",requestBody,String.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+        assertEquals("Error sending follower request.", response.getBody());
+    }
+
+    
 }
