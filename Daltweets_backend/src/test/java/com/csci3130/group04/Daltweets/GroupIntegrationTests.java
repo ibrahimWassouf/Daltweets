@@ -179,4 +179,55 @@ public class GroupIntegrationTests {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
+
+    @Test
+    public void test_get_group_admins(){
+        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        group = groupRepository.save(group);
+
+        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        user = userRepository.save(user);
+
+        GroupMembers groupMembers = new GroupMembers(1,group, user,true);
+        groupMembers = groupMembersRepository.save(groupMembers);
+
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + group.getName()+"/admins",List.class);
+       
+        assertNotNull(response);
+        assertEquals(1, response.getBody().size(),"Size of the group members list is incorrect");
+    }
+
+
+    @Test
+    public void test_get_group_admins_with_no_admins(){
+        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        group = groupRepository.save(group);
+
+        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        user = userRepository.save(user);
+
+        GroupMembers groupMembers = new GroupMembers(1,group, user,false);
+        groupMembers = groupMembersRepository.save(groupMembers);
+
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + group.getName()+"/admins",List.class);
+
+        assertNotNull(response);
+        assertEquals(0, response.getBody().size(),"Size of the group members list should be empty");
+    }
+
+
+    @Test 
+    public void test_get_group_admins_with_no_group_name()
+    {
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/ /admins",List.class);
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    public void test_get_group_admins_with_non_existent_group(){
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/group1/admins",List.class);
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
 }

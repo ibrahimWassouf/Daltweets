@@ -55,4 +55,12 @@ public class GroupServiceImpl implements GroupService {
        if (foundGroup == null) return null;
        return groupMembersRepository.findGroupMembersByGroupName(foundGroup.getName());
     }
+
+    @Override
+    public List<User> getGroupAdmins(String groupName) {
+       if (groupName == null || groupName.isBlank()) return null;
+       Group foundGroup = groupRepository.findGroupByName(groupName);
+       if (foundGroup == null) return null;
+       return groupMembersRepository.findAdminsByGroupName(groupName);
+    }
 }

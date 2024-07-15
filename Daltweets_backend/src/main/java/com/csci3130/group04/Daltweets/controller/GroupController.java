@@ -43,4 +43,13 @@ public class GroupController {
         return new ResponseEntity<>(groupMembers,HttpStatus.OK);
     }
     
+
+    @GetMapping("/{groupName}/admins")
+    ResponseEntity<List<User>> getGroupAdmins(@PathVariable("groupName") String groupName)
+    {
+        if (groupName == null || groupName.isBlank()) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        List<User> groupAdmins = groupService.getGroupAdmins(groupName);  
+        if (groupAdmins == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(groupAdmins,HttpStatus.OK);
+    }
 }

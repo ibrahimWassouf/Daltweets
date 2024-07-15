@@ -17,4 +17,7 @@ public interface GroupMembersRepository extends JpaRepository<GroupMembers,Integ
 
     @Query("Select gm.user FROM GroupMembers gm WHERE gm.group.name = :name")
     List<User> findGroupMembersByGroupName(@Param("name") String groupName);
+
+    @Query("SELECT gm.user FROM GroupMembers gm WHERE gm.group.name = :name  AND gm.isAdmin = true")
+    List<User> findAdminsByGroupName(@Param("name") String groupName);
 }
