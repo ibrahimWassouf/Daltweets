@@ -363,4 +363,14 @@ public class FollowersIntegrationTests {
         assertEquals(2, response.getBody().size());
     }
 
+    @Test
+    public void test_get_all_followers_for_non_existent_user_with_controller()
+    {
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/followers/user/followers",List.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
 }
