@@ -1,8 +1,10 @@
 package com.csci3130.group04.Daltweets.controller;
 
 import com.csci3130.group04.Daltweets.model.Group;
+import com.csci3130.group04.Daltweets.model.GroupMembers;
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.service.Implementation.GroupServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -19,6 +21,8 @@ import java.util.Map;
 public class GroupController {
     @Autowired
     GroupServiceImpl groupService;
+    @Autowired
+    UserServiceImplementation userService;
 
     @PostMapping("/delete")
     ResponseEntity<Group> deleteGroup(@RequestBody Map<String,String> requestBody) {
@@ -60,5 +64,26 @@ public class GroupController {
         List<User> groupAdmins = groupService.getGroupAdmins(groupName);  
         if (groupAdmins == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(groupAdmins,HttpStatus.OK);
+    }
+    @PostMapping("/deleteuser")
+    ResponseEntity<GroupMembers> deleteUser(@RequestBody Map<String,String> requestBody) {
+        String adminname = requestBody.get("adminname");
+        String username = requestBody.get("username");
+        String groupname = requestBody.get("name");
+
+        if (!userService.isValidName(adminname) || !userService.isValidName(username) || !userService.isValidName(groupname) ) {
+            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+        }
+
+        if ( !groupService.isValidToDelete(adminname,groupname) ) {
+            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+        }
+
+        GroupMembers groupMembers = groupService.deleteUser(username,groupname);
+        if ( groupMembers == null ) {
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(groupMembers,HttpStatus.OK);
     }
 }
