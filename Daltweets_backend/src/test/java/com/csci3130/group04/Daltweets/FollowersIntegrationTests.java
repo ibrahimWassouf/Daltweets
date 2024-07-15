@@ -17,12 +17,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.csci3130.group04.Daltweets.model.Followers;
 import com.csci3130.group04.Daltweets.model.Followers.Status;
+import com.csci3130.group04.Daltweets.model.Group;
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.repository.FollowersRepository;
@@ -302,4 +304,21 @@ public class FollowersIntegrationTests {
         
         assertNull(followRequests,"The User passed to follow requests was null so the return should be false");
     }
+
+    @Test
+    public void test_add_follower_with_controller()
+    {
+            User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+            User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+            user = userRepository.save(user);
+            follower = userRepository.save(follower);
+
+            Map<String,String> requestBody = Map.ofEntries(Map.entry("user",user.getUsername()),Map.entry("follower",follower.getUsername()));
+            ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/add",requestBody,String.class);
+
+            assertNotNull(response);
+            assertEquals(HttpStatus.OK,response.getStatusCode());
+            assertEquals("Follower request sent", response.getBody());
+    } 
 }
