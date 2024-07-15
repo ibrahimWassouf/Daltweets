@@ -83,5 +83,20 @@ public class UserServiceImplementation implements UserService {
        if (user == null) return null;
        user.setStatus(Status.DEACTIVATED);
        return userRepository.save(user);
-    }   
+    }
+
+    @Override
+    public User changeUserStatus(String username, Status status) {
+        if ( username == null ) return null;
+        User user = userRepository.findByUsernameRawSearch(username);
+        if (user == null ) return null;
+        user.setStatus(status);
+        return userRepository.save(user);
+    }
+
+    @Override
+    public boolean isValidName(String name) {
+        if ( name == null || name.isBlank() ) return false;
+        return true;
+    }
 }
