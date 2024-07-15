@@ -479,7 +479,28 @@ public class FollowersIntegrationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
+    @Test
+    public void test_accept_follow_request_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+        follower = userRepository.save(follower);
+
+        Followers followers = new Followers(1,user,follower, Followers.Status.PENDING);
+
+        followers = followersRepository.save(followers);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("username",user.getUsername()),Map.entry("followerName",follower.getUsername()));
+        ResponseEntity<Boolean> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/accept",requestBody,Boolean.class);
+        
+        followers = followersRepository.findById(followers.getId()).get();
+        
+        assertNotNull(response);
+        assertTrue(response.getBody(),"Request should have been accepted and returned true");
+        assertEquals(followers.getStatus(), Status.ACCEPTED);
+    }
+
     
-
-
 }
