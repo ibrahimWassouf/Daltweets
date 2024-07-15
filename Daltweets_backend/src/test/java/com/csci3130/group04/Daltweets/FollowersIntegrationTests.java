@@ -406,4 +406,25 @@ public class FollowersIntegrationTests {
         assertEquals(HttpStatus.OK,response.getStatusCode());
         assertEquals(2, response.getBody().size());
     }
+
+    @Test
+    public void test_remove_follower_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+        follower = userRepository.save(follower);
+
+        Followers followers = new Followers(1,user,follower, Followers.Status.ACCEPTED);
+
+        followersRepository.save(followers);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("user",user.getUsername()),Map.entry("follower",follower.getUsername()));
+        ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/delete",requestBody,String.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals("Follower request deleted", response.getBody());
+    }
 }
