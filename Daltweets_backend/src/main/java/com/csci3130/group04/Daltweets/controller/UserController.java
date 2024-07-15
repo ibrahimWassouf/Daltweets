@@ -17,6 +17,9 @@ import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImp
 import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 import com.csci3130.group04.Daltweets.utils.SignUpRequestDTO;
 
+import static com.csci3130.group04.Daltweets.model.User.Role.*;
+import static com.csci3130.group04.Daltweets.model.User.Status.*;
+
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/user")
@@ -35,6 +38,8 @@ public class UserController {
     User createUser(@RequestBody SignUpRequestDTO createUserRequestDto)
     {
         User user = createUserRequestDto.getUser();
+        user.setStatus(PENDING);
+        user.setRole(USER);
         User createdUser = userService.createUser(user);
 
         Login login = createUserRequestDto.getLogin();
@@ -99,5 +104,36 @@ public class UserController {
         return new ResponseEntity<>(Boolean.FALSE,HttpStatus.NOT_IMPLEMENTED);
       }
       return  new ResponseEntity<>(Boolean.TRUE,HttpStatus.OK);
+    }
+    @PostMapping("/changeStatus")
+    ResponseEntity<String> changeStatus(@RequestBody Map<String,String> requestBody ) {
+        String adminName = requestBody.get("adminname");
+        String userName = requestBody.get("username");
+        String status = requestBody.get("status");
+        User.Status userstatus = null;
+        if ( status.equals("ACTIVATED") ) {
+            userstatus = ACTIVATED;
+        }
+        if ( status.equals("DEACTIVATED")) {
+            userstatus = DEACTIVATED;
+        }
+        if ( !userService.isValidName(adminName) || !userService.isValidName(userName) ) {
+            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+        }
+        if ( userstatus == null ) {
+            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+        }
+
+        User admin = userService.getUserByName(adminName);
+        if (!(admin.getRole().equals(Role.SUPERADMIN)) && !admin.getRole().equals(ADMIN)) {
+            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userService.changeUserStatus(userName,userstatus);
+        if ( user == null ) {
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
+        String result = "Success " + status + " " + userName;
+        return new ResponseEntity<>(result,HttpStatus.OK);
     }
 }
