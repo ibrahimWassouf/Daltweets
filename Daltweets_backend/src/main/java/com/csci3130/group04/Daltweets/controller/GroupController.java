@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,14 @@ public class GroupController {
             return new ResponseEntity<>(group,HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(group, HttpStatus.OK);
+    }
+    @GetMapping("/{username}/groups")
+    ResponseEntity<List<Group>> getGroups(@PathVariable("username") String username) {
+        if ( username == null || username.isBlank() ) {
+            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+        }
+        List<Group> groups = groupService.getGroupsByUser(username);
+        return new ResponseEntity<>(groups,HttpStatus.OK);
     }
 
     @GetMapping("/{groupName}/members")

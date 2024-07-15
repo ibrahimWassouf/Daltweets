@@ -148,6 +148,37 @@ public class GroupIntegrationTests {
     }
 
     @Test
+    public void test_getGroupsByUser_with_NULL() {
+        assertThrows(Throwable.class,()->groupService.getGroupsByUser(null));
+    }
+    @Test
+    public void test_get_groups() {
+        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group saved_group = groupRepository.save(group);
+
+        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User saved_user = userRepository.save(user);
+
+        GroupMembers groupMembers = new GroupMembers(1,saved_group,saved_user,false);
+        GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
+
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + saved_user.getUsername() +"/groups", List.class);
+
+        assertNotNull(response);
+        assertEquals(1, response.getBody().size());
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+    }
+
+    @Test
+    public void test_get_group_members_with_no_user() {
+        User user = new User(1,"checkbio"," ","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + user.getUsername() + "/groups",List.class);
+
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
     public void test_get_group_members(){
         Group group = new Group(1,"group1", LocalDateTime.now(),false);
         group = groupRepository.save(group);
