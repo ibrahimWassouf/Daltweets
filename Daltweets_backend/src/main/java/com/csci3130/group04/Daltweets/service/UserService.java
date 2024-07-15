@@ -16,4 +16,5 @@ public interface UserService {
     public User addExistingUser(String name);
 
     public User deleteExistingUser(String name);
+    public boolean isValidName(String name);
 }
