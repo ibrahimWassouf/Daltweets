@@ -502,5 +502,13 @@ public class FollowersIntegrationTests {
         assertEquals(followers.getStatus(), Status.ACCEPTED);
     }
 
-    
+    @Test
+    public void test_accept_follow_request_for_non_existent_user_with_controller()
+    {
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("username","user"),Map.entry("followerName","follower"));
+        ResponseEntity<Boolean> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/accept",requestBody,Boolean.class);
+        
+        assertNotNull(response);
+        assertFalse(response.getBody(),"Request should have not been accepted and returned false");
+    }
 }
