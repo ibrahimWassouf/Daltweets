@@ -442,4 +442,31 @@ public class FollowersIntegrationTests {
         assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
         assertEquals("Error deleting follower request.", response.getBody());
     }
+
+    @Test
+    public void test_get_follow_requests_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        User follower2 = new User(3, "my bio", "follower2", "follower2@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);    
+        
+        user =  userRepository.save(user);
+        follower = userRepository.save(follower);
+        follower2 = userRepository.save(follower2);
+
+       
+        Followers followers = new Followers(1,user,follower, Followers.Status.PENDING);
+        Followers followers2 = new Followers(2,user, follower2, Followers.Status.PENDING);
+
+        followersRepository.save(followers);
+        followersRepository.save(followers2);
+
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/followers/"+user.getUsername()+"/requests",List.class);
+        
+        assertNotNull(response);
+        assertEquals(2, response.getBody().size());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
 }
