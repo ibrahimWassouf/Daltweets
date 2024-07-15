@@ -32,6 +32,7 @@ public class UserServiceImplementation implements UserService {
             user.setDateCreated(LocalDateTime.now());
         }
         user.setStatus(User.Status.PENDING);
+        user.setRole(User.Role.USER);
         return userRepository.save(user);
     }
     

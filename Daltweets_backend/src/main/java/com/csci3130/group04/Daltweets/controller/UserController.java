@@ -38,8 +38,6 @@ public class UserController {
     User createUser(@RequestBody SignUpRequestDTO createUserRequestDto)
     {
         User user = createUserRequestDto.getUser();
-        user.setStatus(PENDING);
-        user.setRole(USER);
         User createdUser = userService.createUser(user);
 
         Login login = createUserRequestDto.getLogin();
