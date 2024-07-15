@@ -427,4 +427,19 @@ public class FollowersIntegrationTests {
         assertEquals(HttpStatus.OK,response.getStatusCode());
         assertEquals("Follower request deleted", response.getBody());
     }
+
+    @Test
+    public void test_remove_follower_for_non_existent_follower_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("user",user.getUsername()),Map.entry("follower","name"));
+        ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/delete",requestBody,String.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+        assertEquals("Error deleting follower request.", response.getBody());
+    }
 }
