@@ -507,6 +507,22 @@ public class FollowersIntegrationTests {
     {
         Map<String,String> requestBody = Map.ofEntries(Map.entry("username","user"),Map.entry("followerName","follower"));
         ResponseEntity<Boolean> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/accept",requestBody,Boolean.class);
+
+        assertNotNull(response);
+        assertFalse(response.getBody(),"Request should have not been accepted and returned false");
+    }
+
+    @Test
+    public void test_accept_follow_request_for_non_existent_follow_request_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+        follower = userRepository.save(follower);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("username",user.getUsername()),Map.entry("followerName",follower.getUsername()));
+        ResponseEntity<Boolean> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/accept",requestBody,Boolean.class);
         
         assertNotNull(response);
         assertFalse(response.getBody(),"Request should have not been accepted and returned false");
