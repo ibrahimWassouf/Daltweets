@@ -383,4 +383,27 @@ public class FollowersIntegrationTests {
         assertNull(response.getBody());
     }
 
+    @Test
+    public void test_get_all_following_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        user =  userRepository.save(user);
+        User following = new User(user.getId()+1, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        following = userRepository.save(following);
+        User following2 = new User(following.getId()+1, "my bio", "follower2", "follower2@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);    
+        following2 = userRepository.save(following2);
+
+       
+        Followers followers = new Followers(1,following,user,Status.ACCEPTED);
+        followers = followersRepository.save(followers);
+        Followers followers2 = new Followers(followers.getId()+1,following2,user,Status.ACCEPTED);
+        followers2 = followersRepository.save(followers2);
+
+
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/followers/"+user.getUsername()+"/following",List.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(2, response.getBody().size());
+    }
 }
