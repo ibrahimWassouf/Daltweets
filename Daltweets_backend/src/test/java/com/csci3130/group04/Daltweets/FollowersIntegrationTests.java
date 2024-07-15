@@ -24,7 +24,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.csci3130.group04.Daltweets.model.Followers;
 import com.csci3130.group04.Daltweets.model.Followers.Status;
-import com.csci3130.group04.Daltweets.model.Group;
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.repository.FollowersRepository;
@@ -339,5 +338,29 @@ public class FollowersIntegrationTests {
         assertEquals("Error sending follower request.", response.getBody());
     }
 
-    
+    @Test
+    public void test_get_all_followers_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower2 = new User(3, "my bio", "follower2", "follower2@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);    
+        
+        user =  userRepository.save(user);
+        follower = userRepository.save(follower);
+        follower2 = userRepository.save(follower2);
+
+       
+        Followers followers = new Followers(1,user,follower, Followers.Status.ACCEPTED);
+        Followers followers2 = new Followers(2,user, follower2, Followers.Status.ACCEPTED);
+
+        followersRepository.save(followers);
+        followersRepository.save(followers2);
+
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/followers/"+user.getUsername()+"/followers",List.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(2, response.getBody().size());
+    }
+
 }
