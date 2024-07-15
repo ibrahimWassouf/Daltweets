@@ -469,4 +469,17 @@ public class FollowersIntegrationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
+    @Test
+    public void test_get_follow_requests_for_non_existent_user_with_controller()
+    {
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/followers/user/requests",List.class);
+        
+        assertNotNull(response);
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    
+
+
 }
