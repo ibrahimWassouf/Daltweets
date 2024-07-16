@@ -5,7 +5,9 @@ import com.csci3130.group04.Daltweets.model.GroupMembers;
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.repository.GroupMembersRepository;
 import com.csci3130.group04.Daltweets.repository.GroupRepository;
+import com.csci3130.group04.Daltweets.repository.UserRepository;
 import com.csci3130.group04.Daltweets.service.GroupService;
+import com.csci3130.group04.Daltweets.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     GroupRepository groupRepository;
+    @Autowired
+    UserServiceImplementation userService;
     @Autowired
     GroupMembersRepository groupMembersRepository;
     @Override
@@ -78,5 +82,18 @@ public class GroupServiceImpl implements GroupService {
        Group foundGroup = groupRepository.findGroupByName(groupName);
        if (foundGroup == null) return null;
        return groupMembersRepository.findAdminsByGroupName(groupName);
+    }
+
+    @Override
+    public GroupMembers deleteUser(String username, String groupname) {
+        if ( !userService.isValidName(username) && !userService.isValidName(groupname) ) return null;
+
+        GroupMembers groupMembers = groupMembersRepository.findGroupMembersByUserAndGroup(username,groupname);
+
+        if ( groupMembers == null ) {
+            return null;
+        }
+        groupMembersRepository.delete(groupMembers);
+        return groupMembers;
     }
 }
