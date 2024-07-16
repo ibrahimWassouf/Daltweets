@@ -123,7 +123,7 @@ public class UserController {
         }
 
         User admin = userService.getUserByName(adminName);
-        if (!(admin.getRole().equals(Role.SUPERADMIN)) && !admin.getRole().equals(ADMIN)) {
+        if (!(admin.getRole().equals(Role.SUPERADMIN) || admin.getRole().equals(ADMIN))) {
             return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
         }
 
