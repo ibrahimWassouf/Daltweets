@@ -261,4 +261,102 @@ public class GroupIntegrationTests {
         assertNull(response.getBody());
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
+
+    @Test
+    public void test_delete_user() {
+        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group saved_group = groupRepository.save(group);
+
+        User admin = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User saved_admin = userRepository.save(admin);
+        User user = new User(2,"checkbio2","Name2","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User saved_user = userRepository.save(user);
+
+        GroupMembers groupadmin = new GroupMembers(1,saved_group,saved_admin,true);
+        GroupMembers saved_groupadmin = groupMembersRepository.save(groupadmin);
+        GroupMembers groupMembers = new GroupMembers(2,saved_group,saved_user,true);
+        GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","Name"),Map.entry("username","Name2"),Map.entry("name","group1"));
+        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser",requestBody,GroupMembers.class);
+
+        GroupMembers deleted = groupMembersRepository.findGroupMembersByUserAndGroup(saved_user.getUsername(),saved_group.getName());
+
+        assertNull(deleted);
+        assertNotNull(response);
+        assertEquals(saved_groupMembers.getUser().getUsername(),response.getBody().getUser().getUsername());
+        assertEquals(saved_groupMembers.getGroup().getName(),response.getBody().getGroup().getName());
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+    }
+
+    @Test
+    public void test_delete_user_without_admin() {
+        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group saved_group = groupRepository.save(group);
+
+        User admin = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User saved_admin = userRepository.save(admin);
+        User user = new User(2,"checkbio2","Name2","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User saved_user = userRepository.save(user);
+
+        GroupMembers groupadmin = new GroupMembers(1,saved_group,saved_admin,false);
+        GroupMembers saved_groupadmin = groupMembersRepository.save(groupadmin);
+        GroupMembers groupMembers = new GroupMembers(2,saved_group,saved_user,true);
+        GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","Name"),Map.entry("username","Name2"),Map.entry("name","group1"));
+        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser",requestBody,GroupMembers.class);
+
+        GroupMembers deleted = groupMembersRepository.findGroupMembersByUserAndGroup(saved_user.getUsername(),saved_group.getName());
+
+        assertNotNull(deleted);
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+    }
+
+    @Test
+    public void test_delete_user_with_nonexist_groupmember() {
+        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group saved_group = groupRepository.save(group);
+
+        User admin = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User saved_admin = userRepository.save(admin);
+        User user = new User(2,"checkbio2","Name2","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User saved_user = userRepository.save(user);
+
+        GroupMembers groupadmin = new GroupMembers(1,saved_group,saved_admin,true);
+        GroupMembers saved_groupadmin = groupMembersRepository.save(groupadmin);
+        GroupMembers groupMembers = new GroupMembers(2,saved_group,saved_user,true);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","Name"),Map.entry("username","Name2"),Map.entry("name","group1"));
+        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser",requestBody,GroupMembers.class);
+
+        GroupMembers deleted = groupMembersRepository.findGroupMembersByUserAndGroup(saved_user.getUsername(),saved_group.getName());
+
+        assertNull(deleted);
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+    }
+
+    @Test
+    public void test_delete_user_with_invalid_name() {
+        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group saved_group = groupRepository.save(group);
+
+        User admin = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User saved_admin = userRepository.save(admin);
+        User user = new User(2,"checkbio2"," ","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User saved_user = userRepository.save(user);
+
+        GroupMembers groupadmin = new GroupMembers(1,saved_group,saved_admin,true);
+        GroupMembers saved_groupadmin = groupMembersRepository.save(groupadmin);
+        GroupMembers groupMembers = new GroupMembers(2,saved_group,saved_user,true);
+        GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","Name"),Map.entry("username"," "),Map.entry("name","group1"));
+        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser",requestBody,GroupMembers.class);
+
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+    }
 }
