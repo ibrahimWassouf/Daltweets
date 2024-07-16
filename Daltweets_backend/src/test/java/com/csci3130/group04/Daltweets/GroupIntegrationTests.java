@@ -296,7 +296,7 @@ public class GroupIntegrationTests {
 
         User admin = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_admin = userRepository.save(admin);
-        User user = new User(1,"checkbio2","Name2","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(2,"checkbio2","Name2","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
         GroupMembers groupadmin = new GroupMembers(1,saved_group,saved_admin,false);
@@ -321,7 +321,7 @@ public class GroupIntegrationTests {
 
         User admin = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_admin = userRepository.save(admin);
-        User user = new User(1,"checkbio2","Name2","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(2,"checkbio2","Name2","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
         GroupMembers groupadmin = new GroupMembers(1,saved_group,saved_admin,true);
@@ -345,7 +345,7 @@ public class GroupIntegrationTests {
 
         User admin = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_admin = userRepository.save(admin);
-        User user = new User(1,"checkbio2"," ","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(2,"checkbio2"," ","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
         GroupMembers groupadmin = new GroupMembers(1,saved_group,saved_admin,true);
