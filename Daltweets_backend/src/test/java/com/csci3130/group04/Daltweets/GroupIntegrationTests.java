@@ -50,313 +50,400 @@ public class GroupIntegrationTests {
         groupMembersRepository.deleteAll();
         groupRepository.deleteAll();
         userRepository.deleteAll();
-        
+
     }
 
     @Test
     public void testGetGroupByName() {
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
 
         groupRepository.save(group);
 
         Group result = groupService.getGroupByName(group);
 
-        assertEquals(group.getName(),result.getName());
+        assertEquals(group.getName(), result.getName());
     }
 
     @Test
     public void testGetGroupByNameWithNull() {
-        assertThrows(Throwable.class,() -> groupService.getGroupByName(null));
+        assertThrows(Throwable.class, () -> groupService.getGroupByName(null));
     }
 
     @Test
     public void testDeleteGroup() {
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
 
         groupRepository.save(group);
 
         Group result = groupService.deleteGroup(group);
 
-        assertEquals(group.getName(),result.getName());
+        assertEquals(group.getName(), result.getName());
     }
 
     @Test
     public void testDeleteGroupWithNull() {
-        assertThrows(Throwable.class,() -> groupService.deleteGroup(null));
+        assertThrows(Throwable.class, () -> groupService.deleteGroup(null));
     }
 
     @Test
     public void testDeleteGroupWithNonExistingGroup() {
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
 
-        assertThrows(Throwable.class,() -> groupService.deleteGroup(group));
+        assertThrows(Throwable.class, () -> groupService.deleteGroup(group));
+    }
+
+    @Test
+    public void testCreatePublicGroup() {
+        Group group = new Group(2, "group2", LocalDateTime.now(), true);
+        groupRepository.save(group);
+        Group created = groupService.createGroup(group);
+        assertEquals(group.getName(), created.getName());
+    }
+
+    @Test
+    public void testCreatePrivateGroup() {
+        Group group = new Group(2, "group2", LocalDateTime.now(), false);
+        groupRepository.save(group);
+        Group created = groupService.createGroup(group);
+        assertEquals(group.getName(), created.getName());
+    }
+
+    @Test
+    public void testCreateGroupWithoutName() {
+        Group group = new Group(2, null, LocalDateTime.now(), false);
+        assertThrows(Throwable.class, () -> groupService.createGroup(group));
+    }
+
+    @Test
+    public void testCreateGroupWithoutTimeCreated() {
+        Group group = new Group(2, "group2", null, false);
+        assertThrows(Throwable.class, () -> groupService.createGroup(group));
+    }
+
+    @Test
+    public void testCreateGroupWithNull(){
+        assertThrows(Throwable.class, () -> groupService.createGroup(null));
     }
 
     @Test
     public void test_controller_delete_group() {
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
         Group saved_group = groupRepository.save(group);
 
-        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
-        GroupMembers groupMembers = new GroupMembers(1,saved_group,saved_user,true);
+        GroupMembers groupMembers = new GroupMembers(1, saved_group, saved_user, true);
         GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
 
-        Map<String,String> requestBody = Map.ofEntries(Map.entry("username","Name"),Map.entry("name","group1"));
-        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/delete",requestBody,Group.class);
-        
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "Name"), Map.entry("name", "group1"));
+        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/delete", requestBody, Group.class);
+
         String status = "200 OK";
         boolean deleted = true;
-        assertEquals(deleted,response.getBody().getIsDeleted());
-        assertEquals(saved_group.getName(),response.getBody().getName());
-        assertEquals(status,response.getStatusCode().toString());
+        assertEquals(deleted, response.getBody().getIsDeleted());
+        assertEquals(saved_group.getName(), response.getBody().getName());
+        assertEquals(status, response.getStatusCode().toString());
     }
 
     @Test
     public void test_controller_delete_group_without_admin() {
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
         Group saved_group = groupRepository.save(group);
 
-        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
-        GroupMembers groupMembers = new GroupMembers(1,saved_group,saved_user,false);
+        GroupMembers groupMembers = new GroupMembers(1, saved_group, saved_user, false);
         GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
 
-        Map<String,String> requestBody = Map.ofEntries(Map.entry("username","Name"),Map.entry("name","group1"));
-        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/delete",requestBody,Group.class);
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "Name"), Map.entry("name", "group1"));
+        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/delete", requestBody, Group.class);
 
         String status = "400 BAD_REQUEST";
         assertNull(response.getBody());
-        assertEquals(status,response.getStatusCode().toString());
+        assertEquals(status, response.getStatusCode().toString());
     }
 
     @Test
     public void test_controller_delete_group_with_nonExist_group() {
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
 
-        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
-        Map<String,String> requestBody = Map.ofEntries(Map.entry("username","Name"),Map.entry("name","group1"));
-        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/delete",requestBody,Group.class);
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "Name"), Map.entry("name", "group1"));
+        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/delete", requestBody, Group.class);
 
         String status = "400 BAD_REQUEST";
         assertNull(response.getBody());
-        assertEquals(status,response.getStatusCode().toString());
+        assertEquals(status, response.getStatusCode().toString());
     }
 
     @Test
     public void test_getGroupsByUser_with_NULL() {
-        assertThrows(Throwable.class,()->groupService.getGroupsByUser(null));
+        assertThrows(Throwable.class, () -> groupService.getGroupsByUser(null));
     }
+
     @Test
     public void test_get_groups() {
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
         Group saved_group = groupRepository.save(group);
 
-        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
-        GroupMembers groupMembers = new GroupMembers(1,saved_group,saved_user,false);
+        GroupMembers groupMembers = new GroupMembers(1, saved_group, saved_user, false);
         GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
 
-        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + saved_user.getUsername() +"/groups", List.class);
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + saved_user.getUsername() + "/groups", List.class);
 
         assertNotNull(response);
         assertEquals(1, response.getBody().size());
-        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     public void test_get_group_members_with_no_user() {
-        User user = new User(1,"checkbio"," ","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
-        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + user.getUsername() + "/groups",List.class);
+        User user = new User(1, "checkbio", " ", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + user.getUsername() + "/groups", List.class);
 
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    public void test_get_group_members(){
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+    public void test_get_group_members() {
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
         group = groupRepository.save(group);
 
-        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         user = userRepository.save(user);
 
-        GroupMembers groupMembers = new GroupMembers(1,group, user,true);
+        GroupMembers groupMembers = new GroupMembers(1, group, user, true);
         groupMembers = groupMembersRepository.save(groupMembers);
 
-        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + group.getName()+"/members",List.class);
-       
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + group.getName() + "/members", List.class);
+
         assertNotNull(response);
-        assertEquals(1, response.getBody().size(),"Size of the group members list is incorrect");
+        assertEquals(1, response.getBody().size(), "Size of the group members list is incorrect");
     }
 
-    @Test 
-    public void test_get_group_members_with_no_group_name()
-    {
-        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/ /members",List.class);
+    @Test
+    public void test_get_group_members_with_no_group_name() {
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/ /members", List.class);
         assertNull(response.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    public void test_get_group_members_with_non_existent_group(){
-        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/group1/members",List.class);
+    public void test_get_group_members_with_non_existent_group() {
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/group1/members", List.class);
         assertNull(response.getBody());
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
 
     @Test
-    public void test_get_group_admins(){
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+    public void test_get_group_admins() {
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
         group = groupRepository.save(group);
 
-        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         user = userRepository.save(user);
 
-        GroupMembers groupMembers = new GroupMembers(1,group, user,true);
+        GroupMembers groupMembers = new GroupMembers(1, group, user, true);
         groupMembers = groupMembersRepository.save(groupMembers);
 
-        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + group.getName()+"/admins",List.class);
-       
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + group.getName() + "/admins", List.class);
+
         assertNotNull(response);
-        assertEquals(1, response.getBody().size(),"Size of the group members list is incorrect");
+        assertEquals(1, response.getBody().size(), "Size of the group members list is incorrect");
     }
 
 
     @Test
-    public void test_get_group_admins_with_no_admins(){
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+    public void test_get_group_admins_with_no_admins() {
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
         group = groupRepository.save(group);
 
-        User user = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         user = userRepository.save(user);
 
-        GroupMembers groupMembers = new GroupMembers(1,group, user,false);
+        GroupMembers groupMembers = new GroupMembers(1, group, user, false);
         groupMembers = groupMembersRepository.save(groupMembers);
 
-        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + group.getName()+"/admins",List.class);
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/" + group.getName() + "/admins", List.class);
 
         assertNotNull(response);
-        assertEquals(0, response.getBody().size(),"Size of the group members list should be empty");
+        assertEquals(0, response.getBody().size(), "Size of the group members list should be empty");
     }
 
 
-    @Test 
-    public void test_get_group_admins_with_no_group_name()
-    {
-        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/ /admins",List.class);
+    @Test
+    public void test_get_group_admins_with_no_group_name() {
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/ /admins", List.class);
         assertNull(response.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    public void test_get_group_admins_with_non_existent_group(){
-        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/group1/admins",List.class);
+    public void test_get_group_admins_with_non_existent_group() {
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/group1/admins", List.class);
         assertNull(response.getBody());
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     public void test_delete_user() {
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
         Group saved_group = groupRepository.save(group);
 
-        User admin = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_admin = userRepository.save(admin);
-        User user = new User(2,"checkbio2","Name2","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(2, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
-        GroupMembers groupadmin = new GroupMembers(1,saved_group,saved_admin,true);
+        GroupMembers groupadmin = new GroupMembers(1, saved_group, saved_admin, true);
         GroupMembers saved_groupadmin = groupMembersRepository.save(groupadmin);
-        GroupMembers groupMembers = new GroupMembers(2,saved_group,saved_user,true);
+        GroupMembers groupMembers = new GroupMembers(2, saved_group, saved_user, true);
         GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
 
-        Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","Name"),Map.entry("username","Name2"),Map.entry("name","group1"));
-        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser",requestBody,GroupMembers.class);
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("adminname", "Name"), Map.entry("username", "Name2"), Map.entry("name", "group1"));
+        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser", requestBody, GroupMembers.class);
 
-        GroupMembers deleted = groupMembersRepository.findGroupMembersByUserAndGroup(saved_user.getUsername(),saved_group.getName());
+        GroupMembers deleted = groupMembersRepository.findGroupMembersByUserAndGroup(saved_user.getUsername(), saved_group.getName());
 
         assertNull(deleted);
         assertNotNull(response);
-        assertEquals(saved_groupMembers.getUser().getUsername(),response.getBody().getUser().getUsername());
-        assertEquals(saved_groupMembers.getGroup().getName(),response.getBody().getGroup().getName());
-        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(saved_groupMembers.getUser().getUsername(), response.getBody().getUser().getUsername());
+        assertEquals(saved_groupMembers.getGroup().getName(), response.getBody().getGroup().getName());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     public void test_delete_user_without_admin() {
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
         Group saved_group = groupRepository.save(group);
 
-        User admin = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_admin = userRepository.save(admin);
-        User user = new User(2,"checkbio2","Name2","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(2, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
-        GroupMembers groupadmin = new GroupMembers(1,saved_group,saved_admin,false);
+        GroupMembers groupadmin = new GroupMembers(1, saved_group, saved_admin, false);
         GroupMembers saved_groupadmin = groupMembersRepository.save(groupadmin);
-        GroupMembers groupMembers = new GroupMembers(2,saved_group,saved_user,true);
+        GroupMembers groupMembers = new GroupMembers(2, saved_group, saved_user, true);
         GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
 
-        Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","Name"),Map.entry("username","Name2"),Map.entry("name","group1"));
-        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser",requestBody,GroupMembers.class);
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("adminname", "Name"), Map.entry("username", "Name2"), Map.entry("name", "group1"));
+        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser", requestBody, GroupMembers.class);
 
-        GroupMembers deleted = groupMembersRepository.findGroupMembersByUserAndGroup(saved_user.getUsername(),saved_group.getName());
+        GroupMembers deleted = groupMembersRepository.findGroupMembersByUserAndGroup(saved_user.getUsername(), saved_group.getName());
 
         assertNotNull(deleted);
         assertNull(response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     public void test_delete_user_with_nonexist_groupmember() {
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
         Group saved_group = groupRepository.save(group);
 
-        User admin = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_admin = userRepository.save(admin);
-        User user = new User(2,"checkbio2","Name2","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(2, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
-        GroupMembers groupadmin = new GroupMembers(1,saved_group,saved_admin,true);
+        GroupMembers groupadmin = new GroupMembers(1, saved_group, saved_admin, true);
         GroupMembers saved_groupadmin = groupMembersRepository.save(groupadmin);
-        GroupMembers groupMembers = new GroupMembers(2,saved_group,saved_user,true);
+        GroupMembers groupMembers = new GroupMembers(2, saved_group, saved_user, true);
 
-        Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","Name"),Map.entry("username","Name2"),Map.entry("name","group1"));
-        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser",requestBody,GroupMembers.class);
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("adminname", "Name"), Map.entry("username", "Name2"), Map.entry("name", "group1"));
+        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser", requestBody, GroupMembers.class);
 
-        GroupMembers deleted = groupMembersRepository.findGroupMembersByUserAndGroup(saved_user.getUsername(),saved_group.getName());
+        GroupMembers deleted = groupMembersRepository.findGroupMembersByUserAndGroup(saved_user.getUsername(), saved_group.getName());
 
         assertNull(deleted);
         assertNull(response.getBody());
-        assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     public void test_delete_user_with_invalid_name() {
-        Group group = new Group(1,"group1", LocalDateTime.now(),false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
         Group saved_group = groupRepository.save(group);
 
-        User admin = new User(1,"checkbio","Name","mail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_admin = userRepository.save(admin);
-        User user = new User(2,"checkbio2"," ","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User user = new User(2, "checkbio2", " ", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
-        GroupMembers groupadmin = new GroupMembers(1,saved_group,saved_admin,true);
+        GroupMembers groupadmin = new GroupMembers(1, saved_group, saved_admin, true);
         GroupMembers saved_groupadmin = groupMembersRepository.save(groupadmin);
-        GroupMembers groupMembers = new GroupMembers(2,saved_group,saved_user,true);
+        GroupMembers groupMembers = new GroupMembers(2, saved_group, saved_user, true);
         GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
 
-        Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","Name"),Map.entry("username"," "),Map.entry("name","group1"));
-        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser",requestBody,GroupMembers.class);
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("adminname", "Name"), Map.entry("username", " "), Map.entry("name", "group1"));
+        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/deleteuser", requestBody, GroupMembers.class);
 
         assertNull(response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    public void test_controller_create_public_group() {
+        Group group = new Group(2, "group2", LocalDateTime.now(), true);
+        Group savedGroup = groupRepository.save(group);
+
+        User user = new User(2, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User savedUser = userRepository.save(user);
+
+        GroupMembers groupMembers = new GroupMembers(2, savedGroup, savedUser, true);
+
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "Name"), Map.entry("name", "group2"));
+        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/create", requestBody, Group.class);
+
+        String status = "200 OK";
+        assertEquals(savedGroup.getName(), response.getBody().getName());
+        assertEquals(status, response.getStatusCode().toString());
+    }
+
+    @Test
+    public void test_controller_create_private_group() {
+        Group group = new Group(2, "group2", LocalDateTime.now(), false);
+        Group savedGroup = groupRepository.save(group);
+
+        User user = new User(2, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User savedUser = userRepository.save(user);
+
+        GroupMembers groupMembers = new GroupMembers(2, savedGroup, savedUser, true);
+
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "Name"), Map.entry("name", "group2"));
+        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/create", requestBody, Group.class);
+
+        String status = "200 OK";
+        assertEquals(savedGroup.getName(), response.getBody().getName());
+        assertEquals(status, response.getStatusCode().toString());
+    }
+
+    @Test
+    public void test_controller_create_group_without_admin() {
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group savedGroup = groupRepository.save(group);
+
+        User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        User savedUser = userRepository.save(user);
+
+        GroupMembers groupMembers = new GroupMembers(1, savedGroup, savedUser, false);
+        GroupMembers savedGroupMembers = groupMembersRepository.save(groupMembers);
+
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "Name"), Map.entry("name", "group1"));
+        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/create", requestBody, Group.class);
+
+        String status = "400 BAD_REQUEST";
+        assertNull(response.getBody());
+        assertEquals(status, response.getStatusCode().toString());
     }
 }
