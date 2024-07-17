@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -301,5 +302,229 @@ public class FollowersIntegrationTests {
         List<Followers> followRequests = followersService.getFollowRequests(null);
         
         assertNull(followRequests,"The User passed to follow requests was null so the return should be false");
+    }
+
+    @Test
+    public void test_add_follower_with_controller()
+    {
+            User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+            User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+            user = userRepository.save(user);
+            follower = userRepository.save(follower);
+
+            Map<String,String> requestBody = Map.ofEntries(Map.entry("user",user.getUsername()),Map.entry("follower",follower.getUsername()));
+            ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/add",requestBody,String.class);
+
+            assertNotNull(response);
+            assertEquals(HttpStatus.OK,response.getStatusCode());
+            assertEquals("Follower request sent", response.getBody());
+    } 
+
+    @Test 
+    public void test_add_follower_with_non_existent_user_with_controller()
+    {  
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+        follower = userRepository.save(follower);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("user",""),Map.entry("follower",follower.getUsername()));
+        ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/add",requestBody,String.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+        assertEquals("Error sending follower request.", response.getBody());
+    }
+
+    @Test
+    public void test_get_all_followers_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower2 = new User(3, "my bio", "follower2", "follower2@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);    
+        
+        user =  userRepository.save(user);
+        follower = userRepository.save(follower);
+        follower2 = userRepository.save(follower2);
+
+       
+        Followers followers = new Followers(1,user,follower, Followers.Status.ACCEPTED);
+        Followers followers2 = new Followers(2,user, follower2, Followers.Status.ACCEPTED);
+
+        followersRepository.save(followers);
+        followersRepository.save(followers2);
+
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/followers/"+user.getUsername()+"/followers",List.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(2, response.getBody().size());
+    }
+
+    @Test
+    public void test_get_all_followers_for_non_existent_user_with_controller()
+    {
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/followers/user/followers",List.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    public void test_get_all_followers_for_null_username_with_controller()
+    {
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/followers/"+null+"/followers",List.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    public void test_get_all_following_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        user =  userRepository.save(user);
+        User following = new User(user.getId()+1, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        following = userRepository.save(following);
+        User following2 = new User(following.getId()+1, "my bio", "follower2", "follower2@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);    
+        following2 = userRepository.save(following2);
+
+       
+        Followers followers = new Followers(1,following,user,Status.ACCEPTED);
+        followers = followersRepository.save(followers);
+        Followers followers2 = new Followers(followers.getId()+1,following2,user,Status.ACCEPTED);
+        followers2 = followersRepository.save(followers2);
+
+
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/followers/"+user.getUsername()+"/following",List.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(2, response.getBody().size());
+    }
+
+    @Test
+    public void test_remove_follower_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+        follower = userRepository.save(follower);
+
+        Followers followers = new Followers(1,user,follower, Followers.Status.ACCEPTED);
+
+        followersRepository.save(followers);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("user",user.getUsername()),Map.entry("follower",follower.getUsername()));
+        ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/delete",requestBody,String.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals("Follower request deleted", response.getBody());
+    }
+
+    @Test
+    public void test_remove_follower_for_non_existent_follower_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("user",user.getUsername()),Map.entry("follower","name"));
+        ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/delete",requestBody,String.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+        assertEquals("Error deleting follower request.", response.getBody());
+    }
+
+    @Test
+    public void test_get_follow_requests_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        User follower2 = new User(3, "my bio", "follower2", "follower2@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);    
+        
+        user =  userRepository.save(user);
+        follower = userRepository.save(follower);
+        follower2 = userRepository.save(follower2);
+
+       
+        Followers followers = new Followers(1,user,follower, Followers.Status.PENDING);
+        Followers followers2 = new Followers(2,user, follower2, Followers.Status.PENDING);
+
+        followersRepository.save(followers);
+        followersRepository.save(followers2);
+
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/followers/"+user.getUsername()+"/requests",List.class);
+        
+        assertNotNull(response);
+        assertEquals(2, response.getBody().size());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void test_get_follow_requests_for_non_existent_user_with_controller()
+    {
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/followers/user/requests",List.class);
+        
+        assertNotNull(response);
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void test_accept_follow_request_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+        follower = userRepository.save(follower);
+
+        Followers followers = new Followers(1,user,follower, Followers.Status.PENDING);
+
+        followers = followersRepository.save(followers);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("username",user.getUsername()),Map.entry("followerName",follower.getUsername()));
+        ResponseEntity<Boolean> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/accept",requestBody,Boolean.class);
+        
+        followers = followersRepository.findById(followers.getId()).get();
+        
+        assertNotNull(response);
+        assertTrue(response.getBody(),"Request should have been accepted and returned true");
+        assertEquals(followers.getStatus(), Status.ACCEPTED);
+    }
+
+    @Test
+    public void test_accept_follow_request_for_non_existent_user_with_controller()
+    {
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("username","user"),Map.entry("followerName","follower"));
+        ResponseEntity<Boolean> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/accept",requestBody,Boolean.class);
+
+        assertNotNull(response);
+        assertFalse(response.getBody(),"Request should have not been accepted and returned false");
+    }
+
+    @Test
+    public void test_accept_follow_request_for_non_existent_follow_request_with_controller()
+    {
+        User user = new User(1, "my bio", "user", "user@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+        User follower = new User(2, "my bio", "follower", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+        user = userRepository.save(user);
+        follower = userRepository.save(follower);
+
+        Map<String,String> requestBody = Map.ofEntries(Map.entry("username",user.getUsername()),Map.entry("followerName",follower.getUsername()));
+        ResponseEntity<Boolean> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/followers/accept",requestBody,Boolean.class);
+        
+        assertNotNull(response);
+        assertFalse(response.getBody(),"Request should have not been accepted and returned false");
     }
 }

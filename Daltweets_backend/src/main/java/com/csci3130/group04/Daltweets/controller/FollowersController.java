@@ -48,7 +48,7 @@ public class FollowersController {
       User user = userService.getUserByName(requestBody.get("user"));
 
       Boolean removeFollowing = followersService.removeFollower(user, follower);
-      if (removeFollowing == null){ return new ResponseEntity<>("Error deleting follower request.", HttpStatus.BAD_REQUEST);}
+      if (removeFollowing == false){ return new ResponseEntity<>("Error deleting follower request.", HttpStatus.BAD_REQUEST);}
 
       return new ResponseEntity<>("Follower request deleted", HttpStatus.OK);
     }
