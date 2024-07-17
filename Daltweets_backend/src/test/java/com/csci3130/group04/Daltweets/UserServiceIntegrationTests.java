@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.csci3130.group04.Daltweets.model.Followers;
+import com.csci3130.group04.Daltweets.model.Group;
 import com.csci3130.group04.Daltweets.model.Login;
+import com.csci3130.group04.Daltweets.repository.FollowersRepository;
 import com.csci3130.group04.Daltweets.repository.LoginRepository;
+import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.LoginServiceImpl;
 import com.csci3130.group04.Daltweets.utils.SignUpRequestDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -42,15 +47,22 @@ class UserServiceIntegrationTests {
   private UserRepository userRepository;
   @Autowired
   private LoginRepository loginRepository;
+  @Autowired
+  private FollowersRepository followersRepository;
 
   @Autowired
   TestRestTemplate restTemplate;
 
+  @Autowired
+  LoginServiceImpl loginService;
+  @Autowired
+  FollowersServiceImpl followersService;
   @LocalServerPort
   private int port;
 
  @AfterEach
   void teardown(){
+     followersRepository.deleteAll();
      loginRepository.deleteAll();
      userRepository.deleteAll();
   }
@@ -231,4 +243,72 @@ class UserServiceIntegrationTests {
 
       assertThrows(Throwable.class,()->this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class));
   }
+
+  @Test
+  void test_recommend_user() {
+      User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+      User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+      User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+      User saved_user = userRepository.save(user);
+      User saved_user2 = userRepository.save(user2);
+      User saved_user3 = userRepository.save(user3);
+
+      Followers newFollower = followersService.addFollower(saved_user2, saved_user);
+
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("username","me"));
+      ResponseEntity<List> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/recommended-users",requestBody,List.class);
+      int expect_size = 1;
+
+      assertNotNull(response);
+      assertEquals(1,response.getBody().size());
+  }
+  @Test
+  void test_recommend_user_with_no_follower() {
+     User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     User saved_user2 = userRepository.save(user2);
+     User saved_user3 = userRepository.save(user3);
+
+     Map<String,String> requestBody = Map.ofEntries(Map.entry("username","me"));
+     ResponseEntity<List> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/recommended-users",requestBody,List.class);
+     int expect_size = 2;
+
+     assertNotNull(response);
+     assertEquals(expect_size,response.getBody().size());
+  }
+
+  @Test
+  void test_recommend_user_with_full_follower() {
+     User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     User saved_user2 = userRepository.save(user2);
+
+     Followers newFollower = followersService.addFollower(saved_user2, saved_user);
+
+     Map<String,String> requestBody = Map.ofEntries(Map.entry("username","me"));
+     ResponseEntity<List> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/recommended-users",requestBody,List.class);
+     int expect_size = 0;
+
+     assertNotNull(response);
+     assertEquals(expect_size,response.getBody().size());
+ }
+  @Test
+  void test_recommend_user_with_null() {
+     User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     User saved_user2 = userRepository.save(user2);
+     User saved_user3 = userRepository.save(user3);
+
+     Followers newFollower = followersService.addFollower(saved_user2, saved_user);
+
+     Map<String,String> requestBody = Map.ofEntries(Map.entry("username","me"));
+
+     assertThrows(Throwable.class,()->this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/recommended-users",requestBody,List.class));
+  }
+
 }
