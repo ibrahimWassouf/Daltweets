@@ -75,6 +75,7 @@ public class GroupController {
         if (groupAdmins == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(groupAdmins,HttpStatus.OK);
     }
+<<<<<<< Updated upstream
     @PostMapping("/deleteuser")
     ResponseEntity<GroupMembers> deleteUser(@RequestBody Map<String,String> requestBody) {
         String adminname = requestBody.get("adminname");
@@ -96,4 +97,12 @@ public class GroupController {
 
         return new ResponseEntity<>(groupMembers,HttpStatus.OK);
     }
+||||||| Stash base
+=======
+
+    @GetMapping("/all-groups")
+    List<Group> getAllGroups(){
+      return groupService.getAllGroups();
+    }
+>>>>>>> Stashed changes
 }

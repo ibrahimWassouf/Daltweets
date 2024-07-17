@@ -17,4 +17,5 @@ public interface GroupService {
     public List<User> getGroupMembers(String groupName);
     public List<User> getGroupAdmins(String groupName);
     public GroupMembers deleteUser(String username, String groupname);
+    public List<Group> getAllGroups();
 }

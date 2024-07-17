@@ -18,4 +18,7 @@ public interface UserRepository extends JpaRepository<User,Integer> {
 
     @Query("SELECT u FROM User u WHERE u.username = :name") 
     User findByUsernameRawSearch(@Param("name") String name);
+
+    @Query("SELECT u FROM User u WHERE u.status = 'PENDING'")
+    List<User> getSignupRequests();
 }

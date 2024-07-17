@@ -103,6 +103,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public List<Group> getAllGroups(){
+      return groupRepository.findAll();
+    }
+
+    @Override
     public GroupMembers deleteUser(String username, String groupname) {
         if ( !userService.isValidName(username) && !userService.isValidName(groupname) ) return null;
 
