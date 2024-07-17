@@ -109,12 +109,6 @@ public class UserController {
         String userName = requestBody.get("username");
         String status = requestBody.get("status");
         User.Status userstatus = null;
-        if ( status.equals("ACTIVATED") ) {
-            userstatus = ACTIVATED;
-        }
-        if ( status.equals("DEACTIVATED")) {
-            userstatus = DEACTIVATED;
-        }
         if ( !userService.isValidName(adminName) || !userService.isValidName(userName) ) {
             return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
         }
