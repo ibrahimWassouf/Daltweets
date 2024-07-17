@@ -37,6 +37,8 @@ import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.repository.UserRepository;
 import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest(classes = DaltweetsApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
@@ -369,4 +371,106 @@ class UserServiceIntegrationTests {
 
      assertThrows(Throwable.class,()->this.restTemplate.exchange("http://localhost:" + port + "/api/user/update", HttpMethod.PUT,new HttpEntity<>(change_user),User.class));
  }
+
+  @Test
+  void test_change_status_with_accept_user() {
+     User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+     admin = userRepository.save(admin);
+
+     User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
+     User saved_user = userRepository.save(user);
+
+     Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","ACTIVATED"));
+     ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
+
+     String result = "Success ACTIVATED " + saved_user.getUsername();
+
+     assertNotNull(response);
+     assertEquals(result,response.getBody());
+     assertEquals(HttpStatus.OK,response.getStatusCode());
+  }
+
+  @Test
+  void test_change_status_with_reject_user() {
+      User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+      admin = userRepository.save(admin);
+
+      User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
+      User saved_user = userRepository.save(user);
+
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","DEACTIVATED"));
+      ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
+
+      String result = "Success DEACTIVATED " + saved_user.getUsername();
+
+      assertNotNull(response);
+      assertEquals(result,response.getBody());
+      assertEquals(HttpStatus.OK,response.getStatusCode());
+  }
+
+  @Test
+  void test_change_status_with_NonExistUser() {
+      User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+      admin = userRepository.save(admin);
+
+      User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
+
+
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","DEACTIVATED"));
+      ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
+
+      assertNotNull(response);
+      assertNull(response.getBody());
+      assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+  }
+
+  @Test
+  void test_change_status_with_NonAdmin() {
+     User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.ONLINE);
+     admin = userRepository.save(admin);
+
+     User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
+     User saved_user = userRepository.save(user);
+
+
+     Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","DEACTIVATED"));
+     ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
+
+     assertNotNull(response);
+     assertNull(response.getBody());
+     assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+  }
+
+  @Test
+  void test_change_status_with_empty_name() {
+      User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, Role.SUPERADMIN, User.Status.ONLINE);
+      admin = userRepository.save(admin);
+
+      User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
+      User saved_user = userRepository.save(user);
+
+
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username"," "),Map.entry("status","DEACTIVATED"));
+      ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
+
+      assertNotNull(response);
+      assertNull(response.getBody());
+      assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+  }
+
+  void test_change_status_with_wrong_status() {
+      User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, Role.SUPERADMIN, User.Status.ONLINE);
+      admin = userRepository.save(admin);
+
+      User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
+      User saved_user = userRepository.save(user);
+
+
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","WRONG"));
+      ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
+
+      assertNotNull(response);
+      assertNull(response.getBody());
+      assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+  }
 }
