@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.csci3130.group04.Daltweets.model.Login;
+import com.csci3130.group04.Daltweets.repository.LoginRepository;
+import com.csci3130.group04.Daltweets.utils.SignUpRequestDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.model.User.Role;
@@ -37,6 +40,8 @@ class UserServiceIntegrationTests {
 
   @Autowired
   private UserRepository userRepository;
+  @Autowired
+  private LoginRepository loginRepository;
 
   @Autowired
   TestRestTemplate restTemplate;
@@ -46,7 +51,8 @@ class UserServiceIntegrationTests {
 
  @AfterEach
   void teardown(){
-    userRepository.deleteAll();
+     loginRepository.deleteAll();
+     userRepository.deleteAll();
   }
 
   @Test
@@ -194,5 +200,35 @@ class UserServiceIntegrationTests {
 
     assertEquals("false", response.getBody());
     assertEquals(HttpStatus.NOT_IMPLEMENTED, response.getStatusCode());
+  }
+
+  @Test
+  void test_create_user() {
+      User user = new User(1,"checkbio","Name","firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+
+      Login login = new Login();
+      login.setPassword("Password1!");
+      login.setSecurityQuestion("security");
+      login.setSecurityAnswer("answer");
+
+      SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
+
+      ResponseEntity<User> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class);
+
+      assertNotNull(response);
+      assertEquals(user.getUsername(),response.getBody().getUsername());
+  }
+  @Test
+  void test_create_user_with_null() {
+      User user = new User(1,"checkbio",null,"firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+
+      Login login = new Login();
+      login.setPassword("Password1!");
+      login.setSecurityQuestion("security");
+      login.setSecurityAnswer("answer");
+
+      SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
+
+      assertThrows(Throwable.class,()->this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class));
   }
 }
