@@ -215,9 +215,37 @@ class UserServiceIntegrationTests {
     assertEquals("false", response.getBody());
     assertEquals(HttpStatus.NOT_IMPLEMENTED, response.getStatusCode());
   }
-
   @Test
-  void test_recommend_user() {
+  public void test_create_user() {
+     User user = new User(1,"checkbio","Name","firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+
+     Login login = new Login();
+     login.setPassword("Password1!");
+     login.setSecurityQuestion("security");
+     login.setSecurityAnswer("answer");
+
+     SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
+
+     ResponseEntity<User> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class);
+
+     assertNotNull(response);
+     assertEquals(user.getUsername(),response.getBody().getUsername());
+  }
+  @Test
+  public void test_create_user_with_null() {
+     User user = new User(1,"checkbio",null,"firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+
+     Login login = new Login();
+     login.setPassword("Password1!");
+     login.setSecurityQuestion("security");
+     login.setSecurityAnswer("answer");
+
+     SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
+
+     assertThrows(Throwable.class,()->this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class));
+  }
+  @Test
+  public void test_recommend_user() {
       User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
       User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
       User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
@@ -235,7 +263,7 @@ class UserServiceIntegrationTests {
       assertEquals(1,response.getBody().size());
   }
   @Test
-  void test_recommend_user_with_no_follower() {
+  public void test_recommend_user_with_no_follower() {
      User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
      User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
      User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
@@ -252,7 +280,7 @@ class UserServiceIntegrationTests {
   }
 
   @Test
-  void test_recommend_user_with_full_follower() {
+  public void test_recommend_user_with_full_follower() {
      User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
      User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
      User saved_user = userRepository.save(user);
@@ -268,7 +296,7 @@ class UserServiceIntegrationTests {
      assertEquals(expect_size,response.getBody().size());
  }
   @Test
-  void test_recommend_user_with_null() {
+  public void test_recommend_user_with_null() {
      User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
      User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
      User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
@@ -284,7 +312,7 @@ class UserServiceIntegrationTests {
   }
 
   @Test
-  void test_get_user_profile() {
+  public void test_get_user_profile() {
      User user = new User(1, "my bio", "Name", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
      User saved_user = userRepository.save(user);
      ResponseEntity<User> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/user/" + saved_user.getUsername() +"/profile",User.class);
@@ -294,7 +322,7 @@ class UserServiceIntegrationTests {
   }
 
   @Test
-  void test_get_user_profile_with_NULL() {
+  public void test_get_user_profile_with_NULL() {
      User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
      User saved_user = userRepository.save(user);
 
@@ -304,7 +332,7 @@ class UserServiceIntegrationTests {
   }
 
   @Test
-  void test_get_user_profile_with_no_user() {
+  public void test_get_user_profile_with_no_user() {
      User user = new User(1, "my bio", "Name", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
 
      ResponseEntity<User> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/user/" + user.getUsername() +"/profile",User.class);
@@ -312,7 +340,7 @@ class UserServiceIntegrationTests {
      assertNull(response.getBody());
   }
   @Test
-  void test_update_user() {
+  public void test_update_user() {
      User user = new User(1, "my bio", "Name", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
      User saved_user = userRepository.save(user);
      User change_user = saved_user;
@@ -324,7 +352,7 @@ class UserServiceIntegrationTests {
   }
 
   @Test
-  void test_update_user_with_null() {
+  public void test_update_user_with_null() {
      User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
      User saved_user = userRepository.save(user);
      User change_user = saved_user;
@@ -334,7 +362,7 @@ class UserServiceIntegrationTests {
  }
 
  @Test
- void test_update_user_with_not_exist_user() {
+ public void test_update_user_with_not_exist_user() {
      User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
      User change_user = user;
      change_user.setStatus(User.Status.OFFLINE);
