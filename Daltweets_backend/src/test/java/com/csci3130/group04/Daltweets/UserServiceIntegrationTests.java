@@ -5,6 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.csci3130.group04.Daltweets.model.Followers;
+import com.csci3130.group04.Daltweets.model.Group;
+import com.csci3130.group04.Daltweets.model.Login;
+import com.csci3130.group04.Daltweets.repository.FollowersRepository;
+import com.csci3130.group04.Daltweets.repository.LoginRepository;
+import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.LoginServiceImpl;
+import com.csci3130.group04.Daltweets.utils.SignUpRequestDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,11 +21,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.model.User.Role;
@@ -36,16 +49,26 @@ class UserServiceIntegrationTests {
 
   @Autowired
   private UserRepository userRepository;
+  @Autowired
+  private LoginRepository loginRepository;
+  @Autowired
+  private FollowersRepository followersRepository;
 
   @Autowired
   TestRestTemplate restTemplate;
 
+  @Autowired
+  LoginServiceImpl loginService;
+  @Autowired
+  FollowersServiceImpl followersService;
   @LocalServerPort
   private int port;
 
  @AfterEach
   void teardown(){
-    userRepository.deleteAll();
+     followersRepository.deleteAll();
+     loginRepository.deleteAll();
+     userRepository.deleteAll();
   }
 
   @Test
@@ -194,6 +217,160 @@ class UserServiceIntegrationTests {
     assertEquals("false", response.getBody());
     assertEquals(HttpStatus.NOT_IMPLEMENTED, response.getStatusCode());
   }
+  @Test
+  public void test_create_user() {
+     User user = new User(1,"checkbio","Name","firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+
+     Login login = new Login();
+     login.setPassword("Password1!");
+     login.setSecurityQuestion("security");
+     login.setSecurityAnswer("answer");
+
+     SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
+
+     ResponseEntity<User> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class);
+
+     assertNotNull(response);
+     assertEquals(user.getUsername(),response.getBody().getUsername());
+  }
+  @Test
+  public void test_create_user_with_null() {
+     User user = new User(1,"checkbio",null,"firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+
+     Login login = new Login();
+     login.setPassword("Password1!");
+     login.setSecurityQuestion("security");
+     login.setSecurityAnswer("answer");
+
+     SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
+
+     assertThrows(Throwable.class,()->this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class));
+  }
+  @Test
+  public void test_recommend_user() {
+      User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+      User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+      User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+      User saved_user = userRepository.save(user);
+      User saved_user2 = userRepository.save(user2);
+      User saved_user3 = userRepository.save(user3);
+
+      Followers newFollower = followersService.addFollower(saved_user2, saved_user);
+
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("username","me"));
+      ResponseEntity<List> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/recommended-users",requestBody,List.class);
+      int expect_size = 1;
+
+      assertNotNull(response);
+      assertEquals(1,response.getBody().size());
+  }
+  @Test
+  public void test_recommend_user_with_no_follower() {
+     User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     User saved_user2 = userRepository.save(user2);
+     User saved_user3 = userRepository.save(user3);
+
+     Map<String,String> requestBody = Map.ofEntries(Map.entry("username","me"));
+     ResponseEntity<List> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/recommended-users",requestBody,List.class);
+     int expect_size = 2;
+
+     assertNotNull(response);
+     assertEquals(expect_size,response.getBody().size());
+  }
+
+  @Test
+  public void test_recommend_user_with_full_follower() {
+     User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     User saved_user2 = userRepository.save(user2);
+
+     Followers newFollower = followersService.addFollower(saved_user2, saved_user);
+
+     Map<String,String> requestBody = Map.ofEntries(Map.entry("username","me"));
+     ResponseEntity<List> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/recommended-users",requestBody,List.class);
+     int expect_size = 0;
+
+     assertNotNull(response);
+     assertEquals(expect_size,response.getBody().size());
+ }
+  @Test
+  public void test_recommend_user_with_null() {
+     User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User user3 = new User(3, "that's me", "they", "they@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     User saved_user2 = userRepository.save(user2);
+     User saved_user3 = userRepository.save(user3);
+
+     Followers newFollower = followersService.addFollower(saved_user2, saved_user);
+
+     Map<String,String> requestBody = Map.ofEntries(Map.entry("username","me"));
+
+     assertThrows(Throwable.class,()->this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/recommended-users",requestBody,List.class));
+  }
+
+  @Test
+  public void test_get_user_profile() {
+     User user = new User(1, "my bio", "Name", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     ResponseEntity<User> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/user/" + saved_user.getUsername() +"/profile",User.class);
+
+     assertNotNull(response);
+     assertEquals(saved_user.getUsername(),response.getBody().getUsername());
+  }
+
+  @Test
+  public void test_get_user_profile_with_NULL() {
+     User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+
+     ResponseEntity<User> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/user/" + saved_user.getUsername() +"/profile",User.class);
+
+     assertNull(response.getBody());
+  }
+
+  @Test
+  public void test_get_user_profile_with_no_user() {
+     User user = new User(1, "my bio", "Name", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+     ResponseEntity<User> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/user/" + user.getUsername() +"/profile",User.class);
+
+     assertNull(response.getBody());
+  }
+  @Test
+  public void test_update_user() {
+     User user = new User(1, "my bio", "Name", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     User change_user = saved_user;
+     change_user.setStatus(User.Status.OFFLINE);
+
+     ResponseEntity<User> response = this.restTemplate.exchange("http://localhost:" + port + "/api/user/update", HttpMethod.PUT,new HttpEntity<>(change_user),User.class);
+
+     assertEquals(change_user.getStatus(),response.getBody().getStatus());
+  }
+
+  @Test
+  public void test_update_user_with_null() {
+     User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     User change_user = saved_user;
+     change_user.setStatus(User.Status.OFFLINE);
+
+     assertThrows(Throwable.class,()->this.restTemplate.exchange("http://localhost:" + port + "/api/user/update", HttpMethod.PUT,new HttpEntity<>(change_user),User.class));
+ }
+
+ @Test
+ public void test_update_user_with_not_exist_user() {
+     User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User change_user = user;
+     change_user.setStatus(User.Status.OFFLINE);
+
+     assertThrows(Throwable.class,()->this.restTemplate.exchange("http://localhost:" + port + "/api/user/update", HttpMethod.PUT,new HttpEntity<>(change_user),User.class));
+ }
 
   @Test
   void test_change_status_with_accept_user() {

@@ -3,10 +3,8 @@ package com.csci3130.group04.Daltweets;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import com.csci3130.group04.Daltweets.utils.SignUpRequestDTO;
 import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,8 @@ import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.repository.LoginRepository;
 import com.csci3130.group04.Daltweets.repository.UserRepository;
 import com.csci3130.group04.Daltweets.service.Implementation.LoginServiceImpl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = DaltweetsApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -132,6 +132,47 @@ class LoginServiceIntegrationTests {
 
     assertEquals("Password updated", response.getBody());
     assertEquals("new password", queriedLogin.getPassword());
+  }
+
+  @Test
+  public void test_create_login() {
+    User user = new User(1, "my bio", "me", "me@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+    User saved_user = userRepository.save(user);
+
+    Login login = new Login(1,"me@dal.ca", "Password1!", "security", "answer", saved_user);
+
+    boolean result = loginService.createLogin(login);
+
+    assertTrue(result);
+  }
+
+  @Test
+  public void test_create_login_with_null() {
+    boolean result = loginService.createLogin(null);
+    assertFalse(result);
+  }
+
+  @Test
+  public void test_create_login_with_null_user() {
+    User saved_user = null;
+
+    Login login = new Login(1,"me@dal.ca", "Password1!", "security", "answer", saved_user);
+
+    boolean result = loginService.createLogin(login);
+
+    assertFalse(result);
+  }
+
+  @Test
+  public void test_create_login_with_wrong_password() {
+    User user = new User(1, "my bio", "me", "me@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+    User saved_user = userRepository.save(user);
+
+    Login login = new Login(1,"me@dal.ca", "Password1", "security", "answer", saved_user);
+
+    boolean result = loginService.createLogin(login);
+
+    assertFalse(result);
   }
 }
 
