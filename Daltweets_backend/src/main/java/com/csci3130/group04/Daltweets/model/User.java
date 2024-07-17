@@ -31,8 +31,6 @@ public class User {
         ONLINE,
         BUSY,
         AWAY,
-        DEACTIVATED,
-        ACTIVATED,
         PENDING
     }
     @Enumerated(EnumType.STRING)
