@@ -58,7 +58,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group createGroup(Group group){
         if (group == null){
-            throw new IllegalArgumentException("Cannot create null group");
+            return null;
         }
 
         if (group.getDateCreated() == null){
@@ -66,7 +66,7 @@ public class GroupServiceImpl implements GroupService {
         }
 
         if (group.getName() == null){
-            throw new IllegalArgumentException("Cannot create group with null name");
+            return null;
         }
 
         return groupRepository.save(group);

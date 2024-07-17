@@ -113,7 +113,8 @@ public class GroupIntegrationTests {
     @Test
     public void testCreateGroupWithoutName() {
         Group group = new Group(2, null, LocalDateTime.now(), false);
-        assertThrows(Throwable.class, () -> groupService.createGroup(group));
+        Group createdGroup = groupService.createGroup(group);
+        assertNull(createdGroup);
     }
 
     @Test
@@ -125,7 +126,8 @@ public class GroupIntegrationTests {
 
     @Test
     public void testCreateGroupWithNull(){
-        assertThrows(Throwable.class, () -> groupService.createGroup(null));
+        Group createdGroup = groupService.createGroup(null);
+        assertNull(createdGroup);
     }
 
     @Test
