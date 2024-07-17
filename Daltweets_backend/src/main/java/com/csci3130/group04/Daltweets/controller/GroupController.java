@@ -38,6 +38,16 @@ public class GroupController {
         }
         return new ResponseEntity<>(group, HttpStatus.OK);
     }
+
+    @PostMapping("/create")
+    ResponseEntity<Group> createGroup(@RequestBody Group group) {
+        Group groupCreated = groupService.createGroup(group);
+        if (groupCreated == null) {
+            return new ResponseEntity<>(group, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(group, HttpStatus.CREATED);
+    }
+
     @GetMapping("/{username}/groups")
     ResponseEntity<List<Group>> getGroups(@PathVariable("username") String username) {
         if ( username == null || username.isBlank() ) {

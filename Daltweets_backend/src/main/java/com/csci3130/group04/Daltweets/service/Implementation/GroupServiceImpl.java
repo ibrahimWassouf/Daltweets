@@ -11,6 +11,7 @@ import com.csci3130.group04.Daltweets.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +53,23 @@ public class GroupServiceImpl implements GroupService {
         Group group_found = getGroupByName(group);
         group_found.setIsDeleted(true);
         return groupRepository.save(group_found);
+    }
+
+    @Override
+    public Group createGroup(Group group){
+        if (group == null){
+            throw new IllegalArgumentException("Cannot create null group");
+        }
+
+        if (group.getDateCreated() == null){
+            group.setDateCreated(LocalDateTime.now());
+        }
+
+        if (group.getName() == null){
+            throw new IllegalArgumentException("Cannot create group with null name");
+        }
+
+        return groupRepository.save(group);
     }
 
     @Override

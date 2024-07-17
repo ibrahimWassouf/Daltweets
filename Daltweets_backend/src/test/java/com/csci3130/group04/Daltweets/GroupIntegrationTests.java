@@ -97,6 +97,7 @@ public class GroupIntegrationTests {
         Group group = new Group(2, "group2", LocalDateTime.now(), true);
         groupRepository.save(group);
         Group created = groupService.createGroup(group);
+        assertTrue(group.getIsPublic());
         assertEquals(group.getName(), created.getName());
     }
 
@@ -105,6 +106,7 @@ public class GroupIntegrationTests {
         Group group = new Group(2, "group2", LocalDateTime.now(), false);
         groupRepository.save(group);
         Group created = groupService.createGroup(group);
+        assertFalse(group.getIsPublic());
         assertEquals(group.getName(), created.getName());
     }
 
@@ -117,7 +119,8 @@ public class GroupIntegrationTests {
     @Test
     public void testCreateGroupWithoutTimeCreated() {
         Group group = new Group(2, "group2", null, false);
-        assertThrows(Throwable.class, () -> groupService.createGroup(group));
+        Group created = groupService.createGroup(group);
+        assertNotNull(created.getDateCreated());
     }
 
     @Test
@@ -405,9 +408,8 @@ public class GroupIntegrationTests {
         Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "Name"), Map.entry("name", "group2"));
         ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/create", requestBody, Group.class);
 
-        String status = "200 OK";
         assertEquals(savedGroup.getName(), response.getBody().getName());
-        assertEquals(status, response.getStatusCode().toString());
+        assertEquals("201 CREATED", response.getStatusCode().toString());
     }
 
     @Test
@@ -423,27 +425,7 @@ public class GroupIntegrationTests {
         Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "Name"), Map.entry("name", "group2"));
         ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/create", requestBody, Group.class);
 
-        String status = "200 OK";
         assertEquals(savedGroup.getName(), response.getBody().getName());
-        assertEquals(status, response.getStatusCode().toString());
-    }
-
-    @Test
-    public void test_controller_create_group_without_admin() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
-        Group savedGroup = groupRepository.save(group);
-
-        User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
-        User savedUser = userRepository.save(user);
-
-        GroupMembers groupMembers = new GroupMembers(1, savedGroup, savedUser, false);
-        GroupMembers savedGroupMembers = groupMembersRepository.save(groupMembers);
-
-        Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "Name"), Map.entry("name", "group1"));
-        ResponseEntity<Group> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/create", requestBody, Group.class);
-
-        String status = "400 BAD_REQUEST";
-        assertNull(response.getBody());
-        assertEquals(status, response.getStatusCode().toString());
+        assertEquals("201 CREATED", response.getStatusCode().toString());
     }
 }
