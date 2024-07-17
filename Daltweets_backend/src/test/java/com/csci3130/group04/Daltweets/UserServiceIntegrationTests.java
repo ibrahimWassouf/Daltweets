@@ -311,4 +311,34 @@ class UserServiceIntegrationTests {
      assertThrows(Throwable.class,()->this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/recommended-users",requestBody,List.class));
   }
 
+  @Test
+  void test_get_user_profile() {
+     User user = new User(1, "my bio", "Name", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     ResponseEntity<User> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/user/" + saved_user.getUsername() +"/profile",User.class);
+
+     assertNotNull(response);
+     assertEquals(saved_user.getUsername(),response.getBody().getUsername());
+  }
+
+  @Test
+  void test_get_user_profile_with_NULL() {
+     User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+
+     ResponseEntity<User> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/user/" + saved_user.getUsername() +"/profile",User.class);
+
+     assertNull(response.getBody());
+  }
+
+  @Test
+  void test_get_user_profile_with_no_user() {
+     User user = new User(1, "my bio", "Name", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+
+     ResponseEntity<User> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/user/" + user.getUsername() +"/profile",User.class);
+
+     assertNull(response.getBody());
+  }
+
+  
 }
