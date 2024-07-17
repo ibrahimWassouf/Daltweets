@@ -135,33 +135,44 @@ class LoginServiceIntegrationTests {
   }
 
   @Test
-  void test_create_user() {
-    User user = new User(1,"checkbio","Name","firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+  public void test_create_login() {
+    User user = new User(1, "my bio", "me", "me@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+    User saved_user = userRepository.save(user);
 
-    Login login = new Login();
-    login.setPassword("Password1!");
-    login.setSecurityQuestion("security");
-    login.setSecurityAnswer("answer");
+    Login login = new Login(1,"me@dal.ca", "Password1!", "security", "answer", saved_user);
 
-    SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
+    boolean result = loginService.createLogin(login);
 
-    ResponseEntity<User> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class);
-
-    assertNotNull(response);
-    assertEquals(user.getUsername(),response.getBody().getUsername());
+    assertTrue(result);
   }
+
   @Test
-  void test_create_user_with_null() {
-    User user = new User(1,"checkbio",null,"firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+  public void test_create_login_with_null() {
+    boolean result = loginService.createLogin(null);
+    assertFalse(result);
+  }
 
-    Login login = new Login();
-    login.setPassword("Password1!");
-    login.setSecurityQuestion("security");
-    login.setSecurityAnswer("answer");
+  @Test
+  public void test_create_login_with_null_user() {
+    User saved_user = null;
 
-    SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
+    Login login = new Login(1,"me@dal.ca", "Password1!", "security", "answer", saved_user);
 
-    assertThrows(Throwable.class,()->this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class));
+    boolean result = loginService.createLogin(login);
+
+    assertFalse(result);
+  }
+
+  @Test
+  public void test_create_login_with_wrong_password() {
+    User user = new User(1, "my bio", "me", "me@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+    User saved_user = userRepository.save(user);
+
+    Login login = new Login(1,"me@dal.ca", "Password1", "security", "answer", saved_user);
+
+    boolean result = loginService.createLogin(login);
+
+    assertFalse(result);
   }
 }
 
