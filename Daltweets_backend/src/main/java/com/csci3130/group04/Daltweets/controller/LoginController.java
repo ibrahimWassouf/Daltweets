@@ -47,6 +47,7 @@ public class LoginController {
       }
 
       User user = authentication.getUser();
+      user.setStatus(Status.ONLINE);
       return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
