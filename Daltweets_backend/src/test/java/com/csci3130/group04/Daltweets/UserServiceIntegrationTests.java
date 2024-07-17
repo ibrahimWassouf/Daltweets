@@ -21,6 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -339,6 +341,34 @@ class UserServiceIntegrationTests {
 
      assertNull(response.getBody());
   }
+  @Test
+  void test_update_user() {
+     User user = new User(1, "my bio", "Name", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     User change_user = saved_user;
+     change_user.setStatus(User.Status.OFFLINE);
 
-  
+     ResponseEntity<User> response = this.restTemplate.exchange("http://localhost:" + port + "/api/user/update", HttpMethod.PUT,new HttpEntity<>(change_user),User.class);
+
+     assertEquals(change_user.getStatus(),response.getBody().getStatus());
+  }
+
+  @Test
+  void test_update_user_with_null() {
+     User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User saved_user = userRepository.save(user);
+     User change_user = saved_user;
+     change_user.setStatus(User.Status.OFFLINE);
+
+     assertThrows(Throwable.class,()->this.restTemplate.exchange("http://localhost:" + port + "/api/user/update", HttpMethod.PUT,new HttpEntity<>(change_user),User.class));
+ }
+ 
+ @Test
+ void test_update_user_with_not_exist_user() {
+     User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
+     User change_user = user;
+     change_user.setStatus(User.Status.OFFLINE);
+
+     assertThrows(Throwable.class,()->this.restTemplate.exchange("http://localhost:" + port + "/api/user/update", HttpMethod.PUT,new HttpEntity<>(change_user),User.class));
+ }
 }
