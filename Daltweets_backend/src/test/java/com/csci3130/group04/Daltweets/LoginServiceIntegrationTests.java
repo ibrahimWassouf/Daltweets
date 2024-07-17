@@ -3,10 +3,8 @@ package com.csci3130.group04.Daltweets;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import com.csci3130.group04.Daltweets.utils.SignUpRequestDTO;
 import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,8 @@ import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.repository.LoginRepository;
 import com.csci3130.group04.Daltweets.repository.UserRepository;
 import com.csci3130.group04.Daltweets.service.Implementation.LoginServiceImpl;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = DaltweetsApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -132,6 +132,36 @@ class LoginServiceIntegrationTests {
 
     assertEquals("Password updated", response.getBody());
     assertEquals("new password", queriedLogin.getPassword());
+  }
+
+  @Test
+  void test_create_user() {
+    User user = new User(1,"checkbio","Name","firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+
+    Login login = new Login();
+    login.setPassword("Password1!");
+    login.setSecurityQuestion("security");
+    login.setSecurityAnswer("answer");
+
+    SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
+
+    ResponseEntity<User> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class);
+
+    assertNotNull(response);
+    assertEquals(user.getUsername(),response.getBody().getUsername());
+  }
+  @Test
+  void test_create_user_with_null() {
+    User user = new User(1,"checkbio",null,"firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+
+    Login login = new Login();
+    login.setPassword("Password1!");
+    login.setSecurityQuestion("security");
+    login.setSecurityAnswer("answer");
+
+    SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
+
+    assertThrows(Throwable.class,()->this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class));
   }
 }
 

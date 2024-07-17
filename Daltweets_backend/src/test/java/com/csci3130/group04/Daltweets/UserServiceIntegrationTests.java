@@ -217,36 +217,6 @@ class UserServiceIntegrationTests {
   }
 
   @Test
-  void test_create_user() {
-      User user = new User(1,"checkbio","Name","firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
-
-      Login login = new Login();
-      login.setPassword("Password1!");
-      login.setSecurityQuestion("security");
-      login.setSecurityAnswer("answer");
-
-      SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
-
-      ResponseEntity<User> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class);
-
-      assertNotNull(response);
-      assertEquals(user.getUsername(),response.getBody().getUsername());
-  }
-  @Test
-  void test_create_user_with_null() {
-      User user = new User(1,"checkbio",null,"firstmail@dal.ca", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
-
-      Login login = new Login();
-      login.setPassword("Password1!");
-      login.setSecurityQuestion("security");
-      login.setSecurityAnswer("answer");
-
-      SignUpRequestDTO requestBody = new SignUpRequestDTO(user,login);
-
-      assertThrows(Throwable.class,()->this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/signup",requestBody, User.class));
-  }
-
-  @Test
   void test_recommend_user() {
       User user = new User(1, "my bio", "me", "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
       User user2 = new User(2, "it's me", "you", "you@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
@@ -362,7 +332,7 @@ class UserServiceIntegrationTests {
 
      assertThrows(Throwable.class,()->this.restTemplate.exchange("http://localhost:" + port + "/api/user/update", HttpMethod.PUT,new HttpEntity<>(change_user),User.class));
  }
- 
+
  @Test
  void test_update_user_with_not_exist_user() {
      User user = new User(1, "my bio", null, "me@email", LocalDateTime.now(), false, Role.SUPERADMIN, User.Status.ONLINE);
