@@ -418,7 +418,7 @@ public class GroupIntegrationTests {
         User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_admin = userRepository.save(admin);
 
-        Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName", "Name"), Map.entry("groupName", "group1"));
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("userName", "Name"), Map.entry("groupName", "group1"), Map.entry("isAdmin", "true"));
         ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/adduser", requestBody, GroupMembers.class);
 
         assertNotNull(response.getBody());
@@ -436,30 +436,12 @@ public class GroupIntegrationTests {
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
 
-        Map<String, String> requestBody = Map.ofEntries(Map.entry("userName", "Name"), Map.entry("groupName", "group1"));
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("userName", "Name"), Map.entry("groupName", "group1"), Map.entry("isAdmin", "false"));
         ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/adduser", requestBody, GroupMembers.class);
 
         assertNotNull(response);
         assertEquals(saved_user.getId(), response.getBody().getUser().getId());
         assertFalse(response.getBody().isAdmin());
-        assertEquals(saved_group.getId(), response.getBody().getGroup().getId());
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    }
-
-    @Test
-    public void test_controller_add_admin_groupmember_with_ignored_user(){
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
-        Group saved_group = groupRepository.save(group);
-
-        User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
-        User saved_admin = userRepository.save(admin);
-
-        Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName", "Name"), Map.entry("userName", "Name2"),Map.entry("groupName", "group1"));
-        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/adduser", requestBody, GroupMembers.class);
-
-        assertNotNull(response.getBody());
-        assertEquals(saved_admin.getId(), response.getBody().getUser().getId());
-        assertTrue(response.getBody().isAdmin());
         assertEquals(saved_group.getId(), response.getBody().getGroup().getId());
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
@@ -480,6 +462,26 @@ public class GroupIntegrationTests {
 
         assertNull(response.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    public void test_controller_add_groupmember_with_existing_member()
+    {
+        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        group = groupRepository.save(group);
+
+        User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+        user = userRepository.save(user);
+
+        GroupMembers groupMember = new GroupMembers(1,group,user,false);
+        groupMember = groupMembersRepository.save(groupMember);
+
+        Map<String, String> requestBody = Map.ofEntries(Map.entry("userName", "Name"), Map.entry("groupName", "group1"), Map.entry("isAdmin", "false"));
+        ResponseEntity<GroupMembers> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/group/adduser", requestBody, GroupMembers.class);
+
+        assertNotNull(response);
+        assertNull(response.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
