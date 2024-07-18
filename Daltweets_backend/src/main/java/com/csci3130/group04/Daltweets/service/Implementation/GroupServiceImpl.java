@@ -102,20 +102,24 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public GroupMembers addUser(GroupMembers groupMember){
+    public GroupMembers addUser(String username, String groupname, boolean isAdmin){
 
-        if(groupMember == null){
-            throw new IllegalArgumentException("GroupMember is null");
-        }
-        if(groupMember.getUser() == null){
+        if(username == null){
             throw new IllegalArgumentException("User is null");
         }
-        if(groupMember.getGroup() == null){
+        if(groupname == null){
             throw new IllegalArgumentException("Group is null");
         }
 
-        Group group = groupMember.getGroup();
-        User user = groupMember.getUser();
+        User user = userService.getUserByName(username);
+        Group group = groupRepository.findGroupByName(groupname);
+
+        if(user == null){
+            throw new IllegalArgumentException("User was not found");
+        }
+        if(group == null){
+            throw new IllegalArgumentException("Group was not found");
+        }
 
         if(user.isAccountDeleted()){
             throw new IllegalArgumentException("Cannot add deleted user to group");
@@ -124,16 +128,19 @@ public class GroupServiceImpl implements GroupService {
             throw new IllegalArgumentException("Cannot add user to deleted group");
         }
 
-        String username = groupMember.getUser().getUsername();
-        String groupName = groupMember.getGroup().getName();
-        GroupMembers alreadyExisting = groupMembersRepository.findGroupMembersByUserAndGroup(username, groupName);
+        GroupMembers alreadyExisting = groupMembersRepository.findGroupMembersByUserAndGroup(username, groupname);
 
         if(alreadyExisting != null){
             System.out.println("User already exists in the group");
             return null;
         }
 
-        return groupMembersRepository.save(groupMember);
+        GroupMembers addedUser = new GroupMembers();
+        addedUser.setUser(user);
+        addedUser.setGroup(group);
+        addedUser.setAdmin(isAdmin);
+
+        return groupMembersRepository.save(addedUser);
     }
 
     @Override

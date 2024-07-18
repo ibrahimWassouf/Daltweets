@@ -14,6 +14,6 @@ public interface GroupService {
     public List<Group> getGroupsByUser( String username );
     public List<User> getGroupMembers(String groupName);
     public List<User> getGroupAdmins(String groupName);
-    public GroupMembers addUser(GroupMembers groupMember);
+    public GroupMembers addUser(String username, String groupname, boolean isAdmin);
     public GroupMembers deleteUser(String username, String groupname);
 }
