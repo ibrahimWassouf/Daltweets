@@ -12,7 +12,10 @@ export default function UserList() {
           `${import.meta.env.VITE_BACKEND_BASE_URL}/api/user/all-users`
         );
         console.log(response.data);
-        setUsers(response.data);
+        let userList = response.data.filter(
+          (u) => u.username != admin.username
+        );
+        setUsers(userList);
       } catch (error) {
         console.error("Error get data", error);
       }
@@ -31,7 +34,7 @@ export default function UserList() {
 
       const newUsers = users.map((u, i) => {
         if (i == idx) {
-          return { ...u, state: "ACTIVATED" };
+          return { ...u, accountDeleted: false };
         }
         return u;
       });
@@ -48,10 +51,10 @@ export default function UserList() {
         username: username,
       })
       .then((response) => {
-        if (response.data) users[idx].status = "ACTIVATED";
+        if (response.data) users[idx].accountDeleted = true;
         const newUsers = users.map((u, i) => {
           if (i == idx) {
-            return { ...u, state: "DEACTIVATED" };
+            return { ...u, accountDeleted: true };
           } else {
             return u;
           }
@@ -69,7 +72,7 @@ export default function UserList() {
       <p className="w-1/3">{elem.username}</p>
       <p className="w-1/3">{elem.email}</p>
       <div className="w-1/3 flex justify-center">
-        {elem.status === "DEACTIVATED" ? (
+        {elem.accountDeleted ? (
           <button
             onClick={() => handleActivate(elem.username, idx)}
             className="flex w-20 justify-center rounded-md bg-yellow-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
