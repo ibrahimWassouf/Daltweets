@@ -83,20 +83,17 @@ public class GroupController {
 
     @PostMapping("/adduser")
     ResponseEntity<GroupMembers> addUser(@RequestBody Map<String,String> requestBody){
-        String adminName = requestBody.get("adminName");
         String userName = requestBody.get("userName");
         String groupName = requestBody.get("groupName");
-        if((!userService.isValidName(adminName) && !userService.isValidName(userName)) || !userService.isValidName(groupName)){
+        boolean isAdmin = Boolean.parseBoolean(requestBody.get("isAdmin"));
+        
+        if( !(userService.isValidName(userName) && userService.isValidName(groupName))){
             return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
         }
 
-        GroupMembers addedMember;
-
-        if(adminName != null){
-            addedMember = groupService.addUser(adminName, groupName, true);
-        }
-        else{
-            addedMember = groupService.addUser(userName, groupName, false);
+        GroupMembers addedMember = groupService.addUser(userName, groupName, isAdmin);
+        if ( addedMember == null ) {
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(addedMember,HttpStatus.CREATED);

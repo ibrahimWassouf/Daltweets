@@ -131,7 +131,6 @@ public class GroupServiceImpl implements GroupService {
         GroupMembers alreadyExisting = groupMembersRepository.findGroupMembersByUserAndGroup(username, groupname);
 
         if(alreadyExisting != null){
-            System.out.println("User already exists in the group");
             return null;
         }
 
