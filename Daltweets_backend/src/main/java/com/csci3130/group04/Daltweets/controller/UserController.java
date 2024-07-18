@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.model.User.Role;
+import com.csci3130.group04.Daltweets.model.User.Status;
 import com.csci3130.group04.Daltweets.model.Login;
 import com.csci3130.group04.Daltweets.service.LoginService;
 import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImpl;
@@ -103,7 +104,7 @@ public class UserController {
     {
       User admin = userService.getUserByName(requestBody.get("adminName"));
       if (!(admin.getRole().equals(Role.SUPERADMIN))) return new ResponseEntity<>(Boolean.FALSE,HttpStatus.UNAUTHORIZED);
-      User deactivatedUser = userService.deleteExistingUser(requestBody.get("username"));
+      User deactivatedUser = userService.softDeleteUser(requestBody.get("username"));
       if (deactivatedUser == null)
       {
         return new ResponseEntity<>(Boolean.FALSE,HttpStatus.NOT_IMPLEMENTED);
@@ -115,17 +116,8 @@ public class UserController {
         String adminName = requestBody.get("adminname");
         String userName = requestBody.get("username");
         String status = requestBody.get("status");
-        User.Status userstatus = null;
-        if ( status.equals("ACTIVATED") ) {
-            userstatus = ACTIVATED;
-        }
-        if ( status.equals("DEACTIVATED")) {
-            userstatus = DEACTIVATED;
-        }
+       
         if ( !userService.isValidName(adminName) || !userService.isValidName(userName) ) {
-            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
-        }
-        if ( userstatus == null ) {
             return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
         }
 
@@ -134,11 +126,21 @@ public class UserController {
             return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
         }
 
-        User user = userService.changeUserStatus(userName,userstatus);
+        User user = null;
+        if (status.equals(Status.OFFLINE.toString()))
+        {
+         user = userService.changeUserStatus(userName,Status.OFFLINE); 
+        }
+        else if (status.equals("REJECTED"))
+        {
+          user = userService.softDeleteUser(userName);
+        }
+
         if ( user == null ) {
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
-        String result = "Success " + status + " " + userName;
+
+        String result = "Success "+ userName + " "+ status;        
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 }

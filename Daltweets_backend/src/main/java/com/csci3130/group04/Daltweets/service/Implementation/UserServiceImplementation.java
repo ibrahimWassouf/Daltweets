@@ -73,16 +73,16 @@ public class UserServiceImplementation implements UserService {
        if(name == null || name.isEmpty()) return null;
        User user = userRepository.findByUsernameRawSearch(name);
        if (user == null) return null;
-       user.setStatus(Status.ACTIVATED);
+       user.setAccountDeleted(false);
        return userRepository.save(user);
     }
 
     @Override
-    public User deleteExistingUser(String name) {
+    public User softDeleteUser(String name) {
         if (name == null || name.isEmpty()) return null;
         User user = userRepository.findByUsernameRawSearch(name);
        if (user == null) return null;
-       user.setStatus(Status.DEACTIVATED);
+       user.setAccountDeleted(true);
        return userRepository.save(user);
     }   
 
