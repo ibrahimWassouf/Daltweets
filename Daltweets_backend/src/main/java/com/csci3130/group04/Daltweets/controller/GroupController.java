@@ -1,19 +1,24 @@
 package com.csci3130.group04.Daltweets.controller;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.csci3130.group04.Daltweets.model.Group;
 import com.csci3130.group04.Daltweets.model.GroupMembers;
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.service.Implementation.GroupServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-
-import java.util.List;
-import java.util.Map;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*", maxAge = 3600)
 @RestController
@@ -75,6 +80,29 @@ public class GroupController {
         if (groupAdmins == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(groupAdmins,HttpStatus.OK);
     }
+
+    @PostMapping("/adduser")
+    ResponseEntity<GroupMembers> addUser(@RequestBody Map<String,String> requestBody){
+        String adminName = requestBody.get("adminName");
+        String userName = requestBody.get("userName");
+        String groupName = requestBody.get("groupName");
+        if((!userService.isValidName(adminName) && !userService.isValidName(userName)) || !userService.isValidName(groupName)){
+            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+        }
+
+        GroupMembers addedMember;
+
+        if(adminName != null){
+            addedMember = groupService.addUser(adminName, groupName, true);
+        }
+        else{
+            addedMember = groupService.addUser(userName, groupName, false);
+        }
+
+        return new ResponseEntity<>(addedMember,HttpStatus.CREATED);
+    }
+
+
     @PostMapping("/deleteuser")
     ResponseEntity<GroupMembers> deleteUser(@RequestBody Map<String,String> requestBody) {
         String adminname = requestBody.get("adminname");
