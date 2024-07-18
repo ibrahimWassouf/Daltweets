@@ -78,7 +78,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public User deleteExistingUser(String name) {
+    public User softDeleteUser(String name) {
         if (name == null || name.isEmpty()) return null;
         User user = userRepository.findByUsernameRawSearch(name);
        if (user == null) return null;
