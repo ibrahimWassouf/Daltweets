@@ -11,10 +11,22 @@ const UpdateUser = () => {
   const [accountDeleted, setAccountDeleted] = useState(user.accountDeleted);
   const [role, setRole] = useState(user.role);
   const [status, setStatus] = useState(user.status);
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const updateUser = (e) => {
     e.preventDefault();
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (password && !passwordRegex.test(password)) {
+      setError(
+        "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character"
+      );
+      return;
+    }
+
     const formData = {
       id,
       bio: bio === "" ? user.bio : bio,
@@ -25,7 +37,9 @@ const UpdateUser = () => {
         accountDeleted === "" ? user.accountDeleted : accountDeleted,
       role: role === "" ? user.role : role,
       status: status === "" ? user.status : status,
+      ...(password && { password }),
     };
+
     axios
       .put(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/user/update`, formData)
       .then((response) => {
@@ -133,19 +147,36 @@ const UpdateUser = () => {
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 h-36"
+              ></textarea>
+            </div>
+          </div>
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Password
+            </label>
+            <div>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
-          {error && <div className="text-red-500 mt-4">{error}</div>}
           <div>
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-yellow-500 shadow-sm hover:bg-yellow-500 hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="w-full flex justify-center rounded-md bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Submit
             </button>
           </div>
         </form>
+        {error && <div className="mt-3 text-red-600 text-sm">{error}</div>}
       </div>
     </div>
   );
