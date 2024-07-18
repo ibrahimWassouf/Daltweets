@@ -107,13 +107,17 @@ const UpdateUser = () => {
               Status
             </label>
             <div>
-              <input
+              <select
                 id="status"
-                type="text"
                 value={status}
-                onChange={(e) => setStatus(e.target.value.toUpperCase())}
-                className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
+                onChange={(e) => setStatus(e.target.value)}
+                className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              >
+                <option value="ONLINE">Online</option>
+                <option value="OFFLINE">Offline</option>
+                <option value="AWAY">Away</option>
+                <option value="BUSY">Busy</option>
+              </select>
             </div>
           </div>
           <div>
