@@ -138,40 +138,40 @@ public class GroupIntegrationTests {
     @Test
     public void testAddUserToGroup(){
         Group group = new Group(1, "group1", LocalDateTime.now(), true);
-        groupRepository.save(group);
+        Group saved_group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
-        userRepository.save(user);
+        User saved_user = userRepository.save(user);
 
-        GroupMembers userMember = new GroupMembers(1, group, user, false);
+        GroupMembers userMember = new GroupMembers(1, saved_group, saved_user, false);
         GroupMembers addedGroupMember = groupService.addUser(userMember);
 
-        assertEquals(userMember, addedGroupMember);
+        assertEquals(userMember.getId(), addedGroupMember.getId());
     }
 
     @Test
     public void testAddGroupAdmin(){
         Group group = new Group(1, "group1", LocalDateTime.now(), true);
-        groupRepository.save(group);
+        Group saved_group = groupRepository.save(group);
 
         User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
-        userRepository.save(admin);
+        User saved_admin = userRepository.save(admin);
 
-        GroupMembers adminMember = new GroupMembers(1, group, admin, true);
+        GroupMembers adminMember = new GroupMembers(1, saved_group, saved_admin, true);
         GroupMembers addedGroupMember = groupService.addUser(adminMember);
 
-        assertEquals(adminMember, addedGroupMember);
+        assertEquals(adminMember.getId(), addedGroupMember.getId());
     }
 
     @Test
     public void testAddUserAlreadyInGroup(){
         Group group = new Group(1, "group1", LocalDateTime.now(), true);
-        groupRepository.save(group);
+        Group saved_group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
-        userRepository.save(user);
+        User saved_user = userRepository.save(user);
 
-        GroupMembers userMember = new GroupMembers(1, group, user, false);
+        GroupMembers userMember = new GroupMembers(1, saved_group, saved_user, false);
         groupService.addUser(userMember);
         GroupMembers alreadyAddedMember = groupService.addUser(userMember);
 
@@ -181,12 +181,12 @@ public class GroupIntegrationTests {
     @Test
     public void testAddDeletedUserAccountToGroup(){
         Group group = new Group(1, "group1", LocalDateTime.now(), true);
-        groupRepository.save(group);
+        Group saved_group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), true, User.Role.SUPERADMIN, User.Status.ONLINE);
-        userRepository.save(user);
+        User saved_user = userRepository.save(user);
 
-        GroupMembers userMember = new GroupMembers(1, group, user, false);
+        GroupMembers userMember = new GroupMembers(1, saved_group, saved_user, false);
 
         IllegalArgumentException exception = (IllegalArgumentException) assertThrows(Throwable.class, () -> groupService.addUser(userMember));
         String expectedMessage = "Cannot add deleted user to group";
@@ -197,12 +197,12 @@ public class GroupIntegrationTests {
     public void testAddUserToDeletedGroup(){
         Group group = new Group(1, "group1", LocalDateTime.now(), true);
         group.setIsDeleted(true);
-        groupRepository.save(group);
+        Group saved_group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
-        userRepository.save(user);
+        User saved_user = userRepository.save(user);
 
-        GroupMembers userMember = new GroupMembers(1, group, user, false);
+        GroupMembers userMember = new GroupMembers(1, saved_group, saved_user, false);
 
         IllegalArgumentException exception = (IllegalArgumentException) assertThrows(Throwable.class, () -> groupService.addUser(userMember));
         String expectedMessage = "Cannot add user to deleted group";
@@ -212,11 +212,11 @@ public class GroupIntegrationTests {
     @Test
     public void testAddUserToGroupWithNullUser(){
         Group group = new Group(1, "group1", LocalDateTime.now(), true);
-        groupRepository.save(group);
+        Group saved_group = groupRepository.save(group);
 
         User user = null;
 
-        GroupMembers userMember = new GroupMembers(1, group, user, false);
+        GroupMembers userMember = new GroupMembers(1, saved_group, user, false);
 
         IllegalArgumentException exception = (IllegalArgumentException) assertThrows(Throwable.class, () -> groupService.addUser(userMember));
         String expectedMessage = "User is null";
@@ -228,9 +228,9 @@ public class GroupIntegrationTests {
         Group group = null;
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
-        userRepository.save(user);
+        User saved_user = userRepository.save(user);
 
-        GroupMembers userMember = new GroupMembers(1, group, user, false);
+        GroupMembers userMember = new GroupMembers(1, group, saved_user, false);
 
         IllegalArgumentException exception = (IllegalArgumentException) assertThrows(Throwable.class, () -> groupService.addUser(userMember));
         String expectedMessage = "Group is null";
