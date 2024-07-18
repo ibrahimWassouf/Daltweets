@@ -113,7 +113,7 @@ class UserServiceIntegrationTests {
   void test_add_existing_user(){
     User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
     admin = userRepository.save(admin);
-    User user = new User(admin.getId()+1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.DEACTIVATED);
+    User user = new User(admin.getId()+1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.ONLINE);
     user = userRepository.save(user);
     
     Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName","admin"), Map.entry("username", "Name"));
@@ -128,7 +128,7 @@ class UserServiceIntegrationTests {
   {
     User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.ONLINE);
     admin = userRepository.save(admin);
-    User user = new User(admin.getId()+1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.DEACTIVATED);
+    User user = new User(admin.getId()+1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.ONLINE);
     user = userRepository.save(user);
 
     Map<String, String> requestBody = Map.ofEntries(Map.entry("adminName","admin"), Map.entry("username", ""));
@@ -377,14 +377,13 @@ class UserServiceIntegrationTests {
      User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
      admin = userRepository.save(admin);
 
-     User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
+     User user = new User(2,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
      User saved_user = userRepository.save(user);
 
-     Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","ACTIVATED"));
+     Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","OFFLINE"));
      ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
 
-     String result = "Success ACTIVATED " + saved_user.getUsername();
-
+     String result = "Success "+saved_user.getUsername()+ " OFFLINE";
      assertNotNull(response);
      assertEquals(result,response.getBody());
      assertEquals(HttpStatus.OK,response.getStatusCode());
@@ -395,13 +394,13 @@ class UserServiceIntegrationTests {
       User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
       admin = userRepository.save(admin);
 
-      User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
+      User user = new User(admin.getId()+1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
       User saved_user = userRepository.save(user);
 
-      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","DEACTIVATED"));
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","REJECTED"));
       ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
 
-      String result = "Success DEACTIVATED " + saved_user.getUsername();
+      String result = "Success "+ saved_user.getUsername() +" REJECTED";
 
       assertNotNull(response);
       assertEquals(result,response.getBody());
@@ -416,7 +415,7 @@ class UserServiceIntegrationTests {
       User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
 
 
-      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","DEACTIVATED"));
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","REJECTED"));
       ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
 
       assertNotNull(response);
