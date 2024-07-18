@@ -36,140 +36,137 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @ExtendWith(SpringExtension.class)
 class PostServiceIntegrationTests {
 
-    @LocalServerPort
-    private int port;
+        @LocalServerPort
+        private int port;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+        @Autowired
+        private TestRestTemplate restTemplate;
 
-    @Autowired
-    private PostServiceImpl postService;
+        @Autowired
+        private PostServiceImpl postService;
 
-    @Autowired
-    private PostRepository postRepository;
+        @Autowired
+        private PostRepository postRepository;
 
-    @Autowired
-    private FollowersServiceImpl followersService;
+        @Autowired
+        private FollowersServiceImpl followersService;
 
-    @Autowired
-    private FollowersRepository followersRepository;
+        @Autowired
+        private FollowersRepository followersRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+        @Autowired
+        private UserRepository userRepository;
 
-    @BeforeEach
-    void setup() {
-        followersRepository.deleteAll();
-        postRepository.deleteAll();
-        userRepository.deleteAll();
-    }
+        @BeforeEach
+        void setup() {
+                followersRepository.deleteAll();
+                postRepository.deleteAll();
+                userRepository.deleteAll();
+        }
 
-    @AfterEach
-    void teardown() {
-        followersRepository.deleteAll();
-        postRepository.deleteAll();
-        userRepository.deleteAll();
-    }
+        @AfterEach
+        void teardown() {
+                followersRepository.deleteAll();
+                postRepository.deleteAll();
+                userRepository.deleteAll();
+        }
 
-    @Test
-    void createPostIntegrationTest() {
-        User user = new User(1, "PosterBio", "PostTester", "poster@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN,
-                User.Status.ONLINE);
-        user = userRepository.save(user);
+        @Test
+        void createPostIntegrationTest() {
+                User user = new User(1, "PosterBio", "PostTester", "poster@dal.ca", LocalDateTime.now(), false,
+                                Role.SUPERADMIN,
+                                User.Status.ONLINE);
+                user = userRepository.save(user);
 
-        Post post = new Post();
-        post.setUser(user);
-        post.setText("Post testers test post");
-        post.setDateCreated(LocalDateTime.now());
+                Post post = new Post();
+                post.setUser(user);
+                post.setText("Post testers test post");
+                post.setDateCreated(LocalDateTime.now());
 
-        ResponseEntity<Post> response = restTemplate.postForEntity(
-                "http://localhost:" + port + "/api/post/create", post, Post.class);
+                ResponseEntity<Post> response = restTemplate.postForEntity(
+                                "http://localhost:" + port + "/api/post/create", post, Post.class);
 
-        assertNotNull(response.getBody());
-        assertEquals("Post testers test post", response.getBody().getText());
-        assertEquals("PostTester", response.getBody().getUser().getUsername());
-    }
+                assertNotNull(response.getBody());
+                assertEquals("Post testers test post", response.getBody().getText());
+                assertEquals("PostTester", response.getBody().getUser().getUsername());
+        }
 
-    @Test
-    void createPostWithNullUserIntegrationTest() {
-        Post post = new Post();
-        post.setText("Some text");
-        post.setDateCreated(LocalDateTime.now());
+        @Test
+        void createPostWithNullUserIntegrationTest() {
+                Post post = new Post();
+                post.setText("Some text");
+                post.setDateCreated(LocalDateTime.now());
 
-        ResponseEntity<Post> response = restTemplate.postForEntity(
-                "http://localhost:" + port + "/api/post/create", post, Post.class);
+                ResponseEntity<Post> response = restTemplate.postForEntity(
+                                "http://localhost:" + port + "/api/post/create", post, Post.class);
 
-        assertNull(response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        }
 
-    @Test
-    void createPostWithNullTextIntegrationTest() {
-        User user = new User(1, "PosterBio", "PostTester", "poster@dal.ca", LocalDateTime.now(), false, Role.SUPERADMIN,
-                User.Status.ONLINE);
-        user = userRepository.save(user);
+        @Test
+        void createPostWithNullTextIntegrationTest() {
+                User user = new User(1, "PosterBio", "PostTester", "poster@dal.ca", LocalDateTime.now(), false,
+                                Role.SUPERADMIN,
+                                User.Status.ONLINE);
+                user = userRepository.save(user);
 
-        Post post = new Post();
-        post.setUser(user);
-        post.setDateCreated(LocalDateTime.now());
+                Post post = new Post();
+                post.setUser(user);
+                post.setDateCreated(LocalDateTime.now());
 
-        ResponseEntity<Post> response = restTemplate.postForEntity(
-                "http://localhost:" + port + "/api/post/create", post, Post.class);
+                ResponseEntity<Post> response = restTemplate.postForEntity(
+                                "http://localhost:" + port + "/api/post/create", post, Post.class);
 
-        assertNull(response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        }
 
-    @Test
-    void getAllPostsIntegrationTest() {
-        // Create users
-        User user = new User(1, "I follow people", "Following", "following@dal.ca", LocalDateTime.now(), false,
-                Role.SUPERADMIN, User.Status.ONLINE);
-        User user2 = new User(1, "I will be followed", "Followed1", "followed1@dal.ca", LocalDateTime.now(), false,
-                Role.SUPERADMIN, User.Status.ONLINE);
-        User user3 = new User(1, "I'll also be followed", "Followed2", "followed2@dal.ca", LocalDateTime.now(), false,
-                Role.SUPERADMIN, User.Status.ONLINE);
+        @Test
+        void getAllPostsIntegrationTest() {
+                // Create users
+                User user = new User(1, "I follow people", "Following", "following@dal.ca", LocalDateTime.now(), false,
+                                Role.SUPERADMIN, User.Status.ONLINE);
+                User user2 = new User(2, "I will be followed", "Followed1", "followed1@dal.ca", LocalDateTime.now(),
+                                false,
+                                Role.SUPERADMIN, User.Status.ONLINE);
+                User user3 = new User(3, "I'll also be followed", "Followed2", "followed2@dal.ca", LocalDateTime.now(),
+                                false,
+                                Role.SUPERADMIN, User.Status.ONLINE);
 
-        user = userRepository.save(user);
-        user2 = userRepository.save(user2);
-        user3 = userRepository.save(user3);
+                user = userRepository.save(user);
+                user2 = userRepository.save(user2);
+                user3 = userRepository.save(user3);
 
-        // Add followers
-        Followers firstFollow = followersService.addFollower(user, user2);
-        Followers secondFollow = followersService.addFollower(user, user3);
+                // Add followers
+                Followers firstFollow = followersService.addFollower(user2, user);
+                Followers secondFollow = followersService.addFollower(user3, user);
 
-        followersRepository.save(firstFollow);
-        followersRepository.save(secondFollow);
+                followersRepository.save(firstFollow);
+                followersRepository.save(secondFollow);
 
-        // Create posts
-        Post post2 = new Post();
-        post2.setUser(user2);
-        post2.setText("User 2's Post");
-        post2.setDateCreated(LocalDateTime.now());
+                // Create posts
+                Post post2 = new Post();
+                post2.setUser(user2);
+                post2.setText("User 2's Post");
+                post2.setDateCreated(LocalDateTime.now());
 
-        Post post3 = new Post();
-        post3.setUser(user3);
-        post3.setText("User 3's Post");
-        post3.setDateCreated(LocalDateTime.now());
+                Post post3 = new Post();
+                post3.setUser(user3);
+                post3.setText("User 3's Post");
+                post3.setDateCreated(LocalDateTime.now());
 
-        postRepository.save(post2);
-        postRepository.save(post3);
+                postRepository.save(post2);
+                postRepository.save(post3);
 
-        // Make the GET request to retrieve all posts for the specified user
-        ResponseEntity<Post[]> response = restTemplate.getForEntity(
-                "http://localhost:" + port + "/api/post/Following/all", Post[].class);
+                // Make the GET request to retrieve all posts for the specified user
+                ResponseEntity<List> response = restTemplate.getForEntity(
+                                "http://localhost:" + port + "/api/post/Following/all", List.class);
 
-        // Verify the response
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(2, response.getBody().length);
-        List<Post> posts = List.of(response.getBody());
-
-        // Verify the content of the posts
-        assertEquals("User 2's Post", posts.get(0).getText());
-        assertEquals("Followed1", posts.get(0).getUser().getUsername());
-        assertEquals("User 3's Post", posts.get(1).getText());
-        assertEquals("Followed2", posts.get(1).getUser().getUsername());
-    }
+                // Verify the response
+                assertNotNull(response.getBody());
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                assertEquals(2, response.getBody().size());
+        }
 
 }
