@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function GroupDisplay({groupname, Public}) {
   let statusColor;
@@ -26,7 +27,7 @@ function GroupDisplay({groupname, Public}) {
                 </div>
             </div>
             <div className="flex justify-center">
-                <span className="font-bold">{groupname}</span>
+                <Link to={`/groupdetail/${encodeURIComponent(groupname)}`} className="font-bold">{groupname}</Link>
             </div>
             </div>
         </div>  
