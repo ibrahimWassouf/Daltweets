@@ -48,6 +48,12 @@ public class GroupController {
         return new ResponseEntity<>(group, HttpStatus.CREATED);
     }
 
+    @GetMapping("/all")
+    ResponseEntity<List<Group>> getAllGroups(){
+        List<Group> groups = groupService.getAllGroups();
+        return new ResponseEntity<>(groups,HttpStatus.OK);
+    }
+
     @GetMapping("/{username}/groups")
     ResponseEntity<List<Group>> getGroups(@PathVariable("username") String username) {
         if ( username == null || username.isBlank() ) {
