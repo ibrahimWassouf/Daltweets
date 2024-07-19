@@ -121,4 +121,9 @@ public class GroupController {
 
         return new ResponseEntity<>(groupMembers,HttpStatus.OK);
     }
+
+    @GetMapping("/all-groups")
+    List<Group> getAllGroups(){
+      return groupService.getAllGroups();
+    }
 }
