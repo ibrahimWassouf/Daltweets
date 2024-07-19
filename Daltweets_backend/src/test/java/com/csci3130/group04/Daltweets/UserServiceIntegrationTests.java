@@ -458,6 +458,7 @@ class UserServiceIntegrationTests {
       assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
   }
 
+  @Test
   void test_change_status_with_wrong_status() {
       User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, Role.SUPERADMIN, User.Status.ONLINE);
       admin = userRepository.save(admin);
@@ -472,5 +473,36 @@ class UserServiceIntegrationTests {
       assertNotNull(response);
       assertNull(response.getBody());
       assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+  }
+
+  @Test
+  void test_controller_get_all_users(){
+   User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+   User user2 = new User(2,"checkbio2","Name2","mail2", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+   User user3 = new User(3,"checkbio3","Name3","mail3", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+   User user4 = new User(4,"checkbio4","Name4","mail4", LocalDateTime.now(),false, User.Role.SUPERADMIN, User.Status.ONLINE);
+
+   List<User> list = new ArrayList<>();
+   list.add(user);
+   list.add(user2);
+   list.add(user3);
+   list.add(user4);
+   userRepository.saveAll(list);
+
+   ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/user/"+user.getUsername()+"/all-users",List.class);
+
+   assertNotNull(response);
+   assertEquals(3,response.getBody().size());
+   assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+
+  @Test
+  void test_controller_get_all_users_with_invalid_name(){
+   ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/user/ /all-users",List.class);
+
+   assertNotNull(response);
+   assertNull(response.getBody());
+   assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 }
