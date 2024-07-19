@@ -118,12 +118,12 @@ public class UserController {
     String status = requestBody.get("status");
 
     if (!userService.isValidName(adminName) || !userService.isValidName(userName)) {
-      return new ResponseEntity<>("Admin does not have valid name", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     User admin = userService.getUserByName(adminName);
     if (!(admin.getRole().equals(Role.SUPERADMIN) || admin.getRole().equals(ADMIN))) {
-      return new ResponseEntity<>("Admin not found", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     User user = null;
@@ -134,7 +134,7 @@ public class UserController {
     }
 
     if (user == null) {
-      return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+      return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     String result = "Success " + userName + " " + status;
