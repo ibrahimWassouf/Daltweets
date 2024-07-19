@@ -1,19 +1,18 @@
 package com.csci3130.group04.Daltweets.service.Implementation;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.csci3130.group04.Daltweets.model.Group;
 import com.csci3130.group04.Daltweets.model.GroupMembers;
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.repository.GroupMembersRepository;
 import com.csci3130.group04.Daltweets.repository.GroupRepository;
-import com.csci3130.group04.Daltweets.repository.UserRepository;
 import com.csci3130.group04.Daltweets.service.GroupService;
-import com.csci3130.group04.Daltweets.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -100,6 +99,44 @@ public class GroupServiceImpl implements GroupService {
        Group foundGroup = groupRepository.findGroupByName(groupName);
        if (foundGroup == null) return null;
        return groupMembersRepository.findAdminsByGroupName(groupName);
+    }
+
+    @Override
+    public GroupMembers addUser(String username, String groupname, boolean isAdmin){
+
+        if(username == null){
+            throw new IllegalArgumentException("User is null");
+        }
+        if(groupname == null){
+            throw new IllegalArgumentException("Group is null");
+        }
+
+        User user = userService.getUserByName(username);
+        Group group = groupRepository.findGroupByName(groupname);
+
+        if(user == null){
+            throw new IllegalArgumentException("User was not found");
+        }
+        if(group == null){
+            throw new IllegalArgumentException("Group was not found");
+        }
+
+        if(group.getIsDeleted()){
+            throw new IllegalArgumentException("Cannot add user to deleted group");
+        }
+
+        GroupMembers alreadyExisting = groupMembersRepository.findGroupMembersByUserAndGroup(username, groupname);
+
+        if(alreadyExisting != null){
+            return null;
+        }
+
+        GroupMembers addedUser = new GroupMembers();
+        addedUser.setUser(user);
+        addedUser.setGroup(group);
+        addedUser.setAdmin(isAdmin);
+
+        return groupMembersRepository.save(addedUser);
     }
 
     @Override
