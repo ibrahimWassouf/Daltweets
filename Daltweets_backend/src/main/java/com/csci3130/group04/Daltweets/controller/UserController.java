@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -133,5 +134,15 @@ public class UserController {
         }
         String result = "Success " + status + " " + userName;
         return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping("/{username}/all-users")
+    ResponseEntity<List<User>> getAllUsers(@PathVariable("username") String username){
+      if (!userService.isValidName(username))
+      {
+        return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+      }
+      List<User> recommendList = userService.getRecommendedUsers(username);
+      return new ResponseEntity<>(recommendList,HttpStatus.OK);
     }
 }
