@@ -1,6 +1,7 @@
 import { Tab, TabGroup, TabList, TabPanels, TabPanel } from "@headlessui/react";
 import SignupRequests from "../components/SignupRequests";
 import UserList from "../components/UserList";
+import GroupList from "../components/GroupList";
 
 export default function AdminPage() {
   const tabs = [
@@ -38,7 +39,9 @@ export default function AdminPage() {
           <TabPanel>
             <UserList />
           </TabPanel>
-          <TabPanel></TabPanel>
+          <TabPanel>
+            <GroupList />
+          </TabPanel>
         </TabPanels>
       </TabGroup>
     </>
