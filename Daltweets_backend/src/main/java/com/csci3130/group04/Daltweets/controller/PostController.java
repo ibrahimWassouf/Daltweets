@@ -3,7 +3,10 @@ package com.csci3130.group04.Daltweets.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.csci3130.group04.Daltweets.service.Implementation.GroupServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +24,12 @@ public class PostController {
     PostService postService;
 
     @Autowired
-    UserService userService;
+    UserServiceImplementation userService;
 
     @Autowired
     FollowersService followersService;
+    @Autowired
+    GroupServiceImpl groupService;
 
     @PostMapping("/create")
     public ResponseEntity<Post> createPost(@RequestBody Post post) {
@@ -38,7 +43,20 @@ public class PostController {
     @GetMapping("/{username}/all")
     List<Post> getAllPosts(@PathVariable("username") String username) {
         User user = userService.getUserByName(username);
-        List<User> followers = followersService.getUserFollowing(user);
-        return postService.getPostsByUsers(followers);
+        List<User> following = followersService.getUserFollowing(user);
+        return postService.getPostsByUsers(following);
     }
+    @GetMapping("/{groupname}/groupPosts")
+    ResponseEntity<List<Post>> getAllGroupPosts(@PathVariable("groupname") String groupname ) {
+        if ( groupname == null ) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        List<User> groupmembers = groupService.getGroupMembers(groupname);
+        if ( groupmembers == null ) {
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
+        List<Post> groupposts = postService.getPostsByUsers(groupmembers);
+        return new ResponseEntity<>(groupposts,HttpStatus.OK);
+    }
+
 }
