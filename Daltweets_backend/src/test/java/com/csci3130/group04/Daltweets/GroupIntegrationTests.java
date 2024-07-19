@@ -189,7 +189,7 @@ public class GroupIntegrationTests {
         userRepository.save(user);
 
         IllegalArgumentException exception = (IllegalArgumentException) assertThrows(Throwable.class, () -> groupService.addUser("Name", "group1", false));
-        String expectedMessage = "Cannot add deleted user to group";
+        String expectedMessage = "User was not found";
         assertEquals(expectedMessage, exception.getMessage());
     }
 

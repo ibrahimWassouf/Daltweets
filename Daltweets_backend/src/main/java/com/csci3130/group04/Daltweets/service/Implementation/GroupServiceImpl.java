@@ -121,9 +121,6 @@ public class GroupServiceImpl implements GroupService {
             throw new IllegalArgumentException("Group was not found");
         }
 
-        if(user.isAccountDeleted()){
-            throw new IllegalArgumentException("Cannot add deleted user to group");
-        }
         if(group.getIsDeleted()){
             throw new IllegalArgumentException("Cannot add user to deleted group");
         }
