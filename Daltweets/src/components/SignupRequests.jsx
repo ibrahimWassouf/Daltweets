@@ -85,6 +85,10 @@ export default function SignupRequests() {
   ));
   return (
     <>
+      <div className="box-border flex flex-row mx-auto w-3/6 pr-5 font-bold m-2">
+        <p className="w-1/3">User Name</p>
+        <p className="w-1/3 text-center">Email</p>
+      </div>
       <div className=" box-border mx-auto w-3/6 flex justify-center">
         <ul className="w-full flex flex-col justify-center ">{list}</ul>
       </div>
