@@ -119,4 +119,9 @@ public class GroupServiceImpl implements GroupService {
         groupMembersRepository.delete(groupMembers);
         return groupMembers;
     }
+
+    @Override
+    public int getGroupCount(String name){
+      return groupRepository.getGroupCount(name);
+    }
 }

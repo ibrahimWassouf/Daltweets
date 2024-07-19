@@ -55,7 +55,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void testGetGroupByName() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
 
         groupRepository.save(group);
 
@@ -71,7 +71,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void testDeleteGroup() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
 
         groupRepository.save(group);
 
@@ -87,14 +87,14 @@ public class GroupIntegrationTests {
 
     @Test
     public void testDeleteGroupWithNonExistingGroup() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
 
         assertThrows(Throwable.class, () -> groupService.deleteGroup(group));
     }
 
     @Test
     public void testCreatePublicGroup() {
-        Group group = new Group(2, "group2", LocalDateTime.now(), true);
+        Group group = new Group(2, "group2", LocalDateTime.now(), true, "");
         groupRepository.save(group);
         Group created = groupService.createGroup(group);
         assertTrue(group.getIsPublic());
@@ -103,7 +103,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void testCreatePrivateGroup() {
-        Group group = new Group(2, "group2", LocalDateTime.now(), false);
+        Group group = new Group(2, "group2", LocalDateTime.now(), false, "");
         groupRepository.save(group);
         Group created = groupService.createGroup(group);
         assertFalse(group.getIsPublic());
@@ -112,14 +112,14 @@ public class GroupIntegrationTests {
 
     @Test
     public void testCreateGroupWithoutName() {
-        Group group = new Group(2, null, LocalDateTime.now(), false);
+        Group group = new Group(2, null, LocalDateTime.now(), false, "");
         Group createdGroup = groupService.createGroup(group);
         assertNull(createdGroup);
     }
 
     @Test
     public void testCreateGroupWithoutTimeCreated() {
-        Group group = new Group(2, "group2", null, false);
+        Group group = new Group(2, "group2", null, false, "");
         Group created = groupService.createGroup(group);
         assertNotNull(created.getDateCreated());
     }
@@ -132,7 +132,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_controller_delete_group() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         Group saved_group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -153,7 +153,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_controller_delete_group_without_admin() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         Group saved_group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -172,7 +172,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_controller_delete_group_with_nonExist_group() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
         User saved_user = userRepository.save(user);
@@ -192,7 +192,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_get_groups() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         Group saved_group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -219,7 +219,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_get_group_members() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -251,7 +251,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_get_group_admins() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -269,7 +269,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_get_group_admins_with_no_admins() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -301,7 +301,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_delete_user() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         Group saved_group = groupRepository.save(group);
 
         User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -328,7 +328,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_delete_user_without_admin() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         Group saved_group = groupRepository.save(group);
 
         User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -353,7 +353,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_delete_user_with_nonexist_groupmember() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         Group saved_group = groupRepository.save(group);
 
         User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -377,7 +377,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_delete_user_with_invalid_name() {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         Group saved_group = groupRepository.save(group);
 
         User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -399,7 +399,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_controller_create_public_group() {
-        Group group = new Group(2, "group2", LocalDateTime.now(), true);
+        Group group = new Group(2, "group2", LocalDateTime.now(), true, "");
         Group savedGroup = groupRepository.save(group);
 
         User user = new User(2, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -416,7 +416,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_controller_create_private_group() {
-        Group group = new Group(2, "group2", LocalDateTime.now(), false);
+        Group group = new Group(2, "group2", LocalDateTime.now(), false, "");
         Group savedGroup = groupRepository.save(group);
 
         User user = new User(2, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
