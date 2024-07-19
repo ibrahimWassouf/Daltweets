@@ -137,7 +137,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void testAddUserToGroup(){
-        Group group = new Group(1, "group1", LocalDateTime.now(), true);
+        Group group = new Group(1, "group1", LocalDateTime.now(), true, "");
         Group saved_group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -153,7 +153,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void testAddGroupAdmin(){
-        Group group = new Group(1, "group1", LocalDateTime.now(), true);
+        Group group = new Group(1, "group1", LocalDateTime.now(), true, "");
         Group saved_group = groupRepository.save(group);
 
         User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -168,7 +168,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void testAddUserAlreadyInGroup(){
-        Group group = new Group(1, "group1", LocalDateTime.now(), true);
+        Group group = new Group(1, "group1", LocalDateTime.now(), true, "");
         groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -182,7 +182,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void testAddDeletedUserAccountToGroup(){
-        Group group = new Group(1, "group1", LocalDateTime.now(), true);
+        Group group = new Group(1, "group1", LocalDateTime.now(), true, "");
         groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), true, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -195,7 +195,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void testAddUserToDeletedGroup(){
-        Group group = new Group(1, "group1", LocalDateTime.now(), true);
+        Group group = new Group(1, "group1", LocalDateTime.now(), true, "");
         group.setIsDeleted(true);
         groupRepository.save(group);
 
@@ -209,7 +209,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void testAddUserToGroupWithNonexistentUser(){
-        Group group = new Group(1, "group1", LocalDateTime.now(), true);
+        Group group = new Group(1, "group1", LocalDateTime.now(), true, "");
         groupRepository.save(group);
         
         IllegalArgumentException exception = (IllegalArgumentException) assertThrows(Throwable.class, () -> groupService.addUser("Name", "group1", false));
@@ -412,7 +412,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_controller_add_groupmember_admin(){
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         Group saved_group = groupRepository.save(group);
 
         User admin = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -430,7 +430,7 @@ public class GroupIntegrationTests {
 
     @Test
     public void test_controller_add_groupmember_user(){
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         Group saved_group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -467,7 +467,7 @@ public class GroupIntegrationTests {
     @Test
     public void test_controller_add_groupmember_with_existing_member()
     {
-        Group group = new Group(1, "group1", LocalDateTime.now(), false);
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
         group = groupRepository.save(group);
 
         User user = new User(1, "checkbio", "Name", "mail", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
