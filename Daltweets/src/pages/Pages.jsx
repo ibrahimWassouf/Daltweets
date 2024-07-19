@@ -12,6 +12,7 @@ import {
 import Friends from './Friends';
 import Error from './Error';
 import UpdateUser from './UpdateUser';
+import Group from './Group';
 const Pages = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   return (
@@ -26,6 +27,7 @@ const Pages = () => {
                 <Route path="/create" element = {<CreatePost/>} />
                 <Route path="/profile" element = {<Profile/>} />
                 <Route path="/updateUser" element = {<UpdateUser/>} />
+                <Route path="/group" element={<Group/>} />
             </Routes>
     </div>) : 
     (
