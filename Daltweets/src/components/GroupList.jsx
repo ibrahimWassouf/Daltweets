@@ -10,7 +10,7 @@ export default function GroupList() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_BASE_URL}/api/group/all-groups`
+          `${import.meta.env.VITE_BACKEND_BASE_URL}/api/group/all`
         );
 
         setGroups(response.data);
