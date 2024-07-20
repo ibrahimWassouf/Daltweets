@@ -165,7 +165,7 @@ public class PostServiceIntegrationTests {
         }
         @Test
         public void test_get_all_group_posts() {
-                Group group = new Group(1, "group1", LocalDateTime.now(), false);
+                Group group = new Group(1, "group1", LocalDateTime.now(), false,"");
                 Group saved_group = groupRepository.save(group);
 
                 User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
@@ -187,7 +187,7 @@ public class PostServiceIntegrationTests {
 
         @Test
         public void test_get_all_group_posts_with_null() {
-                Group group = new Group(1, null, LocalDateTime.now(), false);
+                Group group = new Group(1, null, LocalDateTime.now(), false,"");
                 Group saved_group = groupRepository.save(group);
 
                 User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
