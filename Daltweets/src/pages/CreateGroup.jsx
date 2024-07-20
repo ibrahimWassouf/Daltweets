@@ -76,8 +76,8 @@ const CreateGroup = ({isVisible, onClose}) => {
                                 onChange={(e) => setName(e.target.value)}
                                 className="p-3 rounded-md border-slate-400 border-2"
                             />
-                            <select name="isPublic" onChange={(e) => setIsPublic(e.target.value)} className="p-3 rounded-md border-slate-400 border-2 text-slate-400">
-                                <option value = "" >Choose privacy</option>
+                            <select name="isPublic" onChange={(e) => setIsPublic(e.target.value)} className="p-3 rounded-md border-slate-400 border-2 ">
+                                <option value = "" className="text-slate-400">Choose privacy</option>
                                 <option value="true" className="text-black">Public</option>
                                 <option value="false" className="text-black">Private</option>
                             </select>
@@ -91,7 +91,7 @@ const CreateGroup = ({isVisible, onClose}) => {
                                 type="submit"
                                 className="px-4 py-2 rounded bg-black text-gold font-bold cursor-pointer border-2 border-black hover:bg-gray-500"
                             >
-                                Submit
+                                Create group
                             </button>
                         </form>
                     </div>

@@ -2,6 +2,8 @@ import React, {useState,useEffect} from 'react'
 import { useParams } from 'react-router-dom'
 import Post from './Post';
 import axios from 'axios';
+import { IoPersonAddSharp } from 'react-icons/io5';
+import AddMembers from '../pages/AddMembers';
 
 const GroupDetail = () => {
   const { groupname } = useParams();
@@ -9,6 +11,7 @@ const GroupDetail = () => {
   const [posts,setPosts] = useState([]);
   const [admins,setAdmins] = useState([]);
   const [members,setMembers] = useState([]);
+  const [addMember,setAddMember] = useState(false);
   useEffect(() => {
     const fetchGroup = async () => {
       const name = JSON.parse(localStorage.getItem('user')).username;
@@ -71,8 +74,12 @@ const GroupDetail = () => {
                     )
                     : (console.log(admins), (<p> no admins .... </p>))}
             </div>
-            <div className="justify-center flex">
+            <div className="justify-center flex items-center">
                 <h3 className="font-bold"> Members </h3>
+                <button onClick={() => setAddMember(true)}>
+                  <IoPersonAddSharp className="ml-2"/>
+                </button>  
+                <AddMembers isVisible={addMember} onClose={() => setAddMember(false)} groupName={groupname} isAdmin={"false"}/>
             </div>
             <div className="ml-4">
                 {members
