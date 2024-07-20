@@ -10,7 +10,6 @@ public interface GroupService {
     public Group getGroupByName( Group group );
     public boolean isValidToDelete(String username, String groupname);
     public Group createGroup(Group group);
-    public List<Group> getAllGroups();
     public Group deleteGroup ( Group group );
     public List<Group> getGroupsByUser( String username );
     public List<User> getGroupMembers(String groupName);
