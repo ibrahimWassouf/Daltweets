@@ -53,7 +53,8 @@ function Login() {
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <img src="favicon.ico" alt="" width="100" className="block mx-auto max-w-full h-auto"/>
+        <img src="favicon.ico" alt="" width="200" className="block mx-auto max-w-full h-auto"/>
+        <h1 className="text-center text-4xl font-bold leading-9 tracking-tight text-gray-900">DalTweets</h1>
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Login
         </h2>
