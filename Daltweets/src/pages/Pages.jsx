@@ -17,7 +17,7 @@ const Pages = () => {
   return (
     <>
     {
-      user ? (
+      user && user.status !== "PENDING" ? (
     <div className = "flex ">
             <NavBar/>
             <Routes>
