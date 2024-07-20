@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import Post from './Post';
 import axios from 'axios';
 import { IoPersonAddSharp } from 'react-icons/io5';
@@ -14,14 +14,47 @@ const GroupDetail = () => {
   const [addMember,setAddMember] = useState(false);
   const [admin,setAdmin] = useState(null);
   const [addAdmin,setAddadmin] = useState(null);
+  const [followers,setFollowers] = useState([]);
+  const [followings,setFollowings] = useState([]);
   const name = JSON.parse(localStorage.getItem('user')).username;
+
+  const fetchFollowing = async () => {
+    await axios
+      .get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${name}/following`)
+      .then((response) => {
+        setFollowings(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const fetchFollowers = async () => {
+    await axios
+      .get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${name}/followers`)
+      .then((response) => {
+        setFollowers(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const profileDetails = (friendName) => {
+    const isFollowing =
+      followings.find((user) => user.username === friendName) !== undefined;
+    const isFollower =
+      followers.find((user) => user.username === friendName) !== undefined;  
+
+    return {username: friendName, isFriend: (isFollower || isFollowing) }
+  };
+
   useEffect(() => {
     const fetchGroup = async () => {
       
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/${groupname}/groupPosts`);
         setPosts(response.data);
-        console.log(response.data);
         
         const response1 = await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/group/${groupname}/admins`);
         setAdmins(response1.data);
@@ -29,7 +62,6 @@ const GroupDetail = () => {
         
         const response2 = await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/group/${groupname}/members`);
         setMembers(response2.data);
-        console.log(response2.data);
 
         for (const admin of response1.data) {
           if (admin.username === name) {
@@ -42,7 +74,8 @@ const GroupDetail = () => {
       }
     };
     fetchGroup();
-    
+    fetchFollowers();
+    fetchFollowing();
   },[])
   
   return (   
@@ -54,7 +87,6 @@ const GroupDetail = () => {
           {posts
             ? posts.map(
               (post, index) => (
-                //console.log(post),
                 (
                   <Post
                     key={index}
@@ -93,8 +125,13 @@ const GroupDetail = () => {
                     (admin, index) => (
                         (
                             <div key = {index}>
-                                {admin.username}    
-                            </div>
+                            <Link 
+                          to={`/profile`}
+                          state={profileDetails(admin.username)}
+                          className="text-black-500 hover:text-yellow-700">
+                            {admin.username}    
+                          </Link>
+                        </div>
                         )
                     ),
                     )
@@ -117,7 +154,12 @@ const GroupDetail = () => {
                 (member, index) => (
                     (
                         <div key = {index}>
+                        <Link 
+                          to={`/profile`}
+                          state={profileDetails(member.username)}
+                          className="text-black-500 hover:text-yellow-700">
                             {member.username}    
+                          </Link>
                         </div>
                     )
                 ),

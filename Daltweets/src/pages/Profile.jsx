@@ -12,7 +12,6 @@ function Profile() {
     const isLoggedInUser =   !backendUser || backendUser.username == loggedInUser.username 
     const user = backendUser ? backendUser : loggedInUser  
     let statusColor = ""
-    console.log(user.status)
     switch(user.status){
         case "ONLINE":
             statusColor = "green"
@@ -26,12 +25,9 @@ function Profile() {
         default:
             statusColor="yellow"
     }
-    console.log(user.status)
-    console.log(statusColor)
 
 
     useEffect(() => {
-        console.log(username)
         getProfile();
     }, []);
 
