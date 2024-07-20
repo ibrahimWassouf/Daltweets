@@ -43,11 +43,14 @@ public class LoginController {
       
       User user = authentication.getUser();
       Status userStatus = user.getStatus();
-      if (user.isAccountDeleted() || userStatus.equals(Status.PENDING)){
+      if (user.isAccountDeleted()){
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
       }
 
-      user = userService.changeUserStatus(user.getUsername(), Status.ONLINE);
+      if (!userStatus.equals(Status.PENDING))
+      {
+        user = userService.changeUserStatus(user.getUsername(), Status.ONLINE);
+      }
       return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
