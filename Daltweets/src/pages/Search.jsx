@@ -18,21 +18,21 @@ const Search = () => {
         `${import.meta.env.VITE_BACKEND_BASE_URL}/api/user/${user.username}/all-users`,
         {
           username: user.username,
-        },
+        }
       );
       setUsers(response.data);
     };
 
     const fetchGroups = async () => {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/group/all`,
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/group/all`
       );
       setGroups(response.data);
     };
 
     const fetchFollowers = async () => {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${user.username}/followers`,
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${user.username}/followers`
       );
 
       setFollowers(response.data);
@@ -40,7 +40,7 @@ const Search = () => {
 
     const fetchFollowing = async () => {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${user.username}/following`,
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${user.username}/following`
       );
       setFollowing(response.data);
     };
@@ -56,26 +56,26 @@ const Search = () => {
     if (activeTab === "Users") {
       setFilteredResults(
         users.filter((user) =>
-          user.username.toLowerCase().includes(searchTerm.toLowerCase()),
-        ),
+          user.username.toLowerCase().includes(searchTerm.toLowerCase())
+        )
       );
     } else if (activeTab === "Groups") {
       setFilteredResults(
         groups.filter((group) =>
-          group.name.toLowerCase().includes(searchTerm.toLowerCase()),
-        ),
+          group.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
       );
     } else if (activeTab === "Followers") {
       setFilteredResults(
         followers.filter((user) =>
-          user.username.toLowerCase().includes(searchTerm.toLowerCase()),
-        ),
+          user.username.toLowerCase().includes(searchTerm.toLowerCase())
+        )
       );
     } else if (activeTab === "Following") {
       setFilteredResults(
         following.filter((user) =>
-          user.username.toLowerCase().includes(searchTerm.toLowerCase()),
-        ),
+          user.username.toLowerCase().includes(searchTerm.toLowerCase())
+        )
       );
     }
   }, [activeTab, searchTerm, users, groups]);
@@ -87,8 +87,7 @@ const Search = () => {
   const isFriend = (username) => {
     const isFollowing =
       following.find((user) => user.username === username) !== undefined;
-    const isFollower =
-      followers.find((user) => user.username === username) !== undefined;
+    const isFollower = followers.find((user) => user.username === username) !== undefined;
 
     return isFollower || isFollowing;
   };
@@ -111,8 +110,7 @@ const Search = () => {
             <svg
               className="w-6 h-6 text-gray-400"
               fill="currentColor"
-              viewBox="0 0 24 24"
-            >
+              viewBox="0 0 24 24">
               <path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
             </svg>
           </div>
@@ -125,29 +123,25 @@ const Search = () => {
         <div className="flex border-b border-gray-700 mb-4">
           <button
             className={`flex-1 py-3 font-bold ${activeTab === "Users" ? "text-yellow-600 border-b-2 border-yellow-600" : "text-gray-500"}`}
-            onClick={() => handleTabClick("Users")}
-          >
+            onClick={() => handleTabClick("Users")}>
             Users
           </button>
 
           <button
             className={`flex-1 py-3 font-bold ${activeTab === "Followers" ? "text-yellow-600 border-b-2 border-yellow-600" : "text-gray-500"}`}
-            onClick={() => handleTabClick("Followers")}
-          >
+            onClick={() => handleTabClick("Followers")}>
             Followers
           </button>
 
           <button
             className={`flex-1 py-3 font-bold ${activeTab === "Following" ? "text-yellow-600 border-b-2 border-yellow-600" : "text-gray-500"}`}
-            onClick={() => handleTabClick("Following")}
-          >
+            onClick={() => handleTabClick("Following")}>
             Following
           </button>
 
           <button
             className={`flex-1 py-3 font-bold ${activeTab === "Groups" ? "text-yellow-600 border-b-2 border-yellow-600" : "text-gray-500"}`}
-            onClick={() => handleTabClick("Groups")}
-          >
+            onClick={() => handleTabClick("Groups")}>
             Groups
           </button>
         </div>
@@ -156,10 +150,7 @@ const Search = () => {
         <div className="space-y-4">
           {filteredResults !== undefined && filteredResults.length > 0 ? (
             filteredResults.map((result) => (
-              <div
-                key={result.id}
-                className="border-b text-black border-gray-700 pb-4"
-              >
+              <div key={result.id} className="border-b text-black border-gray-700 pb-4">
                 <div className="flex items-center mb-2">
                   <div>
                     {activeTab !== "Groups" ? (
@@ -168,9 +159,8 @@ const Search = () => {
                         bio={result.bio}
                         route="profile"
                         isFriend={isFriend(result.username)}
-                      />)
-                     :
-                     (
+                      />
+                    ) : (
                       <SearchItem
                         name={result.name}
                         bio={result.description}

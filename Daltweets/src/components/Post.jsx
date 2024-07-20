@@ -10,12 +10,14 @@ import axios from "axios";
 TimeAgo.addDefaultLocale(en);
 
 function Post({ text, username, dateCreated, ...props }) {
-  const [followers,setFollowers] = useState([]);
-  const [followings,setFollowings] = useState([]);
-  let user = JSON.parse(localStorage.getItem("user"))
+  const [followers, setFollowers] = useState([]);
+  const [followings, setFollowings] = useState([]);
+  let user = JSON.parse(localStorage.getItem("user"));
   const fetchFollowing = async () => {
     await axios
-      .get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${user.username}/following`)
+      .get(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${user.username}/following`
+      )
       .then((response) => {
         setFollowings(response.data);
       })
@@ -26,10 +28,12 @@ function Post({ text, username, dateCreated, ...props }) {
 
   const fetchFollowers = async () => {
     await axios
-      .get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${user.username}/followers`)
+      .get(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${user.username}/followers`
+      )
       .then((response) => {
         setFollowers(response.data);
-        console.log(response.data)
+        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -40,29 +44,26 @@ function Post({ text, username, dateCreated, ...props }) {
     const isFollowing =
       followings.find((user) => user.username === friendName) !== undefined;
     const isFollower =
-      followers.find((user) => user.username === friendName) !== undefined; 
-    console.log(followers)
-    return {username: friendName, isFriend: (isFollower || isFollowing) }
+      followers.find((user) => user.username === friendName) !== undefined;
+    console.log(followers);
+    return { username: friendName, isFriend: isFollower || isFollowing };
   };
 
-  useEffect(
-    ()=>{
-      fetchFollowers();
-      fetchFollowing();
-    },[]
-  )
+  useEffect(() => {
+    fetchFollowers();
+    fetchFollowing();
+  }, []);
 
   return (
     <div>
       <div className="border mb-1 border-black w-full">
         <div className="pl-2">
           <div>
-          <Link
-                          to={`/profile`}
-                          state={profileDetails(username)}
-                          className="text-black-500 hover:text-yellow-700"
-                          >
-            <span className="font-bold">{username}</span>
+            <Link
+              to={`/profile`}
+              state={profileDetails(username)}
+              className="text-black-500 hover:text-yellow-700">
+              <span className="font-bold">{username}</span>
             </Link>
             <span className="pl-1 text-gray-500">
               {" "}
