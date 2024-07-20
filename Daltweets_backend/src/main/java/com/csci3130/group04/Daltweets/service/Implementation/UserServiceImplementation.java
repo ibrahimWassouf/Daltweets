@@ -84,6 +84,16 @@ public class UserServiceImplementation implements UserService {
        if (user == null) return null;
        user.setAccountDeleted(true);
        return userRepository.save(user);
+    }   
+
+    @Override
+    public List<User> getSignupRequests(){
+      return userRepository.getSignupRequests();
+    }
+
+    @Override
+    public List<User> getAllUsers(){
+      return userRepository.findAll();
     }
 
     @Override

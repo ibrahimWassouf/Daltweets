@@ -380,7 +380,7 @@ class UserServiceIntegrationTests {
      User user = new User(2,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
      User saved_user = userRepository.save(user);
 
-     Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","OFFLINE"));
+     Map<String,String> requestBody = Map.ofEntries(Map.entry("adminName","admin"),Map.entry("username","Name"),Map.entry("status","OFFLINE"));
      ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
 
      String result = "Success "+saved_user.getUsername()+ " OFFLINE";
@@ -397,7 +397,7 @@ class UserServiceIntegrationTests {
       User user = new User(admin.getId()+1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
       User saved_user = userRepository.save(user);
 
-      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","REJECTED"));
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminName","admin"),Map.entry("username","Name"),Map.entry("status","REJECTED"));
       ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
 
       String result = "Success "+ saved_user.getUsername() +" REJECTED";
@@ -415,7 +415,7 @@ class UserServiceIntegrationTests {
       User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
 
 
-      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","REJECTED"));
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminName","admin"),Map.entry("username","Name"),Map.entry("status","REJECTED"));
       ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
 
       assertNotNull(response);
@@ -432,7 +432,7 @@ class UserServiceIntegrationTests {
      User saved_user = userRepository.save(user);
 
 
-     Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","DEACTIVATED"));
+     Map<String,String> requestBody = Map.ofEntries(Map.entry("adminName","admin"),Map.entry("username","Name"),Map.entry("status","DEACTIVATED"));
      ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
 
      assertNotNull(response);
@@ -449,7 +449,7 @@ class UserServiceIntegrationTests {
       User saved_user = userRepository.save(user);
 
 
-      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username"," "),Map.entry("status","DEACTIVATED"));
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminName","admin"),Map.entry("username"," "),Map.entry("status","DEACTIVATED"));
       ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
 
       assertNotNull(response);
@@ -465,7 +465,7 @@ class UserServiceIntegrationTests {
       User saved_user = userRepository.save(user);
 
 
-      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminname","admin"),Map.entry("username","Name"),Map.entry("status","WRONG"));
+      Map<String,String> requestBody = Map.ofEntries(Map.entry("adminName","admin"),Map.entry("username","Name"),Map.entry("status","WRONG"));
       ResponseEntity<String> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/user/changeStatus",requestBody,String.class);
 
       assertNotNull(response);

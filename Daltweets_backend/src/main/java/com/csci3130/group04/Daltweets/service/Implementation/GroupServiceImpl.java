@@ -102,6 +102,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public List<Group> getAllGroups(){
+      return groupRepository.findAll();
+    }
+
+    @Override
     public GroupMembers addUser(String username, String groupname, boolean isAdmin){
 
         if(username == null){
@@ -150,5 +155,10 @@ public class GroupServiceImpl implements GroupService {
         }
         groupMembersRepository.delete(groupMembers);
         return groupMembers;
+    }
+
+    @Override
+    public int getGroupCount(String name){
+      return groupRepository.getGroupCount(name);
     }
 }
