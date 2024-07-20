@@ -54,7 +54,7 @@ function SignUp() {
         console.log(response);
         setError("");
         localStorage.setItem("user", JSON.stringify(response.data));
-        navigate("/home")
+        navigate("/pending-approval")
       })
       .catch((error) => {
         console.log(error);
