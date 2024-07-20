@@ -31,7 +31,7 @@ const Group = () => {
     <div className="container">
       <div className="mt-5">
         <span className="flex justify-between mx-auto w-3/6 pr-5 font-bold m-2">
-          <button className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium text-sm rounded-lg px-5 py-2.5 text-center flex items-center justify-center"
+          <button className="text-white bg-gold-dark hover:bg-black hover:text-gold focus:outline-none font-medium text-sm rounded-lg px-5 py-2.5 text-center flex items-center justify-center"
           onClick={() => setCreateGroup(true)}
           >
             <IoIosAddCircle className="mr-1 text-2xl"/> Create a group

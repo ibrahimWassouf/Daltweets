@@ -39,10 +39,12 @@ const CreateGroup = ({isVisible, onClose}) => {
         .then((response) => {
             alert("Add member to group success");
             console.log(response);
+            window.location.reload();
         })
             .catch((error) => {
             alert("Add fail");
             console.log(error);
+            window.location.reload();
         });
       })
       .catch((error) => {

@@ -15,12 +15,16 @@ const AddMembers = ({isVisible, onClose,groupName,isAdmin}) => {
     axios.post(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/group/adduser`, formData)
     .then((response) => {
         alert("Add member to group success");
+        window.location.reload();
+        
         console.log(response);
     })
         .catch((error) => {
         alert("Add fail");
         console.log(error);
+        window.location.reload();
     });
+    
   }
   return (
     <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm flex justify-center items-center">
