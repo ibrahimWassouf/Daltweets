@@ -12,6 +12,7 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Pages from "./pages/Pages";
 import ForgotPassword from "./pages/ForgotPassowrd";
+import Pending from "./pages/Pending";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="*" element={<Pages />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path='/pending-approval' element = {<Pending />} />
       </Routes>
     </Router>
   );

@@ -37,11 +37,10 @@ function Login() {
         password: password,
       })
       .then((response) => {
-        console.log(response);
         setPasswordError(false);
         localStorage.setItem("user", JSON.stringify(response.data));
-        JSON.parse(localStorage.getItem("user"));
-        navigate("/home");
+        const user = JSON.parse(localStorage.getItem("user"));
+        user.status == 'PENDING'?  navigate("/pending-approval"):navigate("/home");
       })
       .catch((error) => {
         console.log(error);
@@ -51,7 +50,6 @@ function Login() {
         console.log(JSON.parse(localStorage.getItem("user")) ?? "user is null");
       });
   };
-
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
