@@ -462,7 +462,7 @@ class UserServiceIntegrationTests {
       User admin = new User(1,"checkbio","admin","firstmail", LocalDateTime.now(),false, Role.SUPERADMIN, User.Status.ONLINE);
       admin = userRepository.save(admin);
 
-      User user = new User(1,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
+      User user = new User(2,"checkbio","Name","firstmail", LocalDateTime.now(),false, User.Role.USER, User.Status.PENDING);
       User saved_user = userRepository.save(user);
 
 

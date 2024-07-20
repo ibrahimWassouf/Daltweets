@@ -1,7 +1,9 @@
 package com.csci3130.group04.Daltweets.controller;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -118,7 +120,16 @@ public class UserController {
     String userName = requestBody.get("username");
     String status = requestBody.get("status");
 
-    if (!userService.isValidName(adminName) || !userService.isValidName(userName)) {
+    Status[] statuses = Status.values();
+    Set<String> statusSet = new HashSet<>();
+    for (Status st : statuses) {
+        statusSet.add(st.name());
+    }
+    // Including the implicit status of a rejected sign up request
+    statusSet.add("REJECTED");
+    Boolean statusExists = statusSet.contains(status);
+
+    if (!(userService.isValidName(adminName) && userService.isValidName(userName) && statusExists)) {
       return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
@@ -130,7 +141,7 @@ public class UserController {
     User user = null;
     if (!status.equals("REJECTED")) {
       user = userService.changeUserStatus(userName, Status.valueOf(status));
-    } else {
+    } else if(status.equals("REJECTED")) {
       user = userService.softDeleteUser(userName);
     }
 
