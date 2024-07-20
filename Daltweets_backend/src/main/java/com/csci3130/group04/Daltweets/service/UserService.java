@@ -15,7 +15,11 @@ public interface UserService {
 
     public User addExistingUser(String name);
 
-    public User deleteExistingUser(String name);
+    public User softDeleteUser(String name);
     public User changeUserStatus(String username, User.Status status );
     public boolean isValidName(String name);
+
+    public List<User> getSignupRequests();
+
+    public List<User> getAllUsers();
 }

@@ -10,12 +10,15 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Integer> {
-    @Query("SELECT u FROM User u WHERE u.username = :name and status != 'DEACTIVATED'")
+    @Query("SELECT u FROM User u WHERE u.username = :name and accountDeleted != true")
     User findByUsername(@Param("name") String name);
 
-    @Query("SELECT u FROM User u WHERE u.username != :name and  status != 'DEACTIVATED'")
+    @Query("SELECT u FROM User u WHERE u.username != :name and  accountDeleted != true")
     List<User> findByUsernameNot(String name);
 
     @Query("SELECT u FROM User u WHERE u.username = :name") 
     User findByUsernameRawSearch(@Param("name") String name);
+
+    @Query("SELECT u FROM User u WHERE u.status = 'PENDING'")
+    List<User> getSignupRequests();
 }

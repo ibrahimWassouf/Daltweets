@@ -17,16 +17,18 @@ public class Group{
     private LocalDateTime dateCreated;
     private boolean isDeleted;
     private boolean isPublic;
+    private String description;
 
     public Group() {
     }
 
-    public Group(int id, String name, LocalDateTime dateCreated, boolean isPublic) {
+    public Group(int id, String name, LocalDateTime dateCreated, boolean isPublic, String description) {
         this.id = id;
         this.name = name;
         this.dateCreated = dateCreated;
         this.isDeleted = false;
         this.isPublic = isPublic;
+        this.description = description;
     }
 
     public int getId() {
@@ -67,6 +69,14 @@ public class Group{
 
     public void setIsPublic (boolean isPublic) {
       this.isPublic = isPublic;
+    }
+
+    public String getDescription() {
+      return description;
+    }
+
+    public void setDescription(String description) {
+      this.description = description;
     }
 
 }

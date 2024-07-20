@@ -41,12 +41,16 @@ public class LoginController {
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
       } 
       
-      Status userStatus = authentication.getUser().getStatus();
-      if (userStatus.equals(Status.DEACTIVATED) || userStatus.equals(Status.PENDING) ){
+      User user = authentication.getUser();
+      Status userStatus = user.getStatus();
+      if (user.isAccountDeleted()){
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
       }
 
-      User user = authentication.getUser();
+      if (!userStatus.equals(Status.PENDING))
+      {
+        user = userService.changeUserStatus(user.getUsername(), Status.ONLINE);
+      }
       return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
