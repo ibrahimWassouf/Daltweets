@@ -1,13 +1,9 @@
 package com.csci3130.group04.Daltweets;
 
-import com.csci3130.group04.Daltweets.model.Followers;
-import com.csci3130.group04.Daltweets.model.Post;
-import com.csci3130.group04.Daltweets.model.User;
+import com.csci3130.group04.Daltweets.model.*;
 import com.csci3130.group04.Daltweets.model.User.Role;
 
-import com.csci3130.group04.Daltweets.repository.PostRepository;
-import com.csci3130.group04.Daltweets.repository.UserRepository;
-import com.csci3130.group04.Daltweets.repository.FollowersRepository;
+import com.csci3130.group04.Daltweets.repository.*;
 import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.PostServiceImpl;
 
@@ -34,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @SpringBootTest(classes = DaltweetsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-class PostServiceIntegrationTests {
+public class PostServiceIntegrationTests {
 
         @LocalServerPort
         private int port;
@@ -56,18 +52,18 @@ class PostServiceIntegrationTests {
 
         @Autowired
         private UserRepository userRepository;
-
-        @BeforeEach
-        void setup() {
-                followersRepository.deleteAll();
-                postRepository.deleteAll();
-                userRepository.deleteAll();
-        }
+        @Autowired
+        private GroupRepository groupRepository;
+        @Autowired
+        private GroupMembersRepository groupMembersRepository;
 
         @AfterEach
         void teardown() {
+
                 followersRepository.deleteAll();
                 postRepository.deleteAll();
+                groupMembersRepository.deleteAll();
+                groupRepository.deleteAll();
                 userRepository.deleteAll();
         }
 
@@ -127,15 +123,14 @@ class PostServiceIntegrationTests {
                 // Create users
                 User user = new User(1, "I follow people", "Following", "following@dal.ca", LocalDateTime.now(), false,
                                 Role.SUPERADMIN, User.Status.ONLINE);
-                User user2 = new User(2, "I will be followed", "Followed1", "followed1@dal.ca", LocalDateTime.now(),
-                                false,
-                                Role.SUPERADMIN, User.Status.ONLINE);
-                User user3 = new User(3, "I'll also be followed", "Followed2", "followed2@dal.ca", LocalDateTime.now(),
-                                false,
-                                Role.SUPERADMIN, User.Status.ONLINE);
-
                 user = userRepository.save(user);
+                User user2 = new User(user.getId() + 1,  "I will be followed", "Followed1", "followed1@dal.ca", LocalDateTime.now(),
+                                false,
+                                Role.SUPERADMIN, User.Status.ONLINE);
                 user2 = userRepository.save(user2);
+                User user3 = new User(user2.getId()+1, "I'll also be followed", "Followed2", "followed2@dal.ca", LocalDateTime.now(),
+                                false,
+                                Role.SUPERADMIN, User.Status.ONLINE);
                 user3 = userRepository.save(user3);
 
                 // Add followers
@@ -168,5 +163,47 @@ class PostServiceIntegrationTests {
                 assertEquals(HttpStatus.OK, response.getStatusCode());
                 assertEquals(2, response.getBody().size());
         }
+        @Test
+        public void test_get_all_group_posts() {
+                Group group = new Group(1, "group1", LocalDateTime.now(), false,"");
+                Group saved_group = groupRepository.save(group);
 
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                GroupMembers groupMembers = new GroupMembers(1,saved_group,saved_user,true);
+                GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+                int postNum = 1;
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/" + saved_group.getName() + "/groupPosts", List.class);
+
+                assertNotNull(response);
+                assertEquals(postNum,response.getBody().size());
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+        }
+
+        @Test
+        public void test_get_all_group_posts_with_null() {
+                Group group = new Group(1, null, LocalDateTime.now(), false,"");
+                Group saved_group = groupRepository.save(group);
+
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                GroupMembers groupMembers = new GroupMembers(1,saved_group,saved_user,true);
+                GroupMembers saved_groupMembers = groupMembersRepository.save(groupMembers);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+                int postNum = 1;
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/" + saved_group.getName() + "/groupPosts", List.class);
+
+                assertNotNull(response);
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+        }
 }
