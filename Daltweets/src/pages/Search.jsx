@@ -174,7 +174,8 @@ const Search = () => {
                       <SearchItem
                         name={result.name}
                         bio={result.description}
-                        route="group"
+                        group={result}
+                        route={`groupdetail/${encodeURIComponent(result.name)}`}
                       />
                     )}
                   </div>

@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 
-function SearchItem({name,bio,route,isFriend}){
+function SearchItem({name,bio,route,isFriend,group}){
     const desc = route === "profile" ? "bio" : "description"
+    const state = route === "profile" ? { username: name, isFriend } : group
     function truncateWords(str, maxLength) {
         if (str == undefined) {
             return `No ${desc}`;
@@ -17,7 +18,7 @@ return (
         <div>
         <Link 
         to={`/${route}`}
-        state={{ username: name, isFriend }}
+        state={state}
         className="text-black-500 hover:text-yellow-700"
       > 
         <h3 className="font-bold">{name}</h3>
