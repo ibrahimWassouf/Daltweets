@@ -34,7 +34,7 @@ const AddMembers = ({isVisible, onClose,groupName,isAdmin}) => {
                 </div>
                 <div className="flex-row content-center justify-center h-[100px]">
                     <div className="justify-center flex mb-5">
-                        <h1 className="font-bold">Create group</h1>
+                        { isAdmin  ? <h1 className="font-bold">Add admins</h1> : <h1 className="font-bold">Add members</h1>}
                     </div>
                     <div className="justify-center flex">    
                         <form onSubmit={addUser} className="flex flex-col gap-4 w-72">
