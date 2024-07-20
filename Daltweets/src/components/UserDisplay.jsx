@@ -24,26 +24,23 @@ function UserDisplay({ username }) {
         <div className="flex flex-row w-32">
           <div className="box-border h-min w-min p-2">
             <Link
-          to="/profile" 
-          state={{ username, isFriend : false  }}
-          className="text-blue-500 hover:text-blue-700"
-        >
-            <p className="text-black font-medium m-auto">{username}</p>
+              to="/profile"
+              state={{ username, isFriend: false }}
+              className="text-blue-500 hover:text-blue-700">
+              <p className="text-black font-medium m-auto">{username}</p>
             </Link>
           </div>
           <div className="box-border h32 w-24 ml-24">
             {!isSent ? (
               <button
                 onClick={handleFollow}
-                className="flex w-full justify-center rounded-md bg-yellow-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
+                className="flex w-full justify-center rounded-md bg-yellow-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                 <p className="text-bold text-grey-700">Follow</p>
               </button>
             ) : (
               <button
                 disabled
-                className="flex w-full justify-center rounded-md bg-gray-400 px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm"
-              >
+                className="flex w-full justify-center rounded-md bg-gray-400 px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm">
                 <p className="text-bold text-black-700">Pending</p>
               </button>
             )}
