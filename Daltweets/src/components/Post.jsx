@@ -70,6 +70,9 @@ function Post({ text, username, dateCreated, ...props }) {
               <ReactTimeAgo date={Date.parse(dateCreated)}></ReactTimeAgo>{" "}
             </span>
           </div>
+          <Link
+            to={`/post/${encodeURIComponent(props.postID)}`}
+            state={{username, text, likeCount: 0, dateCreated}}>
           <div>{text}</div>
           <div className="flex justify-around text-gray-500">
             <button className="flex">
@@ -81,6 +84,7 @@ function Post({ text, username, dateCreated, ...props }) {
               <span>0</span>
             </button>
           </div>
+          </Link>
         </div>
       </div>
     </div>
