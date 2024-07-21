@@ -11,6 +11,7 @@ import UpdateUser from "./UpdateUser";
 import Group from "./Group";
 import GroupDetail from "../components/GroupDetail";
 import Search from "./Search";
+import PostPage from "./PostPage";
 const Pages = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   return (
@@ -29,6 +30,7 @@ const Pages = () => {
             <Route path="/group" element={<Group />} />
             <Route path="/groupdetail/:groupname" element={<GroupDetail />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/post/:postId" element={<PostPage />}/>
           </Routes>
         </div>
       ) : (
