@@ -34,13 +34,13 @@ const CreatePost = () => {
   }
   return (
       <div className="h-screen bg-gray-50 flex items-center flex-1 justify-center content-center">
-        <div className="container border-black border-2 content-center rounded-lg bg-white p-5 w-3/4 h-2/3">
-          <div className="w-5/6 font-bold text-xl leading-9 text-gray-900 mx-auto">
-            <div className="mb-10 mt-5 text-3xl">
+        <div className="container content-center rounded-lg bg-white w-5/6 h-5/6">
+          <div className="w-5/6 font-bold text-xl text-gray-900 mx-auto">
+            <div className="mb-20 mt-5 text-3xl">
               Create Post
             </div>
             <form className="h-full">
-              <textarea className="w-full flex mb-2 text-lg rounded-md pl-2 font-normal border h-80 border-yellow-500 resize-none"
+              <textarea className="w-full text-xl h-80 flex rounded-md pl-2 font-normal border mb-2 border-black resize-none"
                         type="text" value={text} onChange={(e) => setText(e.target.value)}
                         placeholder="What's on your mind?"/>
               <div className="w-full">
