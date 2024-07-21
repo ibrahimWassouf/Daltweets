@@ -18,7 +18,7 @@ function FriendRequest({ username, followerName, onAccept, onRemove }) {
   return (
     <div className=" mt-8 mb-4 shadow-md rounded-lg flex items-center justify-between p-4">
       <div className="flex-1 mr-24">
-        <Link to="/profile" state={{ username: followerName, isFollower }}>
+        <Link to={`/profile/${encodeURIComponent(followerName)}`} state={{ isFollower }}>
           <div className="font-bold text-black text-xl hover:text-blue-700">
             {followerName}
           </div>

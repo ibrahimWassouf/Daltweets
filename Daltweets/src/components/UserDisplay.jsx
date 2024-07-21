@@ -24,8 +24,8 @@ function UserDisplay({ username }) {
         <div className="flex flex-row w-32">
           <div className="box-border h-min w-min p-2">
             <Link
-              to="/profile"
-              state={{ username, isFriend: false }}
+              to={`/profile/${encodeURIComponent(username)}`}
+              state={{ isFriend: false }}
               className="text-blue-500 hover:text-blue-700">
               <p className="text-black font-medium m-auto">{username}</p>
             </Link>
