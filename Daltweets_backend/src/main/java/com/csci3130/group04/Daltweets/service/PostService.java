@@ -9,5 +9,5 @@ public interface PostService {
   Post createPost(Post post); 
   List<Post> getPostsByUser(User user);
   List<Post> getPostsByUsers(List<User> users);
-
+  Post getPostById(int postId);
 }
