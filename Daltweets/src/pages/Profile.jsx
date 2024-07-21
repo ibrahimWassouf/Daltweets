@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { GoDotFill } from "react-icons/go";
 import { FaGear } from "react-icons/fa6";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 function Profile() {
   const location = useLocation();
-  const { username, isFriend } = location.state || {};
+  const {isFriend } = location.state || {};
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  const {username} = useParams() || loggedInUser.username;
   const [backendUser, setBackendUser] = useState({});
   const isLoggedInUser = !backendUser || backendUser.username == loggedInUser.username;
   const user = backendUser ? backendUser : loggedInUser;
@@ -28,9 +29,10 @@ function Profile() {
 
   useEffect(() => {
     getProfile();
-  }, []);
+  }, [username]);
 
   const getProfile = async () => {
+    
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_BASE_URL}/api/user/${username}/profile`
@@ -42,9 +44,6 @@ function Profile() {
     }
   };
 
-  useEffect(() => {
-    getProfile();
-  }, []);
 
   let navigae = useNavigate();
   const routeChange = () => {

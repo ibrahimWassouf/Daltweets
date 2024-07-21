@@ -22,7 +22,8 @@ const Pages = () => {
             <Route path="/home" element={<HomePage />} />
             <Route path="/friends" element={<Friends />} />
             <Route path="/create" element={<CreatePost />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/:username" element={<Profile />} />
+            <Route path="/profile" element={<Profile />}/>
             <Route path="/updateUser" element={<UpdateUser />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/group" element={<Group />} />

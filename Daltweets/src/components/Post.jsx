@@ -46,7 +46,7 @@ function Post({ text, username, dateCreated, ...props }) {
     const isFollower =
       followers.find((user) => user.username === friendName) !== undefined;
     console.log(followers);
-    return { username: friendName, isFriend: isFollower || isFollowing };
+    return { isFriend: isFollower || isFollowing };
   };
 
   useEffect(() => {
@@ -60,7 +60,7 @@ function Post({ text, username, dateCreated, ...props }) {
         <div className="pl-2">
           <div>
             <Link
-              to={`/profile`}
+              to={`/profile/${encodeURIComponent(username)}`}
               state={profileDetails(username)}
               className="text-black-500 hover:text-yellow-700">
               <span className="font-bold">{username}</span>

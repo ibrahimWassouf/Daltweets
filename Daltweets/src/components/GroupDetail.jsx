@@ -46,7 +46,7 @@ const GroupDetail = () => {
     const isFollower =
       followers.find((user) => user.username === friendName) !== undefined;
 
-    return { username: friendName, isFriend: isFollower || isFollowing };
+    return {isFriend: isFollower || isFollowing };
   };
 
   useEffect(() => {
@@ -126,7 +126,7 @@ const GroupDetail = () => {
             ? admins.map((admin, index) => (
                 <div key={index}>
                   <Link
-                    to={`/profile`}
+                    to={`/profile/${encodeURIComponent(admin.username)}`}
                     state={profileDetails(admin.username)}
                     className="text-black-500 hover:text-yellow-700">
                     {admin.username}
@@ -156,7 +156,7 @@ const GroupDetail = () => {
             ? members.map((member, index) => (
                 <div key={index}>
                   <Link
-                    to={`/profile`}
+                    to={`/profile/${encodeURIComponent(member.username)}`}
                     state={profileDetails(member.username)}
                     className="text-black-500 hover:text-yellow-700">
                     {member.username}

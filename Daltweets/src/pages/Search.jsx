@@ -157,7 +157,7 @@ const Search = () => {
                       <SearchItem
                         name={result.username}
                         bio={result.bio}
-                        route="profile"
+                        route={`profile/${encodeURIComponent(result.username)}`}
                         isFriend={isFriend(result.username)}
                       />
                     ) : (
