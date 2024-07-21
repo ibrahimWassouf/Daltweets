@@ -16,7 +16,7 @@ function Friend({ username, followerName, action, onRemove }) {
     <div className=" mt-12 mb-4 w-96 box-border border border-black bg-cover shadow-md rounded-lg flex items-center justify-between p-4">
       <div className="flex-1 mr-20">
         <Link to={`/profile/${encodeURIComponent(displayedName)}`} state={{ isFriend: true }}>
-          <div className="font-bold text-black text-xl hover:text-blue-700">
+          <div className="font-bold text-black text-xl hover:text-yellow-700">
             {displayedName}
           </div>
         </Link>
