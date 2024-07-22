@@ -8,6 +8,7 @@ import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImp
 import com.csci3130.group04.Daltweets.service.Implementation.PostCommentServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.PostServiceImpl;
 
+import com.csci3130.group04.Daltweets.service.Implementation.TopicServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,8 @@ public class PostServiceIntegrationTests {
         private PostCommentRepository postCommentRepository;
         @Autowired
         private PostCommentServiceImpl postCommentServiceImpl;
+        @Autowired
+        private TopicServiceImpl topicService;
 
         @AfterEach
         void teardown() {
@@ -456,5 +459,41 @@ public class PostServiceIntegrationTests {
                 assertNull(response.getBody());
         }
 
+        @Test
+        public void test_get_all_topic() {
+                Topic topic1 = topicService.createTopic("topic1");
+                Topic topic2 = topicService.createTopic("topic2");
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getAllTopics",List.class);
+
+                int result_list = 2;
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(result_list,response.getBody().size());
+        }
+
+        @Test
+        public void test_get_all_topic_with_duplicate() {
+                Topic topic1 = topicService.createTopic("topic1");
+                Topic topic2 = topicService.createTopic("topic1");
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getAllTopics",List.class);
+
+                int result_list = 1;
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(result_list,response.getBody().size());
+        }
+
+        @Test
+        public void test_get_all_topic_with_no_topics() {
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getAllTopics",List.class);
+
+                int result_list = 0;
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(result_list,response.getBody().size());
+        }
 }
 
