@@ -5,6 +5,7 @@ import com.csci3130.group04.Daltweets.model.User.Role;
 
 import com.csci3130.group04.Daltweets.repository.*;
 import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.PostCommentServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.PostServiceImpl;
 
 import org.junit.jupiter.api.AfterEach;
@@ -60,6 +61,8 @@ public class PostServiceIntegrationTests {
         private GroupMembersRepository groupMembersRepository;
         @Autowired
         private PostCommentRepository postCommentRepository;
+        @Autowired
+        private PostCommentServiceImpl postCommentServiceImpl;
 
         @AfterEach
         void teardown() {
@@ -363,5 +366,34 @@ public class PostServiceIntegrationTests {
                 assertNotNull(response);
                 assertNull(response.getBody());
                 assertEquals(HttpStatus.NOT_IMPLEMENTED, response.getStatusCode());
+        }
+
+        @Test
+        public void test_get_comments_count(){
+                User user = new User(1, "checkbio2", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user);
+
+                User user2 = new User(user.getId()+1, "checkbio2", "Name2", "mail2@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user2 = userRepository.save(user2);
+
+                Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+                post = postRepository.save(post);
+
+                PostComment postComment1 = new PostComment(1,user,post,"comment",LocalDateTime.now());
+                postComment1 = postCommentRepository.save(postComment1);
+                PostComment postComment2 = new PostComment(2,user2,post,"comment",LocalDateTime.now());
+                postComment2 = postCommentRepository.save(postComment2);
+
+                int commentCount  = postCommentServiceImpl.getCommentCount(post);
+
+                assertEquals(2,commentCount);
+        }
+
+        @Test
+        public void test_get_comments_count_with_null_post(){
+
+                int commentCount  = postCommentServiceImpl.getCommentCount(null);
+
+                assertEquals(0,commentCount);
         }
 }       
