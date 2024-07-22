@@ -396,4 +396,59 @@ public class PostServiceIntegrationTests {
 
                 assertEquals(0,commentCount);
         }
+
+        @Test
+        public void test_get_all_posts_by_user() {
+                
+
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user);
+
+
+                Post post1 = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+                post1 = postRepository.save(post1);
+                Post post2 = new Post(2, user, "my second post", LocalDateTime.now(), false, false);
+                post2 = postRepository.save(post2);
+                Post post3 = new Post(3, user, "my third post", LocalDateTime.now(), false, false);
+                post3 = postRepository.save(post3);
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/" + user.getUsername() + "/posts", List.class);
+
+                assertNotNull(response);
+                assertEquals(3,response.getBody().size());
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+        }
+
+        @Test
+        public void test_get_all_posts_by_user_with_non_existing_user() {
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/user/posts", List.class);
+
+                assertNotNull(response);
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+        }
+
+        @Test
+        public void test_get_all_posts_by_user_with_no_posts() {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user);
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/" + user.getUsername() + "/posts", List.class);
+
+                assertNotNull(response);
+                assertEquals(0,response.getBody().size());
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+        }
+
+        @Test
+        public void test_get_all_posts_by_user_with_null_user() {
+                User user = new User(1, "checkbio2", null, "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user);
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/ /posts", List.class);
+
+                assertNotNull(response);
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+        }
+
 }       
