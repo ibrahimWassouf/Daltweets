@@ -9,7 +9,7 @@ import axios from "axios";
 
 TimeAgo.addDefaultLocale(en);
 
-function Post({ text, username, dateCreated, ...props }) {
+function Post({ text, username, commentCount,dateCreated, ...props }) {
   const [followers, setFollowers] = useState([]);
   const [followings, setFollowings] = useState([]);
   let user = JSON.parse(localStorage.getItem("user"));
@@ -71,17 +71,17 @@ function Post({ text, username, dateCreated, ...props }) {
             </span>
           </div>
           <Link
-            to={`/post/${encodeURIComponent(props.postID)}`}
-            state={{username, text, likeCount: 0, dateCreated}}>
+            to={`/post/${encodeURIComponent(props.id)}`}
+            state={{username, text, likeCount: 0, commentCount, dateCreated}}>
           <div>{text}</div>
           <div className="flex justify-around text-gray-500">
             <button className="flex">
               <FaRegHeart />
               <span>0</span>
             </button>
-            <button className="flex">
-              <FaRegComment />
-              <span>0</span>
+            <button className="flex ">
+              <FaRegComment className="h-5"/>
+              <span className="ml-1">{commentCount} </span>
             </button>
           </div>
           </Link>

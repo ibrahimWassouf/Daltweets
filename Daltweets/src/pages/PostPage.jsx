@@ -6,7 +6,7 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 
 const PostPage = () => {
     const location = useLocation()
-    const {username, text, likeCount, dateCreated} = location.state || {}
+    const {username, text, likeCount, commentCount, dateCreated} = location.state || {}
     let user = JSON.parse(localStorage.getItem("user"))
     const [postComments, setPostComments] = useState([])
     const [newComment, setNewComment] = useState('')
@@ -97,6 +97,7 @@ const PostPage = () => {
                     <p className="text-gray-700 mb-2">{text}</p>
                     <div className="flex justify-between text-gray-500">
                         <span>{likeCount} Likes</span>
+                        <span>{commentCount} Comments</span>
                         <span><ReactTimeAgo date={Date.parse(dateCreated)} /></span>
                     </div>
                 </div>

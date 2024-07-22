@@ -32,8 +32,9 @@ const HomePage = () => {
                 (
                   <Post
                     key={index}
-                    username={post.user.username}
+                    username={post.creator}
                     dateCreated={post.dateCreated}
+                    commentCount = {post.commentCount}
                     {...post}
                   />
                 )
