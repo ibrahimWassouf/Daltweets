@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.csci3130.group04.Daltweets.model.*;
 import com.csci3130.group04.Daltweets.service.Implementation.GroupServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.PostTopicServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.TopicServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 import com.csci3130.group04.Daltweets.utils.PostResponseDTO;
 
@@ -15,9 +18,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.csci3130.group04.Daltweets.model.Post;
-import com.csci3130.group04.Daltweets.model.PostComment;
-import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.service.FollowersService;
 import com.csci3130.group04.Daltweets.service.PostCommentService;
 import com.csci3130.group04.Daltweets.service.PostService;
@@ -40,6 +40,10 @@ public class PostController {
     FollowersService followersService;
     @Autowired
     GroupServiceImpl groupService;
+    @Autowired
+    TopicServiceImpl topicService;
+    @Autowired
+    PostTopicServiceImpl postTopicService;
 
     @PostMapping("/create")
     public ResponseEntity<Post> createPost(@RequestBody Post post) {
@@ -138,4 +142,25 @@ public class PostController {
         return ResponseEntity.ok().body(postComments);
     }
 
+    @PostMapping("/createPostTopic")
+    ResponseEntity<PostTopic> createPostTopic(@RequestBody Map<String,String> requestBody ) {
+        String topicname = requestBody.get("topicname");
+        if ( !userService.isValidName(topicname) ) {
+            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+        }
+        int postid = Integer.parseInt(requestBody.get("postId"));
+
+        Topic topic = topicService.createTopic(topicname);
+        Post post = postService.getPostById(postid);
+        if ( topic == null || post == null ) {
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
+
+        PostTopic postTopic = new PostTopic();
+        postTopic.setTopic(topic);
+        postTopic.setPost(post);
+        PostTopic createdPostTopic = postTopicService.createPostTopic(postTopic);
+
+        return new ResponseEntity<>(createdPostTopic,HttpStatus.OK);
+    }
 }
