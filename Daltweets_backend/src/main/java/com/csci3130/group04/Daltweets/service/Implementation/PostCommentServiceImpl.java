@@ -31,5 +31,11 @@ public class PostCommentServiceImpl implements PostCommentService {
        if (post == null) return null;
        return postCommentRepository.findByPostId(post.getPostID());
     }
+
+    @Override
+    public int getCommentCount(Post post) {
+        if(post == null) return 0;
+        return postCommentRepository.getCommentsCount(post.getPostID());
+    }
     
 }
