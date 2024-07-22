@@ -178,4 +178,14 @@ public class PostController {
         List<Topic> topics = postTopicService.getTopicByPost(post);
         return new ResponseEntity<>(topics,HttpStatus.OK);
     }
+
+    @GetMapping("/getPostsByTopic/{topicname}")
+    ResponseEntity<List<Post>> getPostsByTopic(@PathVariable("topicname") String topicname) {
+        Topic topic = topicService.getTopicByName(topicname);
+        if ( topic == null ) {
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
+        List<Post> posts = postTopicService.getPostByTopic(topic);
+        return new ResponseEntity<>(posts,HttpStatus.OK);
+    }
 }
