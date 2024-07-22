@@ -535,5 +535,53 @@ public class PostServiceIntegrationTests {
                 assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
                 assertNull(response.getBody());
         }
+
+        @Test
+        public void test_get_posts_by_topic() {
+                User begin_user = new User();
+                User user = new User(begin_user.getId() , "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post begin_post = new Post();
+                Post post1 = new Post(begin_post.getPostID() , saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+                Post post2 = new Post(sentPost1.getPostID() + 1, saved_user, "post2", LocalDateTime.now(), false, false);
+                Post sentPost2 = postService.createPost(post2);
+
+                Topic topic1 = topicService.createTopic("topic1");
+
+                PostTopic postTopic1 = new PostTopic();
+                postTopic1.setTopic(topic1);
+                postTopic1.setPost(sentPost1);
+                PostTopic saved_postTopic1 = postTopicService.createPostTopic(postTopic1);
+                PostTopic postTopic2 = new PostTopic(saved_postTopic1.getID() + 1, topic1,sentPost2);
+                PostTopic saved_postTopic2 = postTopicService.createPostTopic(postTopic2);
+
+                int result = 2;
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getPostsByTopic/" + topic1.getName(),List.class);
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(result,response.getBody().size());
+        }
+        @Test
+        public void test_get_posts_by_topic_nonexist_topic() {
+                User begin_user = new User();
+                User user = new User(begin_user.getId() , "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post begin_post = new Post();
+                Post post1 = new Post(begin_post.getPostID() , saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+                Post post2 = new Post(sentPost1.getPostID() + 1, saved_user, "post2", LocalDateTime.now(), false, false);
+                Post sentPost2 = postService.createPost(post2);
+
+                Topic topic1 = new Topic();
+                topic1.setName("topic1");
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getPostsByTopic/" + topic1.getName(),List.class);
+                assertNotNull(response);
+                assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+                assertNull(response.getBody());
+        }
 }
 
