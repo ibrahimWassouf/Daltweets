@@ -2,52 +2,48 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { GoDotFill } from "react-icons/go";
 import { FaGear } from "react-icons/fa6";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 function Profile() {
-    const location = useLocation();
-    const { username, isFriend} = location.state || {};
-    const loggedInUser = JSON.parse(localStorage.getItem("user"));
-    const [backendUser,setBackendUser] = useState({})
-    const isLoggedInUser =   !backendUser || backendUser.username == loggedInUser.username 
-    const user = backendUser ? backendUser : loggedInUser  
-    let statusColor = ""
-    console.log(user.status)
-    switch(user.status){
-        case "ONLINE":
-            statusColor = "green"
-            break
-        case "OFFLINE":
-            statusColor = "red"
-            break
-        case "DEACTIVATED":
-            statusColor = "grey"
-            break
-        default:
-            statusColor="yellow"
+  const location = useLocation();
+  const {isFriend } = location.state || {};
+  const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  const {username} = useParams() || loggedInUser.username;
+  const [backendUser, setBackendUser] = useState({});
+  const isLoggedInUser = !backendUser || backendUser.username == loggedInUser.username;
+  const user = backendUser ? backendUser : loggedInUser;
+  let statusColor = "";
+  switch (user.status) {
+    case "ONLINE":
+      statusColor = "green";
+      break;
+    case "OFFLINE":
+      statusColor = "red";
+      break;
+    case "DEACTIVATED":
+      statusColor = "grey";
+      break;
+    default:
+      statusColor = "yellow";
+  }
+
+  useEffect(() => {
+    getProfile();
+  }, [username]);
+
+  const getProfile = async () => {
+    
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/user/${username}/profile`
+      );
+      setBackendUser(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching profile.", error);
     }
-    console.log(user.status)
-    console.log(statusColor)
+  };
 
-
-    useEffect(() => {
-        console.log(username)
-        getProfile();
-    }, []);
-
-    const getProfile = async() => {
-        try{
-            const response = await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/user/${username}/profile`);
-            setBackendUser(response.data)
-            console.log(response.data)
-        }catch (error){
-            console.error("Error fetching profile.", error);
-        }
-    };
-
-    useEffect(() => {
-        getProfile()
-    }, []) 
 
     let navigae = useNavigate();
     const routeChange = () => {

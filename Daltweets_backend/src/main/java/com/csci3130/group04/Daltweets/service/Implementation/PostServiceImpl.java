@@ -10,6 +10,7 @@ import com.csci3130.group04.Daltweets.service.PostService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -37,6 +38,13 @@ public class PostServiceImpl implements PostService {
       } 
 
       return postRepository.findPostsByUserIn(users);
+    }
+
+    @Override
+    public Post getPostById(int postId) {
+      Optional<Post> optionalPost = postRepository.findById(postId);
+      if (optionalPost == null || !optionalPost.isPresent()) return null;
+      return optionalPost.get();
     }
 
 }

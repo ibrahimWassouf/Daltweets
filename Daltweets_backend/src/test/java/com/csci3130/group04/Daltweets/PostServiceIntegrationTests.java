@@ -5,6 +5,7 @@ import com.csci3130.group04.Daltweets.model.User.Role;
 
 import com.csci3130.group04.Daltweets.repository.*;
 import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.PostCommentServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.PostServiceImpl;
 
 import org.junit.jupiter.api.AfterEach;
@@ -21,7 +22,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -56,10 +59,14 @@ public class PostServiceIntegrationTests {
         private GroupRepository groupRepository;
         @Autowired
         private GroupMembersRepository groupMembersRepository;
+        @Autowired
+        private PostCommentRepository postCommentRepository;
+        @Autowired
+        private PostCommentServiceImpl postCommentServiceImpl;
 
         @AfterEach
         void teardown() {
-
+                postCommentRepository.deleteAll();
                 followersRepository.deleteAll();
                 postRepository.deleteAll();
                 groupMembersRepository.deleteAll();
@@ -206,4 +213,187 @@ public class PostServiceIntegrationTests {
                 assertNull(response.getBody());
                 assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
         }
-}
+
+        @Test
+        public void test_create_post_comment()
+        {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user);
+
+                Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+                post = postRepository.save(post);
+
+                Map<String, String> requestBody = Map.ofEntries(Map.entry("username", user.getUsername()), Map.entry("postId", String.valueOf(post.getPostID())),Map.entry("comment", "new comment"));
+                ResponseEntity<PostComment> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/comment/create", requestBody,PostComment.class);
+                
+                assertNotNull(response);
+                assertEquals(requestBody.get("comment"),response.getBody().getComment());
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+        }       
+
+
+        @Test
+        public void test_create_post_comment_with_non_existing_post()
+        {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user);
+
+                Map<String, String> requestBody = Map.ofEntries(Map.entry("username", user.getUsername()), Map.entry("postId","0"),Map.entry("comment", "new comment"));
+                ResponseEntity<PostComment> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/comment/create", requestBody,PostComment.class);
+                
+                assertNotNull(response);
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        }
+
+        @Test
+        public void test_create_post_comment_with_non_existing_user()
+        {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user); 
+
+                Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+                post = postRepository.save(post);
+
+                Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "name"), Map.entry("postId",String.valueOf(post.getPostID())),Map.entry("comment", "new comment"));
+                ResponseEntity<PostComment> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/comment/create", requestBody,PostComment.class);
+                
+                assertNotNull(response);
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        }
+
+        @Test
+        public void test_create_post_comment_with_null_comment()
+        {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user); 
+
+                Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+                post = postRepository.save(post);
+
+                Map<String, String> requestBody = new HashMap<>();
+                requestBody.put("username", "name");
+                requestBody.put("postId",String.valueOf(post.getPostID()));
+                requestBody.put("comment", null);
+                ResponseEntity<PostComment> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/comment/create", requestBody,PostComment.class);
+                
+                assertNotNull(response);
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        }
+
+        @Test
+        public void test_create_post_comment_with_null_user()
+        {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user); 
+
+                Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+                post = postRepository.save(post);
+
+                Map<String, String> requestBody = new HashMap<>();
+                requestBody.put("username", null);
+                requestBody.put("postId",String.valueOf(post.getPostID()));
+                requestBody.put("comment", "new comment");
+                ResponseEntity<PostComment> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/comment/create", requestBody,PostComment.class);
+                
+                assertNotNull(response);
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        }
+
+        @Test
+        public void test_create_post_comment_with_invalid_post_id()
+        {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user); 
+
+                Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+                post = postRepository.save(post);
+
+                Map<String, String> requestBody = new HashMap<>();
+                requestBody.put("username", "name");
+                requestBody.put("postId","-1");
+                requestBody.put("comment","new comment");
+                ResponseEntity<PostComment> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/comment/create", requestBody,PostComment.class);
+                
+                assertNotNull(response);
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        }
+
+        @Test
+        public void test_get_post_with_post_id()
+        {
+                User user = new User(1, "checkbio2", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user);
+
+                User user2 = new User(user.getId()+1, "checkbio2", "Name2", "mail2@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user2 = userRepository.save(user2);
+
+                Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+                post = postRepository.save(post);
+
+                PostComment postComment1 = new PostComment(1,user,post,"comment",LocalDateTime.now());
+                postComment1 = postCommentRepository.save(postComment1);
+                PostComment postComment2 = new PostComment(2,user2,post,"comment",LocalDateTime.now());
+                postComment2 = postCommentRepository.save(postComment2);
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/comment/get/"+post.getPostID(),List.class);
+                
+                assertNotNull(response);
+                assertEquals(2,response.getBody().size());
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+        }
+
+
+        @Test
+        public void test_get_post_with_invalid_post_id()
+        {
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/comment/get/-1",List.class);
+                
+                assertNotNull(response);
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        }
+
+        @Test
+        public void test_get_post_with_non_existing_post_id()
+        {
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/comment/get/2",List.class);
+                
+                assertNotNull(response);
+                assertNull(response.getBody());
+                assertEquals(HttpStatus.NOT_IMPLEMENTED, response.getStatusCode());
+        }
+
+        @Test
+        public void test_get_comments_count(){
+                User user = new User(1, "checkbio2", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user = userRepository.save(user);
+
+                User user2 = new User(user.getId()+1, "checkbio2", "Name2", "mail2@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                user2 = userRepository.save(user2);
+
+                Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+                post = postRepository.save(post);
+
+                PostComment postComment1 = new PostComment(1,user,post,"comment",LocalDateTime.now());
+                postComment1 = postCommentRepository.save(postComment1);
+                PostComment postComment2 = new PostComment(2,user2,post,"comment",LocalDateTime.now());
+                postComment2 = postCommentRepository.save(postComment2);
+
+                int commentCount  = postCommentServiceImpl.getCommentCount(post);
+
+                assertEquals(2,commentCount);
+        }
+
+        @Test
+        public void test_get_comments_count_with_null_post(){
+
+                int commentCount  = postCommentServiceImpl.getCommentCount(null);
+
+                assertEquals(0,commentCount);
+        }
+}       

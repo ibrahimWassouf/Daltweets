@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.csci3130.group04.Daltweets.model.Group;
 import com.csci3130.group04.Daltweets.model.GroupMembers;
@@ -29,6 +30,12 @@ import com.csci3130.group04.Daltweets.repository.GroupMembersRepository;
 import com.csci3130.group04.Daltweets.repository.GroupRepository;
 import com.csci3130.group04.Daltweets.repository.UserRepository;
 import com.csci3130.group04.Daltweets.service.Implementation.GroupServiceImpl;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @SpringBootTest(classes = DaltweetsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -614,5 +621,30 @@ public class GroupIntegrationTests {
 
         assertEquals(savedGroup.getName(), response.getBody().getName());
         assertEquals("201 CREATED", response.getStatusCode().toString());
+    }
+
+    @Test
+    public void test_get_all_groups_with_controller(){
+        Group group = new Group(1, "group1", LocalDateTime.now(), false, "");
+        group = groupRepository.save(group);
+
+        Group group2 = new Group(2, "group2", LocalDateTime.now(), false,"");
+        group2 = groupRepository.save(group2);
+
+        
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/all",List.class);
+
+        assertNotNull(response);
+        assertEquals(2, response.getBody().size());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void test_controller_get_all_groups_with_no_existing_groups(){
+        ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/group/all",List.class);
+
+        assertNotNull(response);
+        assertEquals(0, response.getBody().size());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
