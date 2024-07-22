@@ -46,7 +46,10 @@ public class PostServiceIntegrationTests {
 
         @Autowired
         private PostRepository postRepository;
-
+        @Autowired
+        private PostTopicRepository postTopicRepository;
+        @Autowired
+        private TopicRepository topicRepository;
         @Autowired
         private FollowersServiceImpl followersService;
 
@@ -66,12 +69,15 @@ public class PostServiceIntegrationTests {
 
         @AfterEach
         void teardown() {
-                postCommentRepository.deleteAll();
                 followersRepository.deleteAll();
-                postRepository.deleteAll();
                 groupMembersRepository.deleteAll();
                 groupRepository.deleteAll();
+                postCommentRepository.deleteAll();
+                postTopicRepository.deleteAll();
+                postRepository.deleteAll();
+                topicRepository.deleteAll();
                 userRepository.deleteAll();
+
         }
 
         @Test
@@ -396,4 +402,59 @@ public class PostServiceIntegrationTests {
 
                 assertEquals(0,commentCount);
         }
-}       
+
+        @Test
+        public void test_create_post_topic() {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+                String Post1id = String.valueOf(sentPost1.getPostID());
+                String topicname = "topic1";
+
+                Map<String, String> requestBody = Map.ofEntries(Map.entry("topicname", topicname), Map.entry("postId",Post1id));
+                ResponseEntity<PostTopic> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/createPostTopic", requestBody,PostTopic.class);
+
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(sentPost1.getText(),response.getBody().getPost().getText());
+                assertEquals(topicname,response.getBody().getTopic().getName());
+        }
+
+        @Test
+        public void test_create_post_topic_with_invalid_topic() {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+                String Post1id = String.valueOf(sentPost1.getPostID());
+                String topicname = "";
+
+                Map<String, String> requestBody = Map.ofEntries(Map.entry("topicname", topicname), Map.entry("postId",Post1id));
+                ResponseEntity<PostTopic> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/createPostTopic", requestBody,PostTopic.class);
+
+                assertNotNull(response);
+                assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+                assertNull(response.getBody());
+        }
+        @Test
+        public void test_create_post_topic_with_nonexist_post() {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+                String Post1id = String.valueOf(post1.getPostID());
+                String topicname = "topic1";
+
+                Map<String, String> requestBody = Map.ofEntries(Map.entry("topicname", topicname), Map.entry("postId",Post1id));
+                ResponseEntity<PostTopic> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/createPostTopic", requestBody,PostTopic.class);
+
+                assertNotNull(response);
+                assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+                assertNull(response.getBody());
+        }
+
+}
+
