@@ -8,11 +8,11 @@ public class PostTopic{
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   
-  @ManyToOne(fetch=FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name="postId")
   private Post post;
 
-  @ManyToOne(fetch=FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name="topicId")
   private Topic topic;
 
