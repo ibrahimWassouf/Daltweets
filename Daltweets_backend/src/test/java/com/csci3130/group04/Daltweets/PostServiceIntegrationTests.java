@@ -6,6 +6,7 @@ import com.csci3130.group04.Daltweets.model.User.Role;
 import com.csci3130.group04.Daltweets.repository.*;
 import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.PostCommentServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.PostLikeServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.PostServiceImpl;
 
 import org.junit.jupiter.api.AfterEach;
@@ -63,15 +64,22 @@ public class PostServiceIntegrationTests {
         private PostCommentRepository postCommentRepository;
         @Autowired
         private PostCommentServiceImpl postCommentServiceImpl;
+        
+        @Autowired
+        private PostLikeServiceImpl postLikeServiceImpl;
+        @Autowired
+        private PostLikeRepository postLikeRepository;
 
         @AfterEach
         void teardown() {
+        		postLikeRepository.deleteAll();
                 postCommentRepository.deleteAll();
                 followersRepository.deleteAll();
                 postRepository.deleteAll();
                 groupMembersRepository.deleteAll();
                 groupRepository.deleteAll();
                 userRepository.deleteAll();
+                
         }
 
         @Test
@@ -396,4 +404,85 @@ public class PostServiceIntegrationTests {
 
                 assertEquals(0,commentCount);
         }
+        
+        
+        @Test
+        public void test_get_post_like_count() {
+        	User user = new User(1, "checkbio", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user = userRepository.save(user);
+            
+            User user2 = new User(2, "checkbio2", "Name2", "mail2@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user2 = userRepository.save(user2);
+            
+            User user3 = new User(3, "checkbio3", "Name3", "mail3@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user3 = userRepository.save(user3);
+            
+        	Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+            post = postRepository.save(post);
+            
+            PostLike pl1 = new PostLike(1, user, post);
+            PostLike pl2 = new PostLike(2, user2, post);
+            PostLike pl3 = new PostLike(3, user3, post);
+            pl1 = postLikeRepository.save(pl1);
+            pl2 = postLikeRepository.save(pl2);
+            pl3 = postLikeRepository.save(pl3);
+            
+            
+        	int postLikes = postLikeServiceImpl.getPostLikes(post);
+        	
+        	assertEquals(3, postLikes);
+        }
+        
+        @Test
+        public void test_get_post_like_on_null_post() {
+        	User user = new User(1, "checkbio", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user = userRepository.save(user);
+            
+            User user2 = new User(2, "checkbio2", "Name2", "mail2@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user2 = userRepository.save(user2);
+            
+            User user3 = new User(3, "checkbio3", "Name3", "mail3@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user3 = userRepository.save(user3);
+            
+        	Post post = null;
+            
+            PostLike pl1 = new PostLike(1, user, post);
+            PostLike pl2 = new PostLike(2, user2, post);
+            PostLike pl3 = new PostLike(3, user3, post);
+            pl1 = postLikeRepository.save(pl1);
+            pl2 = postLikeRepository.save(pl2);
+            pl3 = postLikeRepository.save(pl3);
+            
+            
+        	int postLikes = postLikeServiceImpl.getPostLikes(post);
+        	
+        	assertEquals(0, postLikes);
+        	
+        }
+
+        public void test_get_post_like_ignore_null_users() {
+        	User user = new User(1, "checkbio", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user = userRepository.save(user);
+            
+            User user2 = new User(2, "checkbio2", "Name2", "mail2@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user2 = userRepository.save(user2);
+            
+            User user3 = null;
+            
+        	Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+            post = postRepository.save(post);
+            
+            PostLike pl1 = new PostLike(1, user, post);
+            PostLike pl2 = new PostLike(2, user2, post);
+            PostLike pl3 = new PostLike(3, user3, post);
+            pl1 = postLikeRepository.save(pl1);
+            pl2 = postLikeRepository.save(pl2);
+            pl3 = postLikeRepository.save(pl3);
+            
+            
+        	int postLikes = postLikeServiceImpl.getPostLikes(post);
+        	
+        	assertEquals(2, postLikes);
+        }
+        
 }       
