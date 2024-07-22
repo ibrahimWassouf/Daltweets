@@ -4,11 +4,8 @@ import com.csci3130.group04.Daltweets.model.*;
 import com.csci3130.group04.Daltweets.model.User.Role;
 
 import com.csci3130.group04.Daltweets.repository.*;
-import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImpl;
-import com.csci3130.group04.Daltweets.service.Implementation.PostCommentServiceImpl;
-import com.csci3130.group04.Daltweets.service.Implementation.PostServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.*;
 
-import com.csci3130.group04.Daltweets.service.Implementation.TopicServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,6 +66,8 @@ public class PostServiceIntegrationTests {
         private PostCommentServiceImpl postCommentServiceImpl;
         @Autowired
         private TopicServiceImpl topicService;
+        @Autowired
+        private PostTopicServiceImpl postTopicService;
 
         @AfterEach
         void teardown() {
@@ -494,6 +493,47 @@ public class PostServiceIntegrationTests {
                 assertNotNull(response);
                 assertEquals(HttpStatus.OK,response.getStatusCode());
                 assertEquals(result_list,response.getBody().size());
+        }
+
+        @Test
+        public void test_get_topics() {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+
+                Topic topic1 = topicService.createTopic("topic1");
+                Topic topic2 = topicService.createTopic("topic2");
+
+                PostTopic postTopic1 = new PostTopic();
+                postTopic1.setTopic(topic1);
+                postTopic1.setPost(sentPost1);
+                PostTopic saved_postTopic1 = postTopicService.createPostTopic(postTopic1);
+                PostTopic postTopic2 = new PostTopic(saved_postTopic1.getID() + 1, topic2,sentPost1);
+                PostTopic saved_postTopic2 = postTopicService.createPostTopic(postTopic2);
+
+                int result = 2;
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getTopic/" + sentPost1.getPostID(),List.class);
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(result,response.getBody().size());
+        }
+
+        @Test
+        public void test_get_topics_with_nonexist_post() {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+
+                Topic topic1 = topicService.createTopic("topic1");
+                Topic topic2 = topicService.createTopic("topic2");
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getTopic/" + post1.getPostID(),List.class);
+                assertNotNull(response);
+                assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+                assertNull(response.getBody());
         }
 }
 
