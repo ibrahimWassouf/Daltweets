@@ -1,11 +1,13 @@
 package com.csci3130.group04.Daltweets.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.csci3130.group04.Daltweets.service.Implementation.GroupServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
+import com.csci3130.group04.Daltweets.utils.PostResponseDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,13 +51,27 @@ public class PostController {
     }
 
     @GetMapping("/{username}/all")
-    List<Post> getAllPosts(@PathVariable("username") String username) {
+    List<PostResponseDTO> getAllPosts(@PathVariable("username") String username) {
         User user = userService.getUserByName(username);
         List<User> following = followersService.getUserFollowing(user);
-        return postService.getPostsByUsers(following);
+        List<Post> posts = postService.getPostsByUsers(following);
+        List<PostResponseDTO> postResponseDTOs = new ArrayList<>();
+        for (Post post: posts)
+        {
+            int commentCount = postCommentService.getCommentCount(post);
+            PostResponseDTO postResponseDTO = new PostResponseDTO();
+            postResponseDTO.setId(post.getPostID());
+            postResponseDTO.setCreator(post.getUser().getUsername());
+            postResponseDTO.setText(post.getText());
+            postResponseDTO.setDateCreated(post.getDateCreated());
+            postResponseDTO.setCommentCount(commentCount);
+            postResponseDTOs.add(postResponseDTO);
+        }
+
+        return postResponseDTOs;
     }
     @GetMapping("/{groupname}/groupPosts")
-    ResponseEntity<List<Post>> getAllGroupPosts(@PathVariable("groupname") String groupname ) {
+    ResponseEntity<List<PostResponseDTO>> getAllGroupPosts(@PathVariable("groupname") String groupname ) {
         if ( groupname == null ) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -64,7 +80,21 @@ public class PostController {
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
         List<Post> groupposts = postService.getPostsByUsers(groupmembers);
-        return new ResponseEntity<>(groupposts,HttpStatus.OK);
+        List<PostResponseDTO> postResponseDTOs = new ArrayList<>();
+
+        for (Post post: groupposts)
+        {
+            int commentCount = postCommentService.getCommentCount(post);
+            PostResponseDTO postResponseDTO = new PostResponseDTO();
+            postResponseDTO.setId(post.getPostID());
+            postResponseDTO.setCreator(post.getUser().getUsername());
+            postResponseDTO.setText(post.getText());
+            postResponseDTO.setDateCreated(post.getDateCreated());
+            postResponseDTO.setCommentCount(commentCount);
+            postResponseDTOs.add(postResponseDTO);
+        }
+
+        return new ResponseEntity<>(postResponseDTOs,HttpStatus.OK);
     }
 
     @PostMapping("/comment/create")
