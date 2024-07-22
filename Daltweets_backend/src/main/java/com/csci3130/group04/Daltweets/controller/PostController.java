@@ -163,4 +163,9 @@ public class PostController {
 
         return new ResponseEntity<>(createdPostTopic,HttpStatus.OK);
     }
+    @GetMapping("/getAllTopics")
+    ResponseEntity<List<Topic>> getAllTopics() {
+        List<Topic> topics = topicService.getAllTopics();
+        return new ResponseEntity<>(topics,HttpStatus.OK);
+    }
 }
