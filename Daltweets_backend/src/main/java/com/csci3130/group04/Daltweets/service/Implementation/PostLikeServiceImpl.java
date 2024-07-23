@@ -31,7 +31,12 @@ public class PostLikeServiceImpl implements PostLikeService {
 	@Override
 	public PostLike addLike(User user, Post post) {
 		if (post == null || user == null) return null;
-		PostLike postLike= new PostLike(1, user, post);
+		
+		//prevents duplicate rows
+		PostLike pl = postLikeRepository.postLikedByUser(user.getId(), post.getPostID());
+		if (pl != null) return null;
+		
+		PostLike postLike= new PostLike(0, user, post);
 		
 		postLike = postLikeRepository.save(postLike);
 		if (postLike == null) return null;
