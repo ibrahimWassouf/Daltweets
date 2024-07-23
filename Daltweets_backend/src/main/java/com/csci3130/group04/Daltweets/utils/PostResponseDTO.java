@@ -17,17 +17,22 @@ public class PostResponseDTO {
     private LocalDateTime dateCreated;
 
     private int commentCount;
+    
+    private int likeCount;
+    
+    private boolean likedByUser;
    
     public PostResponseDTO() {
     }
     
-    public PostResponseDTO(Post post, int commentCount) {
+    public PostResponseDTO(Post post, int commentCount, int likeCount) {
         this.id = post.getPostID();
         this.creator = post.getUser().getUsername();
         this.text = post.getText();
         this.dateCreated =  post.getDateCreated();
         this.commentCount = commentCount;
-        this.commentCount = commentCount;
+        this.likeCount = likeCount;
+        this.likedByUser = false;
     }
 
     public int getId() {
@@ -70,6 +75,22 @@ public class PostResponseDTO {
     public void setCreator(String postCreator) {
         this.creator = postCreator;
     }
+
+	public int getLikeCount() {
+		return likeCount;
+	}
+
+	public void setLikeCount(int likeCount) {
+		this.likeCount = likeCount;
+	}
+
+	public boolean isLikedByUser() {
+		return likedByUser;
+	}
+
+	public void setLikedByUser(boolean likedByUser) {
+		this.likedByUser = likedByUser;
+	}
 
     
 

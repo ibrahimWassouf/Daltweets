@@ -28,4 +28,21 @@ public class PostLikeServiceImpl implements PostLikeService {
 		return postLikeRepository.getLikeCount(post.getPostID());
 	}
 	
+	@Override
+	public PostLike addLike(User user, Post post) {
+		if (post == null || user == null) return null;
+		PostLike postLike= new PostLike(1, user, post);
+		
+		postLike = postLikeRepository.save(postLike);
+		if (postLike == null) return null;
+		return postLike;
+		
+	}
+
+	@Override
+	public boolean postLikedByUser(User user, Post post) {
+		if (post == null || user == null) return false;
+		return postLikeRepository.postLikedByUser(user.getId(), post.getPostID());
+	}
+	
 }
