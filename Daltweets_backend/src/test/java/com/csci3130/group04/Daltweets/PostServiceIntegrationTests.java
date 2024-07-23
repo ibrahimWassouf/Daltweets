@@ -535,7 +535,7 @@ public class PostServiceIntegrationTests {
             Map<String, String> requestBody2 = Map.ofEntries(Map.entry("username", "Name2"), Map.entry("postId", String.valueOf(post.getPostID())));
             
             ResponseEntity<PostResponseDTO> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/add-like", requestBody,PostResponseDTO.class);
-            ResponseEntity<PostResponseDTO> response2 = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/add-like", requestBody,PostResponseDTO.class);
+            ResponseEntity<PostResponseDTO> response2 = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/add-like", requestBody2,PostResponseDTO.class);
             
             assertEquals(1, response.getBody().getLikeCount());
             assertEquals(2, response2.getBody().getLikeCount());
