@@ -15,6 +15,7 @@ const PostPage = () => {
     const [followings, setFollowings] = useState([]);
     const {postId} = useParams();
     const [topics,setTopics] = useState([]);
+    const [postTopics,setPostTopics] = useState([]);
   
     const fetchFollowing = async () => {
       await axios
@@ -66,11 +67,23 @@ const PostPage = () => {
         }
     }
 
+    const fetchTopicsbyPost = async () => {
+        await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/getTopic/${postId}`)
+        .then((response) => {
+            setTopics(response.data);
+            console.log(response.data);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+      };
+
     useEffect(() => {
-        fetchComments()
-        fetchFollowers()
-        fetchFollowing()
-        fetchTopics()
+        fetchComments();
+        fetchFollowers();
+        fetchFollowing();
+        fetchTopics();
+        fetchTopicsbyPost();
     }, [])
 
     const handleCommentSubmit = async (e) => {
@@ -109,6 +122,21 @@ const PostPage = () => {
                                 </div>
                             </div>
                             <p className="text-gray-700 mb-2">{text}</p>
+                            <div className="flex ">
+                            {
+                                topics.map(
+                                    (topic, index) => (
+                                    console.log(topic),
+                                    (
+                                        <Topic
+                                        key = {index}
+                                        topicname={topic.name}
+                                        />
+                                    )
+                                    ),
+                                )
+                            }
+                            </div>
                             <div className="flex justify-between text-gray-500">
                                 <span>{likeCount} Likes</span>
                                 <span>{commentCount} Comments</span>
