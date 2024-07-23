@@ -42,7 +42,8 @@ public class PostLikeServiceImpl implements PostLikeService {
 	@Override
 	public boolean postLikedByUser(User user, Post post) {
 		if (post == null || user == null) return false;
-		return postLikeRepository.postLikedByUser(user.getId(), post.getPostID());
+		PostLike pl = postLikeRepository.postLikedByUser(user.getId(), post.getPostID());
+		return pl == null ? false : true;
 	}
 	
 }

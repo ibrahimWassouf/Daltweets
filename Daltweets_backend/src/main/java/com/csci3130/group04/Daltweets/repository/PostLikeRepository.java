@@ -12,5 +12,5 @@ public interface PostLikeRepository extends JpaRepository<PostLike,Integer>{
 	int getLikeCount(@Param("postId") int postId);
 	
 	@Query("SELECT pl FROM PostLike pl WHERE pl.post.id = :postId AND pl.user.id = :userId")
-	boolean postLikedByUser(@Param("postId") int postId, @Param("userId") int userId);
+	PostLike postLikedByUser(@Param("postId") int postId, @Param("userId") int userId);
 }
