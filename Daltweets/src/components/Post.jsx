@@ -6,12 +6,15 @@ import en from "javascript-time-ago/locale/en";
 import { FaRegComment, FaRegHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Topic from "./Topic";
 
 TimeAgo.addDefaultLocale(en);
 
-function Post({ text, username, commentCount,dateCreated, ...props }) {
+function Post({ text, username, commentCount,dateCreated,postId, ...props }) {
   const [followers, setFollowers] = useState([]);
   const [followings, setFollowings] = useState([]);
+  const [topics,setTopics] = useState([]);
+  console.log(postId);
   let user = JSON.parse(localStorage.getItem("user"));
   const fetchFollowing = async () => {
     await axios
@@ -40,6 +43,17 @@ function Post({ text, username, commentCount,dateCreated, ...props }) {
       });
   };
 
+  const fetchTopics = async () => {
+    await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/getTopic/${postId}`)
+    .then((response) => {
+        setTopics(response.data);
+        console.log(response.data);
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+  };
+
   const profileDetails = (friendName) => {
     const isFollowing =
       followings.find((user) => user.username === friendName) !== undefined;
@@ -52,6 +66,7 @@ function Post({ text, username, commentCount,dateCreated, ...props }) {
   useEffect(() => {
     fetchFollowers();
     fetchFollowing();
+    fetchTopics();
   }, []);
 
   return (
@@ -70,10 +85,26 @@ function Post({ text, username, commentCount,dateCreated, ...props }) {
               <ReactTimeAgo date={Date.parse(dateCreated)}></ReactTimeAgo>{" "}
             </span>
           </div>
+          
           <Link
             to={`/post/${encodeURIComponent(props.id)}`}
             state={{username, text, likeCount: 0, commentCount, dateCreated}}>
           <div>{text}</div>
+          <div className="flex">
+            {
+              topics.map(
+                (topic, index) => (
+                  console.log(topic),
+                  (
+                    <Topic
+                      key = {index}
+                      topicname={topic.name}
+                    />
+                  )
+                ),
+              )
+            }
+          </div>
           <div className="flex justify-around text-gray-500">
             <button className="flex">
               <FaRegHeart />

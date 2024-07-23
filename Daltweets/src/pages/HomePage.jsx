@@ -21,7 +21,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="w-screen h-screen">
+    <div className="w-screen h-full min-h-screen">
       HomePage
       <div className="flex flex-row flex-wrap ">
         <div className="w-3/4">
@@ -35,6 +35,7 @@ const HomePage = () => {
                     username={post.creator}
                     dateCreated={post.dateCreated}
                     commentCount = {post.commentCount}
+                    postId = {post.id}
                     {...post}
                   />
                 )
