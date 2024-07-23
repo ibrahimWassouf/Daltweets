@@ -48,7 +48,7 @@ function Post({ text, username, commentCount, dateCreated, ...props }) {
       });
   };
 
-  const addLike = async (postId) => {
+  const handleLike = async (postId) => {
     if (!liked) {
       await axios
         .post(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/add-like`, {
@@ -59,6 +59,20 @@ function Post({ text, username, commentCount, dateCreated, ...props }) {
           console.log(res);
           setLiked(true);
           setLikeCount(likeCount + 1);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      await axios
+        .post(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/unlike`, {
+          username: user.username,
+          postId: postId,
+        })
+        .then((res) => {
+          console.log(res);
+          setLiked(false);
+          setLikeCount(likeCount - 1);
         })
         .catch((error) => {
           console.error(error);
@@ -108,7 +122,7 @@ function Post({ text, username, commentCount, dateCreated, ...props }) {
             <div>{text}</div>
           </Link>
           <div className="flex justify-around text-gray-500">
-            <button className="flex" onClick={() => addLike(props.id)}>
+            <button className="flex" onClick={() => handleLike(props.id)}>
               {liked ? <RiHeartFill fill="red" /> : <FaRegHeart />}
               <span>{likeCount}</span>
             </button>
