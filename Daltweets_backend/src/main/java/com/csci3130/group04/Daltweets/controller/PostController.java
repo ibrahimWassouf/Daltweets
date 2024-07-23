@@ -180,12 +180,23 @@ public class PostController {
     }
 
     @GetMapping("/getPostsByTopic/{topicname}")
-    ResponseEntity<List<Post>> getPostsByTopic(@PathVariable("topicname") String topicname) {
+    ResponseEntity<List<PostResponseDTO>> getPostsByTopic(@PathVariable("topicname") String topicname) {
         Topic topic = topicService.getTopicByName(topicname);
         if ( topic == null ) {
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
         List<Post> posts = postTopicService.getPostByTopic(topic);
-        return new ResponseEntity<>(posts,HttpStatus.OK);
+        List<PostResponseDTO> postResponseDTOs = new ArrayList<>();
+        for (Post post: posts) {
+            int commentCount = postCommentService.getCommentCount(post);
+            PostResponseDTO postResponseDTO = new PostResponseDTO();
+            postResponseDTO.setId(post.getPostID());
+            postResponseDTO.setCreator(post.getUser().getUsername());
+            postResponseDTO.setText(post.getText());
+            postResponseDTO.setDateCreated(post.getDateCreated());
+            postResponseDTO.setCommentCount(commentCount);
+            postResponseDTOs.add(postResponseDTO);
+        }
+        return new ResponseEntity<>(postResponseDTOs,HttpStatus.OK);
     }
 }
