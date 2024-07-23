@@ -462,6 +462,7 @@ public class PostServiceIntegrationTests {
         	
         }
 
+        @Test
         public void test_get_post_like_ignore_null_users() {
         	User user = new User(1, "checkbio", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
             user = userRepository.save(user);
@@ -473,13 +474,10 @@ public class PostServiceIntegrationTests {
             
         	Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
             post = postRepository.save(post);
-            
-            PostLike pl1 = new PostLike(1, user, post);
-            PostLike pl2 = new PostLike(2, user2, post);
-            PostLike pl3 = new PostLike(3, user3, post);
-            pl1 = postLikeRepository.save(pl1);
-            pl2 = postLikeRepository.save(pl2);
-            pl3 = postLikeRepository.save(pl3);
+
+            PostLike pl1 = postLikeServiceImpl.addLike(user, post);
+            PostLike pl2 = postLikeServiceImpl.addLike(user2, post);
+            PostLike pl3 = postLikeServiceImpl.addLike(user3, post);
             
             
         	int postLikes = postLikeServiceImpl.getPostLikes(post);
@@ -487,6 +485,7 @@ public class PostServiceIntegrationTests {
         	assertEquals(2, postLikes);
         }
         
+        @Test
         public void test_add_post_like() {
         	User user = new User(1, "checkbio", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
             user = userRepository.save(user);
@@ -508,6 +507,7 @@ public class PostServiceIntegrationTests {
             assertEquals(2, pl_response);
         }
         
+        @Test
         public void test_post_liked_by_user() {
         	User user = new User(1, "checkbio", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
             user = userRepository.save(user);
@@ -521,6 +521,7 @@ public class PostServiceIntegrationTests {
             assertTrue(plByUser);
         }
         
+        @Test
         public void test_add_post_like_endpoint() {
         	User user = new User(1, "checkbio", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
             user = userRepository.save(user);
