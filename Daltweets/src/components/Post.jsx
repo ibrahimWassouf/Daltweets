@@ -89,8 +89,9 @@ function Post({ text, username, commentCount,dateCreated,postId, ...props }) {
           <Link
             to={`/post/${encodeURIComponent(props.id)}`}
             state={{username, text, likeCount: 0, commentCount, dateCreated}}>
-          <div>{text}</div>
-          <div className="flex">
+            <div>{text}</div>
+          </Link>
+          <div className="flex ">
             {
               topics.map(
                 (topic, index) => (
@@ -105,16 +106,19 @@ function Post({ text, username, commentCount,dateCreated,postId, ...props }) {
               )
             }
           </div>
-          <div className="flex justify-around text-gray-500">
-            <button className="flex">
-              <FaRegHeart />
-              <span>0</span>
-            </button>
-            <button className="flex ">
-              <FaRegComment className="h-5"/>
-              <span className="ml-1">{commentCount} </span>
-            </button>
-          </div>
+          <Link
+            to={`/post/${encodeURIComponent(props.id)}`}
+            state={{username, text, likeCount: 0, commentCount, dateCreated}}>
+            <div className="flex justify-around text-gray-500">
+              <button className="flex">
+                <FaRegHeart />
+                <span>0</span>
+              </button>
+              <button className="flex ">
+                <FaRegComment className="h-5"/>
+                <span className="ml-1">{commentCount} </span>
+              </button>
+            </div>
           </Link>
         </div>
       </div>
