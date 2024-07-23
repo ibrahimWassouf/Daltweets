@@ -93,7 +93,7 @@ const Search = () => {
   };
 
   return (
-    <div className="bg-white in-h-screen text-white w-5/6">
+    <div className="bg-white in-h-screen text-white">
       <header className="sticky top-0 bg-opacity-80 backdrop-blur-sm border-b border-gray-500 z-10">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center">
           <div></div>

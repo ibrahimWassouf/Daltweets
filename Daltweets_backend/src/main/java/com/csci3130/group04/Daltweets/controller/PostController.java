@@ -190,4 +190,27 @@ public class PostController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
+    @GetMapping("/{username}/posts")
+    ResponseEntity<List<PostResponseDTO>> getAllPostsByUser(@PathVariable("username") String username)
+    {
+        if (username.isBlank()) return ResponseEntity.badRequest().body(null);
+        User user = userService.getUserByName(username);
+        List<Post> posts = postService.getPostsByUser(user);
+        if (posts == null) return ResponseEntity.notFound().build();
+
+        List<PostResponseDTO> postResponseDTOs = new ArrayList<>();
+        for (Post post: posts)
+        {
+            int commentCount = postCommentService.getCommentCount(post);
+            PostResponseDTO postResponseDTO = new PostResponseDTO();
+            postResponseDTO.setId(post.getPostID());
+            postResponseDTO.setCreator(post.getUser().getUsername());
+            postResponseDTO.setText(post.getText());
+            postResponseDTO.setDateCreated(post.getDateCreated());
+            postResponseDTO.setCommentCount(commentCount);
+            postResponseDTOs.add(postResponseDTO);
+        }
+        return ResponseEntity.ok().body(postResponseDTOs);
+    }
+
 }
