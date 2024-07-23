@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-TimeAgo.addDefaultLocale(en);
+TimeAgo.addLocale(en);
 function Comment({username,text,dateCreated}){
     const user = JSON.parse(localStorage.getItem("user"))
     const [followers, setFollowers] = useState([]);
