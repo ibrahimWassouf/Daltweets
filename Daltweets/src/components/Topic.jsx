@@ -1,9 +1,12 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function Topic({topicname}) {
   return (
     <div>
-        <div className="pr-1.5 text-sky-500">#{topicname}</div>
+        <Link to = {`/topic/${encodeURIComponent(topicname)}`} className="pr-1.5 text-sky-500 py-1" onClick="refresh">
+          #{topicname}
+        </Link>
     </div>
   )
 }
