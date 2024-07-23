@@ -8,6 +8,7 @@ import com.csci3130.group04.Daltweets.service.Implementation.FollowersServiceImp
 import com.csci3130.group04.Daltweets.service.Implementation.PostCommentServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.PostLikeServiceImpl;
 import com.csci3130.group04.Daltweets.service.Implementation.PostServiceImpl;
+import com.csci3130.group04.Daltweets.utils.PostResponseDTO;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -518,6 +519,26 @@ public class PostServiceIntegrationTests {
             boolean plByUser = postLikeServiceImpl.postLikedByUser(user, post);
             
             assertTrue(plByUser);
+        }
+        
+        public void test_add_post_like_endpoint() {
+        	User user = new User(1, "checkbio", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user = userRepository.save(user);
+            User user2 = new User(2, "checkbio2", "Name2", "mail2@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user2 = userRepository.save(user2);
+            
+            Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+            post = postRepository.save(post);
+            
+            Map<String, String> requestBody = Map.ofEntries(Map.entry("username", "Name"), Map.entry("postId", String.valueOf(post.getPostID())));
+            Map<String, String> requestBody2 = Map.ofEntries(Map.entry("username", "Name2"), Map.entry("postId", String.valueOf(post.getPostID())));
+            
+            ResponseEntity<PostResponseDTO> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/add-like", requestBody,PostResponseDTO.class);
+            ResponseEntity<PostResponseDTO> response2 = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/add-like", requestBody,PostResponseDTO.class);
+            
+            assertEquals(1, response.getBody().getLikeCount());
+            assertEquals(2, response2.getBody().getLikeCount());
+            
         }
         
 }       
