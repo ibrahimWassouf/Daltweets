@@ -46,7 +46,7 @@ const GroupDetail = () => {
     const isFollower =
       followers.find((user) => user.username === friendName) !== undefined;
 
-    return {isFriend: isFollower || isFollowing };
+    return { isFriend: isFollower || isFollowing };
   };
 
   useEffect(() => {
@@ -83,7 +83,7 @@ const GroupDetail = () => {
   }, []);
 
   return (
-    <div className="w-screen min-h-screen flex mt-4 ml-2">
+    <div className="min-h-screen flex mt-4 ml-2">
       <div className="w-3/4">
         <div className="justify-center flex mb-5">
           <h1 className="font-bold text-xl"> {groupname}</h1>
