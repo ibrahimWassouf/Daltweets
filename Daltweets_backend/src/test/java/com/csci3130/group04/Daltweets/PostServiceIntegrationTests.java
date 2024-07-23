@@ -30,6 +30,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = DaltweetsApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -483,6 +484,40 @@ public class PostServiceIntegrationTests {
         	int postLikes = postLikeServiceImpl.getPostLikes(post);
         	
         	assertEquals(2, postLikes);
+        }
+        
+        public void test_add_post_like() {
+        	User user = new User(1, "checkbio", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user = userRepository.save(user);
+            
+            User user2 = new User(2, "checkbio2", "Name2", "mail2@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user2 = userRepository.save(user2);
+            
+            User user3 = new User(3, "checkbio3", "Name3", "mail3@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user3 = userRepository.save(user3);
+            
+            Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+            post = postRepository.save(post);
+            
+            PostLike pl = postLikeServiceImpl.addLike(user2, post);
+            PostLike pl2 = postLikeServiceImpl.addLike(user3, post);
+            
+            int pl_response = postLikeServiceImpl.getPostLikes(post);
+            
+            assertEquals(2, pl_response);
+        }
+        
+        public void test_post_liked_by_user() {
+        	User user = new User(1, "checkbio", "Name", "mail@dal.ca", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+            user = userRepository.save(user);
+            
+            Post post = new Post(1, user, "my first post", LocalDateTime.now(), false, false);
+            post = postRepository.save(post);
+            
+            PostLike pl = postLikeServiceImpl.addLike(user, post);
+            boolean plByUser = postLikeServiceImpl.postLikedByUser(user, post);
+            
+            assertTrue(plByUser);
         }
         
 }       
