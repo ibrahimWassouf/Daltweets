@@ -14,14 +14,6 @@ public class PostLikeServiceImpl implements PostLikeService {
 
 	@Autowired
 	PostLikeRepository postLikeRepository;
-	
-	@Override
-	public PostLike createPostLike(User user, Post post) {
-		if (post == null || user == null) {return null;};
-		PostLike pl = new PostLike(1, user, post);
-		return postLikeRepository.save(pl);
-	}
-
 	@Override
 	public int getPostLikes(Post post) {
 		if (post == null) {return 0;}
@@ -49,6 +41,14 @@ public class PostLikeServiceImpl implements PostLikeService {
 		if (post == null || user == null) return false;
 		PostLike pl = postLikeRepository.postLikedByUser(user.getId(), post.getPostID());
 		return pl == null ? false : true;
+	}
+
+	@Override
+	public boolean unlike(User user, Post post){
+		if (post == null || user == null) return false;
+		PostLike pl = postLikeRepository.findPostLikeByUserAndPost(user, post);
+		 postLikeRepository.delete(pl);
+		return true;
 	}
 	
 }
