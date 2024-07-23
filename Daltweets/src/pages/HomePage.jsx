@@ -21,7 +21,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="w-screen h-screen">
+    <div className="h-screen">
       HomePage
       <div className="flex flex-row flex-wrap ">
         <div className="w-3/4">
