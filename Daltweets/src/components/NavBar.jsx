@@ -11,7 +11,7 @@ const NavBar = () => {
     localStorage.clear();
   };
   return (
-    <div className="h-screen sticky top-0 flex justify-center items-center bg-gray-800 px-4 py-2 mr-1 w-1/6 text-xl">
+    <div className="h-screen fixed top-0 flex justify-center items-center bg-gray-800 px-4 py-2 mr-1 w-1/6 text-xl">
       <ul className=" text-white font-bold">
         <li className="mt-10 mb-12 rounded hover:shadow hover:bg-blue-500 py-2">
           <Link to={"/home"}>
