@@ -34,9 +34,9 @@ const TopicPosts = () => {
         fetchTopics();
       }, []);
     return (
-        <div className="w-screen">
-            <div className="flex flex-row flex-wrap ">
-                <div className="w-3/4">
+        <div className="w-screen pl-20 pr-16 pt-10">
+            <div className="flex flex-row flex-wrap">
+                <div className="w-4/5">
                 {posts
                     ? posts.map(
                     (post, index) => (
@@ -55,8 +55,9 @@ const TopicPosts = () => {
                     )
                     : (console.log(posts), (<p> Loading posts .... </p>))}
                 </div>
-                <div className="pt-5 m-auto">
-                        <div className="px-10 py-5 rounded-xl border-black border h-full">
+                <div className="absolute right-20">
+                    <div className="">
+                        <div className="px-10 py-5 rounded-xl border-black border h-full min-h-96">
                             <div className="justify-center flex mb-5">
                                 <h1 className="font-bold text-xl border-b border-gray-300 pb-4"> Topics </h1>
                             </div>
@@ -76,6 +77,7 @@ const TopicPosts = () => {
                             }
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
         </div>

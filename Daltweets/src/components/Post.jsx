@@ -71,7 +71,7 @@ function Post({ text, username, commentCount,dateCreated,postId, ...props }) {
 
   return (
     <div>
-      <div className="border mb-1 border-black w-full">
+      <div className="border border-t border-l border-r rounded-lg mb-2 border-gray-400 w-full ">
         <div className="pl-2">
           <div>
             <Link
