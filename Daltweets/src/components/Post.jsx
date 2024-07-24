@@ -7,12 +7,15 @@ import { FaRegComment, FaRegHeart } from "react-icons/fa";
 import { RiHeartFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Topic from "./Topic";
 
 TimeAgo.addDefaultLocale(en);
 
-function Post({ text, username, commentCount, dateCreated, ...props }) {
+function Post({ text, username, commentCount,dateCreated,postId, ...props }) {
   const [followers, setFollowers] = useState([]);
   const [followings, setFollowings] = useState([]);
+  const [topics,setTopics] = useState([]);
+  console.log(postId);
   const [liked, setLiked] = useState(props.likedByUser);
   const [likeCount, setLikeCount] = useState(props.likeCount);
 
@@ -46,6 +49,17 @@ function Post({ text, username, commentCount, dateCreated, ...props }) {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const fetchTopics = async () => {
+    await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/getTopic/${postId}`)
+    .then((response) => {
+        setTopics(response.data);
+        console.log(response.data);
+    })
+    .catch((error) => {
+        console.log(error);
+    });
   };
 
   const handleLike = async (postId) => {
@@ -92,11 +106,12 @@ function Post({ text, username, commentCount, dateCreated, ...props }) {
   useEffect(() => {
     fetchFollowers();
     fetchFollowing();
+    fetchTopics();
   }, []);
 
   return (
     <div>
-      <div className="border mb-1 border-black w-full">
+      <div className="border border-t border-l border-r rounded-lg mb-2 border-gray-400 w-full ">
         <div className="pl-2">
           <div>
             <Link
@@ -110,17 +125,27 @@ function Post({ text, username, commentCount, dateCreated, ...props }) {
               <ReactTimeAgo date={Date.parse(dateCreated)}></ReactTimeAgo>{" "}
             </span>
           </div>
+          
           <Link
             to={`/post/${encodeURIComponent(props.id)}`}
-            state={{
-              username,
-              text,
-              likeCount: likeCount,
-              commentCount,
-              dateCreated,
-            }}>
+            state={{username, text, likeCount: likeCount, commentCount, dateCreated}}>
             <div>{text}</div>
           </Link>
+          <div className="flex ">
+            {
+              topics.map(
+                (topic, index) => (
+                  console.log(topic),
+                  (
+                    <Topic
+                      key = {index}
+                      topicname={topic.name}
+                    />
+                  )
+                ),
+              )
+            }
+          </div>
           <div className="flex justify-around text-gray-500">
             <button className="flex" onClick={() => handleLike(props.id)}>
               {liked ? <RiHeartFill fill="red" /> : <FaRegHeart />}

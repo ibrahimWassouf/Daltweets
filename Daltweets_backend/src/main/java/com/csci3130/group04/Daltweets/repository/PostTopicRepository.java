@@ -18,4 +18,6 @@ public interface PostTopicRepository extends JpaRepository<PostTopic,Integer>{
     List<PostTopic> findPostTopicBypost(Post post);
 
     List<PostTopic> findPostTopicBytopic(Topic topic);
+
+    PostTopic findPostTopicByPostAndTopic(Post post, Topic topic);
 }

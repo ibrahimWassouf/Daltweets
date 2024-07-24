@@ -19,6 +19,10 @@ public class PostTopicServiceImpl {
     PostTopicRepository postTopicRepository;
     public PostTopic createPostTopic(PostTopic postTopic) {
         if ( postTopic == null ) throw new IllegalArgumentException("Null in createPostTopic");
+
+        PostTopic found_postTopic = postTopicRepository.findPostTopicByPostAndTopic(postTopic.getPost(),postTopic.getTopic());
+        if ( found_postTopic != null ) return found_postTopic;
+
         postTopicRepository.save(postTopic);
         return postTopic;
     }

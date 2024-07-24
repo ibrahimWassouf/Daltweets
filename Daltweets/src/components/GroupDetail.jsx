@@ -83,10 +83,10 @@ const GroupDetail = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex mt-4 ml-2">
-      <div className="w-3/4">
+    <div className="w-full min-h-screen flex pl-20 pr-16 pt-10">
+      <div className="w-4/5">
         <div className="justify-center flex mb-5">
-          <h1 className="font-bold text-xl"> {groupname}</h1>
+          <h1 className="font-semibold text-xl"> {groupname}</h1>
         </div>
         {posts
           ? posts.map((post, index) => (
@@ -101,8 +101,8 @@ const GroupDetail = () => {
           : (console.log(posts), (<p> Loading posts .... </p>))}
       </div>
 
-      <div className="ml-14 border-black border w-1/6 h-svh">
-        <div className="justify-center flex">
+      <div className=" border-black border min-w-40 h-svh rounded-xl absolute right-20">
+        <div className="justify-center flex mt-4 mb-2">
           <h3 className="font-bold"> Admins </h3>
           {admin == true && (
             <div>
@@ -122,7 +122,7 @@ const GroupDetail = () => {
             </div>
           )}
         </div>
-        <div className="ml-4">
+        <div className="ml-4 ">
           {admins
             ? admins.map((admin, index) => (
                 <div key={index}>
@@ -136,7 +136,7 @@ const GroupDetail = () => {
               ))
             : (console.log(admins), (<p> no admins .... </p>))}
         </div>
-        <div className="justify-center flex items-center">
+        <div className="justify-center flex items-center mt-4 mb-2 ">
           <h3 className="font-bold"> Members </h3>
           <button
             onClick={() => {

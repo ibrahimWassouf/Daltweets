@@ -4,6 +4,11 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.csci3130.group04.Daltweets.model.*;
+import com.csci3130.group04.Daltweets.model.User.Role;
+
+import com.csci3130.group04.Daltweets.repository.*;
+import com.csci3130.group04.Daltweets.service.Implementation.*;
 
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,7 +66,10 @@ public class PostServiceIntegrationTests {
 
         @Autowired
         private PostRepository postRepository;
-
+        @Autowired
+        private PostTopicRepository postTopicRepository;
+        @Autowired
+        private TopicRepository topicRepository;
         @Autowired
         private FollowersServiceImpl followersService;
 
@@ -78,6 +86,10 @@ public class PostServiceIntegrationTests {
         private PostCommentRepository postCommentRepository;
         @Autowired
         private PostCommentServiceImpl postCommentServiceImpl;
+        @Autowired
+        private TopicServiceImpl topicService;
+        @Autowired
+        private PostTopicServiceImpl postTopicService;
         
         @Autowired
         private PostLikeServiceImpl postLikeServiceImpl;
@@ -87,12 +99,15 @@ public class PostServiceIntegrationTests {
         @AfterEach
         void teardown() {
         		postLikeRepository.deleteAll();
-                postCommentRepository.deleteAll();
                 followersRepository.deleteAll();
-                postRepository.deleteAll();
                 groupMembersRepository.deleteAll();
                 groupRepository.deleteAll();
+                postCommentRepository.deleteAll();
+                postTopicRepository.deleteAll();
+                postRepository.deleteAll();
+                topicRepository.deleteAll();
                 userRepository.deleteAll();
+
                 
         }
 
@@ -653,4 +668,184 @@ public class PostServiceIntegrationTests {
                 assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
         }
 
-}       
+
+        @Test
+        public void test_create_post_topic() {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+                String Post1id = String.valueOf(sentPost1.getPostID());
+                String topicname = "topic1";
+
+                Map<String, String> requestBody = Map.ofEntries(Map.entry("topicname", topicname), Map.entry("postId",Post1id));
+                ResponseEntity<PostTopic> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/createPostTopic", requestBody,PostTopic.class);
+
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(sentPost1.getText(),response.getBody().getPost().getText());
+                assertEquals(topicname,response.getBody().getTopic().getName());
+        }
+
+        @Test
+        public void test_create_post_topic_with_invalid_topic() {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+                String Post1id = String.valueOf(sentPost1.getPostID());
+                String topicname = "";
+
+                Map<String, String> requestBody = Map.ofEntries(Map.entry("topicname", topicname), Map.entry("postId",Post1id));
+                ResponseEntity<PostTopic> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/createPostTopic", requestBody,PostTopic.class);
+
+                assertNotNull(response);
+                assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+                assertNull(response.getBody());
+        }
+        @Test
+        public void test_create_post_topic_with_nonexist_post() {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+                String Post1id = String.valueOf(post1.getPostID());
+                String topicname = "topic1";
+
+                Map<String, String> requestBody = Map.ofEntries(Map.entry("topicname", topicname), Map.entry("postId",Post1id));
+                ResponseEntity<PostTopic> response = this.restTemplate.postForEntity("http://localhost:" + port + "/api/post/createPostTopic", requestBody,PostTopic.class);
+
+                assertNotNull(response);
+                assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+                assertNull(response.getBody());
+        }
+
+        @Test
+        public void test_get_all_topic() {
+                Topic topic1 = topicService.createTopic("topic1");
+                Topic topic2 = topicService.createTopic("topic2");
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getAllTopics",List.class);
+
+                int result_list = 2;
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(result_list,response.getBody().size());
+        }
+
+        @Test
+        public void test_get_all_topic_with_duplicate() {
+                Topic topic1 = topicService.createTopic("topic1");
+                Topic topic2 = topicService.createTopic("topic1");
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getAllTopics",List.class);
+
+                int result_list = 1;
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(result_list,response.getBody().size());
+        }
+
+        @Test
+        public void test_get_all_topic_with_no_topics() {
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getAllTopics",List.class);
+
+                int result_list = 0;
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(result_list,response.getBody().size());
+        }
+
+        @Test
+        public void test_get_topics() {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+
+                Topic topic1 = topicService.createTopic("topic1");
+                Topic topic2 = topicService.createTopic("topic2");
+
+                PostTopic postTopic1 = new PostTopic();
+                postTopic1.setTopic(topic1);
+                postTopic1.setPost(sentPost1);
+                PostTopic saved_postTopic1 = postTopicService.createPostTopic(postTopic1);
+                PostTopic postTopic2 = new PostTopic(saved_postTopic1.getID() + 1, topic2,sentPost1);
+                PostTopic saved_postTopic2 = postTopicService.createPostTopic(postTopic2);
+
+                int result = 2;
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getTopic/" + sentPost1.getPostID(),List.class);
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(result,response.getBody().size());
+        }
+
+        @Test
+        public void test_get_topics_with_nonexist_post() {
+                User user = new User(1, "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post post1 = new Post(1, saved_user, "my first post", LocalDateTime.now(), false, false);
+
+                Topic topic1 = topicService.createTopic("topic1");
+                Topic topic2 = topicService.createTopic("topic2");
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getTopic/" + post1.getPostID(),List.class);
+                assertNotNull(response);
+                assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+                assertNull(response.getBody());
+        }
+
+        @Test
+        public void test_get_posts_by_topic() {
+                User begin_user = new User();
+                User user = new User(begin_user.getId() , "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post begin_post = new Post();
+                Post post1 = new Post(begin_post.getPostID() , saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+                Post post2 = new Post(sentPost1.getPostID() + 1, saved_user, "post2", LocalDateTime.now(), false, false);
+                Post sentPost2 = postService.createPost(post2);
+
+                Topic topic1 = topicService.createTopic("topic1");
+
+                PostTopic postTopic1 = new PostTopic();
+                postTopic1.setTopic(topic1);
+                postTopic1.setPost(sentPost1);
+                PostTopic saved_postTopic1 = postTopicService.createPostTopic(postTopic1);
+                PostTopic postTopic2 = new PostTopic(saved_postTopic1.getID() + 1, topic1,sentPost2);
+                PostTopic saved_postTopic2 = postTopicService.createPostTopic(postTopic2);
+
+                int result = 2;
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getPostsByTopic/" + topic1.getName(),List.class);
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK,response.getStatusCode());
+                assertEquals(result,response.getBody().size());
+        }
+        @Test
+        public void test_get_posts_by_topic_nonexist_topic() {
+                User begin_user = new User();
+                User user = new User(begin_user.getId() , "checkbio2", "Name2", "mail2", LocalDateTime.now(), false, User.Role.SUPERADMIN, User.Status.ONLINE);
+                User saved_user = userRepository.save(user);
+
+                Post begin_post = new Post();
+                Post post1 = new Post(begin_post.getPostID() , saved_user, "my first post", LocalDateTime.now(), false, false);
+                Post sentPost1 = postService.createPost(post1);
+                Post post2 = new Post(sentPost1.getPostID() + 1, saved_user, "post2", LocalDateTime.now(), false, false);
+                Post sentPost2 = postService.createPost(post2);
+
+                Topic topic1 = new Topic();
+                topic1.setName("topic1");
+
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getPostsByTopic/" + topic1.getName(),List.class);
+                assertNotNull(response);
+                assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+                assertNull(response.getBody());
+        }
+}
+
