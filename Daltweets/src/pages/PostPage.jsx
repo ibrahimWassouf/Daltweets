@@ -70,7 +70,7 @@ const PostPage = () => {
     const fetchTopicsbyPost = async () => {
         await axios.get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/getTopic/${postId}`)
         .then((response) => {
-            setTopics(response.data);
+            setPostTopics(response.data);
             console.log(response.data);
         })
         .catch((error) => {
@@ -124,7 +124,7 @@ const PostPage = () => {
                             <p className="text-gray-700 mb-2">{text}</p>
                             <div className="flex ">
                             {
-                                topics.map(
+                                postTopics.map(
                                     (topic, index) => (
                                     console.log(topic),
                                     (
