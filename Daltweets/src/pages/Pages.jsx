@@ -20,6 +20,7 @@ const Pages = () => {
       {user && user.status !== "PENDING" ? (
         <div className="flex ">
           <NavBar />
+          <main className="flex-1 pl-[17.666667%] p-4">
           <Routes>
             <Route path="/home" element={<HomePage />} />
             <Route path="/friends" element={<Friends />} />
@@ -34,6 +35,7 @@ const Pages = () => {
             <Route path="/post/:postId" element={<PostPage />}/>
             <Route path="/topic/:topicname" element={<TopicPosts/>}/>
           </Routes>
+          </main>
         </div>
       ) : (
         <Error />

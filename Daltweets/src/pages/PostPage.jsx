@@ -104,7 +104,7 @@ const PostPage = () => {
     }
 
     return (
-        <div className="bg-white min-h-screen text-black w-5/6">
+        <div className="bg-white min-h-screen text-black">
             <header className="sticky top-0 bg-white bg-opacity-90 backdrop-blur-sm border-b border-gray-200 z-10">
                 <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-center text-xl">
                     Posts

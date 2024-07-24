@@ -46,7 +46,7 @@ const GroupDetail = () => {
     const isFollower =
       followers.find((user) => user.username === friendName) !== undefined;
 
-    return {isFriend: isFollower || isFollowing };
+    return { isFriend: isFollower || isFollowing };
   };
 
   useEffect(() => {
