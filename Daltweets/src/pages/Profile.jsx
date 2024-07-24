@@ -143,6 +143,7 @@ function Profile() {
                                     username={post.creator}
                                     dateCreated={post.dateCreated}
                                     commentCount={post.commentCount}
+                                    postId = {post.id}
                                     {...post}
                                 />
                             </li>

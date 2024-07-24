@@ -83,7 +83,7 @@ const GroupDetail = () => {
   }, []);
 
   return (
-    <div className="w-screen min-h-screen flex pl-20 pr-16 pt-10">
+    <div className="w-full min-h-screen flex pl-20 pr-16 pt-10">
       <div className="w-4/5">
         <div className="justify-center flex mb-5">
           <h1 className="font-semibold text-xl"> {groupname}</h1>

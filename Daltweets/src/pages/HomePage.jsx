@@ -21,7 +21,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="w-screen h-full min-h-screen pl-20 pr-16 pt-7">
+    <div className="w-full h-full min-h-screen pl-20 pr-16 pt-7">
       <div className="pb-5  w-3/4 flex justify-center text-xl font-semibold">
         HomePage
       </div>

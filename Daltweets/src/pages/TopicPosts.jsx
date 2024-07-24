@@ -29,12 +29,13 @@ const TopicPosts = () => {
             console.log(error);
         });
       };
+    
     useEffect(() => {
         fetchPosts();
         fetchTopics();
       }, []);
     return (
-        <div className="w-screen pl-20 pr-16 pt-10">
+        <div className="w-full pl-20 pr-16 pt-10">
             <div className="flex flex-row flex-wrap">
                 <div className="w-4/5">
                 {posts

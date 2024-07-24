@@ -146,20 +146,16 @@ function Post({ text, username, commentCount,dateCreated,postId, ...props }) {
               )
             }
           </div>
-          <Link
-            to={`/post/${encodeURIComponent(props.id)}`}
-            state={{username, text, likeCount: 0, commentCount, dateCreated}}>
-            <div className="flex justify-around text-gray-500">
-              <button className="flex">
-                <FaRegHeart />
-                <span>0</span>
-              </button>
-              <button className="flex ">
-                <FaRegComment className="h-5"/>
-                <span className="ml-1">{commentCount} </span>
-              </button>
-            </div>
-          </Link>
+          <div className="flex justify-around text-gray-500">
+            <button className="flex" onClick={() => handleLike(props.id)}>
+              {liked ? <RiHeartFill fill="red" /> : <FaRegHeart />}
+              <span>{likeCount}</span>
+            </button>
+            <button className="flex ">
+              <FaRegComment className="h-5" />
+              <span className="ml-1">{commentCount} </span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
