@@ -4,19 +4,25 @@ import TimeAgo from "javascript-time-ago";
 
 import en from "javascript-time-ago/locale/en";
 import { FaRegComment, FaRegHeart } from "react-icons/fa";
+import { RiHeartFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
 TimeAgo.addDefaultLocale(en);
 
-function Post({ text, username, commentCount,dateCreated, ...props }) {
+function Post({ text, username, commentCount, dateCreated, ...props }) {
   const [followers, setFollowers] = useState([]);
   const [followings, setFollowings] = useState([]);
+  const [liked, setLiked] = useState(props.likedByUser);
+  const [likeCount, setLikeCount] = useState(props.likeCount);
+
   let user = JSON.parse(localStorage.getItem("user"));
   const fetchFollowing = async () => {
     await axios
       .get(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${user.username}/following`
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${
+          user.username
+        }/following`
       )
       .then((response) => {
         setFollowings(response.data);
@@ -29,7 +35,9 @@ function Post({ text, username, commentCount,dateCreated, ...props }) {
   const fetchFollowers = async () => {
     await axios
       .get(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${user.username}/followers`
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/followers/${
+          user.username
+        }/followers`
       )
       .then((response) => {
         setFollowers(response.data);
@@ -38,6 +46,38 @@ function Post({ text, username, commentCount,dateCreated, ...props }) {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const handleLike = async (postId) => {
+    if (!liked) {
+      await axios
+        .post(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/add-like`, {
+          username: user.username,
+          postId: postId,
+        })
+        .then((res) => {
+          console.log(res);
+          setLiked(true);
+          setLikeCount(likeCount + 1);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      await axios
+        .post(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/unlike`, {
+          username: user.username,
+          postId: postId,
+        })
+        .then((res) => {
+          console.log(res);
+          setLiked(false);
+          setLikeCount(likeCount - 1);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   };
 
   const profileDetails = (friendName) => {
@@ -72,19 +112,25 @@ function Post({ text, username, commentCount,dateCreated, ...props }) {
           </div>
           <Link
             to={`/post/${encodeURIComponent(props.id)}`}
-            state={{username, text, likeCount: 0, commentCount, dateCreated}}>
-          <div>{text}</div>
+            state={{
+              username,
+              text,
+              likeCount: likeCount,
+              commentCount,
+              dateCreated,
+            }}>
+            <div>{text}</div>
+          </Link>
           <div className="flex justify-around text-gray-500">
-            <button className="flex">
-              <FaRegHeart />
-              <span>0</span>
+            <button className="flex" onClick={() => handleLike(props.id)}>
+              {liked ? <RiHeartFill fill="red" /> : <FaRegHeart />}
+              <span>{likeCount}</span>
             </button>
             <button className="flex ">
-              <FaRegComment className="h-5"/>
+              <FaRegComment className="h-5" />
               <span className="ml-1">{commentCount} </span>
             </button>
           </div>
-          </Link>
         </div>
       </div>
     </div>

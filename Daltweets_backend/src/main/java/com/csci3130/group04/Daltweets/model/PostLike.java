@@ -3,24 +3,24 @@ package com.csci3130.group04.Daltweets.model;
 import jakarta.persistence.*;
 
 @Entity
-public class PostLikes {
+public class PostLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "postId")
     private Post post;
 
-    public PostLikes(){
+    public PostLike(){
     }
 
-    public PostLikes(int id, User user, Post post){
+    public PostLike(int id, User user, Post post){
         this.id = id;
         this.user = user;
         this.post = post;

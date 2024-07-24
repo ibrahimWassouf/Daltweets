@@ -1,27 +1,31 @@
 package com.csci3130.group04.Daltweets.controller;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.csci3130.group04.Daltweets.service.Implementation.GroupServiceImpl;
-import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
-import com.csci3130.group04.Daltweets.utils.PostResponseDTO;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.csci3130.group04.Daltweets.model.Post;
 import com.csci3130.group04.Daltweets.model.PostComment;
+import com.csci3130.group04.Daltweets.model.PostLike;
 import com.csci3130.group04.Daltweets.model.User;
 import com.csci3130.group04.Daltweets.service.FollowersService;
+import com.csci3130.group04.Daltweets.service.Implementation.GroupServiceImpl;
+import com.csci3130.group04.Daltweets.service.Implementation.UserServiceImplementation;
 import com.csci3130.group04.Daltweets.service.PostCommentService;
+import com.csci3130.group04.Daltweets.service.PostLikeService;
 import com.csci3130.group04.Daltweets.service.PostService;
-import com.csci3130.group04.Daltweets.service.UserService;
+import com.csci3130.group04.Daltweets.utils.PostResponseDTO;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -32,6 +36,9 @@ public class PostController {
 
     @Autowired 
     PostCommentService postCommentService;
+    
+    @Autowired
+    PostLikeService postLikeService;
 
     @Autowired
     UserServiceImplementation userService;
@@ -40,6 +47,7 @@ public class PostController {
     FollowersService followersService;
     @Autowired
     GroupServiceImpl groupService;
+  
 
     @PostMapping("/create")
     public ResponseEntity<Post> createPost(@RequestBody Post post) {
@@ -58,6 +66,8 @@ public class PostController {
         List<PostResponseDTO> postResponseDTOs = new ArrayList<>();
         for (Post post: posts)
         {
+        	int likeCount = postLikeService.getPostLikes(post);
+        	boolean postLikedByUser = postLikeService.postLikedByUser(user, post);
             int commentCount = postCommentService.getCommentCount(post);
             PostResponseDTO postResponseDTO = new PostResponseDTO();
             postResponseDTO.setId(post.getPostID());
@@ -65,6 +75,8 @@ public class PostController {
             postResponseDTO.setText(post.getText());
             postResponseDTO.setDateCreated(post.getDateCreated());
             postResponseDTO.setCommentCount(commentCount);
+            postResponseDTO.setLikeCount(likeCount);
+            postResponseDTO.setLikedByUser(postLikedByUser);
             postResponseDTOs.add(postResponseDTO);
         }
 
@@ -136,6 +148,46 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
         }
         return ResponseEntity.ok().body(postComments);
+    }
+    
+    
+    @PostMapping("/add-like")
+    ResponseEntity<PostResponseDTO> addLike(@RequestBody Map<String, String> requestBody ){
+    	int postId = Integer.parseInt(requestBody.get("postId"));
+        String username = requestBody.get("username");
+    
+        Post post = postService.getPostById(postId);
+        User user = userService.getUserByName(username);
+        
+        if (post == null || user == null) {
+        	return new ResponseEntity(null, HttpStatus.BAD_REQUEST);
+        }
+        
+        PostLike addedLike = postLikeService.addLike(user, post);
+        int postLikeCount = postLikeService.getPostLikes(post);
+        int commentCount = postCommentService.getCommentCount(post);
+        PostResponseDTO response = new PostResponseDTO(post, commentCount, postLikeCount);
+        response.setLikedByUser(true);
+        return new ResponseEntity(response, HttpStatus.OK);
+    }    
+
+    @PostMapping("/unlike")
+    ResponseEntity<PostResponseDTO> unlike(@RequestBody Map<String ,String> requestBody){
+        int postId = Integer.parseInt(requestBody.get("postId"));
+        String username = requestBody.get("username");
+    
+        Post post = postService.getPostById(postId);
+        User user = userService.getUserByName(username);
+
+        if (post == null || user == null) {
+        	return new ResponseEntity(null, HttpStatus.BAD_REQUEST);
+        }
+        boolean deleted = postLikeService.unlike(user, post);
+        int postLikeCount = postLikeService.getPostLikes(post);
+        int commentCount = postCommentService.getCommentCount(post);
+        PostResponseDTO response = new PostResponseDTO(post, commentCount, postLikeCount);
+        response.setLikedByUser(false);
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @GetMapping("/{username}/posts")
