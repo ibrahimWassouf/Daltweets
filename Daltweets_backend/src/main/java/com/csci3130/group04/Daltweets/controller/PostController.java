@@ -107,6 +107,9 @@ public class PostController {
 
         for (Post post: groupposts)
         {
+            User user = post.getUser();
+            int likeCount = postLikeService.getPostLikes(post);
+            boolean postLikedByUser = postLikeService.postLikedByUser(user, post);
             int commentCount = postCommentService.getCommentCount(post);
             PostResponseDTO postResponseDTO = new PostResponseDTO();
             postResponseDTO.setId(post.getPostID());
@@ -114,6 +117,8 @@ public class PostController {
             postResponseDTO.setText(post.getText());
             postResponseDTO.setDateCreated(post.getDateCreated());
             postResponseDTO.setCommentCount(commentCount);
+            postResponseDTO.setLikeCount(likeCount);
+            postResponseDTO.setLikedByUser(postLikedByUser);
             postResponseDTOs.add(postResponseDTO);
         }
 
@@ -212,6 +217,8 @@ public class PostController {
         List<PostResponseDTO> postResponseDTOs = new ArrayList<>();
         for (Post post: posts)
         {
+            int likeCount = postLikeService.getPostLikes(post);
+            boolean postLikedByUser = postLikeService.postLikedByUser(user, post);
             int commentCount = postCommentService.getCommentCount(post);
             PostResponseDTO postResponseDTO = new PostResponseDTO();
             postResponseDTO.setId(post.getPostID());
@@ -219,6 +226,8 @@ public class PostController {
             postResponseDTO.setText(post.getText());
             postResponseDTO.setDateCreated(post.getDateCreated());
             postResponseDTO.setCommentCount(commentCount);
+            postResponseDTO.setLikeCount(likeCount);
+            postResponseDTO.setLikedByUser(postLikedByUser);
             postResponseDTOs.add(postResponseDTO);
         }
         return ResponseEntity.ok().body(postResponseDTOs);
@@ -270,6 +279,9 @@ public class PostController {
         List<Post> posts = postTopicService.getPostByTopic(topic);
         List<PostResponseDTO> postResponseDTOs = new ArrayList<>();
         for (Post post: posts) {
+            User user = post.getUser();
+            int likeCount = postLikeService.getPostLikes(post);
+            boolean postLikedByUser = postLikeService.postLikedByUser(user, post);
             int commentCount = postCommentService.getCommentCount(post);
             PostResponseDTO postResponseDTO = new PostResponseDTO();
             postResponseDTO.setId(post.getPostID());
@@ -277,6 +289,8 @@ public class PostController {
             postResponseDTO.setText(post.getText());
             postResponseDTO.setDateCreated(post.getDateCreated());
             postResponseDTO.setCommentCount(commentCount);
+            postResponseDTO.setLikeCount(likeCount);
+            postResponseDTO.setLikedByUser(postLikedByUser);
             postResponseDTOs.add(postResponseDTO);
         }
         return new ResponseEntity<>(postResponseDTOs,HttpStatus.OK);
