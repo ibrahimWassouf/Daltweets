@@ -357,7 +357,7 @@ public class PostServiceIntegrationTests {
                 
                 assertNotNull(response);
                 assertNull(response.getBody());
-                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+                assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
         }
 
         @Test

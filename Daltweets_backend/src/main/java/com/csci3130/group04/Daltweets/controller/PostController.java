@@ -131,7 +131,13 @@ public class PostController {
         int postId = Integer.parseInt(requestBody.get("postId"));
         String username = requestBody.get("username");
         String comment = requestBody.get("comment");
-        if (postId < 0 || username == null || comment == null ) 
+
+        if (postId < 0)
+        {
+            return  new ResponseEntity<>(null,HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
+        if (username == null || comment == null )
         {
             return ResponseEntity.badRequest().body(null);
         }

@@ -111,8 +111,9 @@ public class GroupController {
         String adminname = requestBody.get("adminname");
         String username = requestBody.get("username");
         String groupname = requestBody.get("name");
+        boolean notValidUsers = !userService.isValidName(adminname) || !userService.isValidName(username);
 
-        if (!userService.isValidName(adminname) || !userService.isValidName(username) || !userService.isValidName(groupname) ) {
+        if ( notValidUsers || !userService.isValidName(groupname) ) {
             return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
         }
 

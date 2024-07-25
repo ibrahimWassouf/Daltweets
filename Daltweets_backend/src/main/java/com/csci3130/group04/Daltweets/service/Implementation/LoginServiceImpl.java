@@ -11,6 +11,7 @@ import com.csci3130.group04.Daltweets.service.LoginService;
 
 @Service
 public class LoginServiceImpl implements LoginService{
+    private final int PASSWORD_LENGTH = 8;
 
     @Autowired 
     LoginRepository loginRepository;
@@ -27,7 +28,7 @@ public class LoginServiceImpl implements LoginService{
 
     private boolean validatePassword(String password)
     {
-      if(password == null || password.length() < 8)
+      if(password == null || password.length() < PASSWORD_LENGTH)
       {
           return false;
       }

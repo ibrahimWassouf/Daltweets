@@ -69,11 +69,17 @@ public class LoginController {
     @PostMapping("/forgot-password-change")
     ResponseEntity<String> forgotPasswordChange(@RequestBody Map<String, String> requestBody){
       Login loginEntry = loginService.getLogin(requestBody.get("username"));
-
-      if (loginEntry == null ||
-          loginEntry.getUser() == null ||
-          !loginEntry.getSecurityAnswer().equals(requestBody.get("security-answer"))){
+      User loggedInUser = loginEntry.getUser();
+      String storedSecurityAnswer = loginEntry.getSecurityAnswer();
+      String givenSecurityAnswer = requestBody.get("security-answer");
+      boolean isSameAnswer = storedSecurityAnswer.equals(givenSecurityAnswer);
+      if (loginEntry == null || loggedInUser == null) {
         return new ResponseEntity<>("Could not change password, please try again", HttpStatus.BAD_REQUEST);
+      }
+
+      if (!isSameAnswer)
+      {
+          return new ResponseEntity<>("Wrong Answer given", HttpStatus.BAD_REQUEST);
       }
 
       loginEntry.setPassword(requestBody.get("new-password"));
