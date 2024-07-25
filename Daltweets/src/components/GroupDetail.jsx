@@ -53,7 +53,7 @@ const GroupDetail = () => {
     const fetchGroup = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/${groupname}/groupPosts`
+          `${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/${name}/group/${groupname}/groupPosts`
         );
         setPosts(response.data);
 
