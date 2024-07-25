@@ -20,8 +20,13 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public User createUser(User user) {
-        if ( user == null || user.getUsername() == null || user.getEmail() == null) {
-            throw new IllegalArgumentException("user is empty");
+        if (user == null)
+        {
+            throw new IllegalArgumentException("given user is null");
+        }
+
+        if ( user.getUsername() == null || user.getEmail() == null) {
+            throw new IllegalArgumentException("user details are empty");
         }
         User find_user = getUserByName(user.getUsername());
         if ( find_user != null ) {
