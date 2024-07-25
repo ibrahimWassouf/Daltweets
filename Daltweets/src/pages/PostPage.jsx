@@ -189,7 +189,8 @@ const PostPage = () => {
                         </div>
                         <div className="">
                         {
-                        topics.map(
+                            topics && topics.length > 0 ? 
+                        topics?.map(
                             (topic, index) => (
                             console.log(topic),
                             (
@@ -200,6 +201,8 @@ const PostPage = () => {
                             )
                             ),
                         )
+                        : 
+                        <p > No Topics....</p>
                         }
                         </div>
                     </div>

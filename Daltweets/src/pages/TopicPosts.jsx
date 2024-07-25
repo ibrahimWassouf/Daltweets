@@ -8,9 +8,10 @@ const TopicPosts = () => {
     const {topicname} = useParams();
     const [posts,setPosts] = useState([]);
     const [topics,setTopics] = useState([]);
+    const user = JSON.parse(localStorage.getItem("user"))
     const fetchPosts = async () => {
         await axios
-        .get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/getPostsByTopic/${topicname}`)
+        .get(`${import.meta.env.VITE_BACKEND_BASE_URL}/api/post/${user.username}/getPostsByTopic/${topicname}`)
         .then((response) => {
             setPosts(response.data);
             console.log(response.data);

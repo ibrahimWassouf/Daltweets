@@ -151,10 +151,14 @@ function Post({ text, username, commentCount,dateCreated,postId, ...props }) {
               {liked ? <RiHeartFill fill="red" /> : <FaRegHeart />}
               <span>{likeCount}</span>
             </button>
+            <Link
+            to={`/post/${encodeURIComponent(props.id)}`}
+            state={{username, text, likeCount: likeCount, commentCount, dateCreated}}>
             <button className="flex ">
               <FaRegComment className="h-5" />
               <span className="ml-1">{commentCount} </span>
             </button>
+            </Link>
           </div>
         </div>
       </div>
