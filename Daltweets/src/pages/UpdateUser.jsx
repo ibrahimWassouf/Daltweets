@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useLocation, useParams } from "react-router";
 
 const UpdateUser = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const location = useLocation()
+  const {user} = location.state || {}
+  const loggedInUser = JSON.parse(localStorage.getItem("user"))
   const [id, setId] = useState(user.id);
   const [bio, setBio] = useState(user.bio);
   const [username, setUserName] = useState(user.username);
@@ -94,7 +97,7 @@ const UpdateUser = () => {
               />
             </div>
           </div>
-          {user.role === "SUPERADMIN" && (
+          {loggedInUser.role === "SUPERADMIN" && (
             <div>
               <label
                 htmlFor="role"
@@ -103,13 +106,16 @@ const UpdateUser = () => {
                 Role
               </label>
               <div>
-                <input
+                <select
                   id="role"
                   type="text"
                   value={role}
                   onChange={(e) => setRole(e.target.value.toUpperCase())}
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
+                >
+                <option value="SUPERADMIN">Admin</option>
+                <option value="USER">User</option>
+                </select>
               </div>
             </div>
           )}

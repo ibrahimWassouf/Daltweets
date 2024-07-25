@@ -71,8 +71,10 @@ function Profile() {
 
     let navigate = useNavigate();
     const routeChange = () => {
-        let path = "/updateUser";
-        navigate(path);
+        let path = `/updateUser`;
+        navigate(path,{
+            state: {user}
+        });
     }
 
     return (
@@ -87,7 +89,7 @@ function Profile() {
                     </div>
                     <div className="grid-cols-1 mt-8 px-3">
                         <div className="font-bold text-3xl">{user.username}
-                            {isLoggedInUser &&
+                            { (isLoggedInUser || loggedInUser.role === 'SUPERADMIN') && 
                                 <button className="bg-blue-300 hover:bg-yellow-200 rounded-full ml-1 py-0 px-2 text-base" onClick={routeChange}>
                                     <FaGear className="mr-1 inline-block mb-1" />Edit
                                 </button>}
