@@ -222,7 +222,7 @@ public class PostServiceIntegrationTests {
                 Post sentPost1 = postService.createPost(post1);
                 int postNum = 1;
 
-                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/" + saved_group.getName() + "/groupPosts", List.class);
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/"+user.getUsername()+"/group/"+ saved_group.getName() + "/groupPosts", List.class);
 
                 assertNotNull(response);
                 assertEquals(postNum,response.getBody().size());
@@ -244,7 +244,7 @@ public class PostServiceIntegrationTests {
                 Post sentPost1 = postService.createPost(post1);
                 int postNum = 1;
 
-                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/" + saved_group.getName() + "/groupPosts", List.class);
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/"+user.getUsername()+"/group/" + saved_group.getName() + "/groupPosts", List.class);
 
                 assertNotNull(response);
                 assertNull(response.getBody());
@@ -822,7 +822,7 @@ public class PostServiceIntegrationTests {
                 PostTopic saved_postTopic2 = postTopicService.createPostTopic(postTopic2);
 
                 int result = 2;
-                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getPostsByTopic/" + topic1.getName(),List.class);
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/"+user.getUsername()+"/getPostsByTopic/" + topic1.getName(),List.class);
                 assertNotNull(response);
                 assertEquals(HttpStatus.OK,response.getStatusCode());
                 assertEquals(result,response.getBody().size());
@@ -842,7 +842,7 @@ public class PostServiceIntegrationTests {
                 Topic topic1 = new Topic();
                 topic1.setName("topic1");
 
-                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/getPostsByTopic/" + topic1.getName(),List.class);
+                ResponseEntity<List> response = this.restTemplate.getForEntity("http://localhost:" + port + "/api/post/"+user.getUsername()+"/getPostsByTopic/" + topic1.getName(),List.class);
                 assertNotNull(response);
                 assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
                 assertNull(response.getBody());

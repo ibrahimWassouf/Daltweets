@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-export default function SignupRequests() {
+const SignupRequests = ()=> {
   const [requests, setRequests] = useState([]);
   let admin = JSON.parse(localStorage.getItem("user"));
 
@@ -56,17 +57,22 @@ export default function SignupRequests() {
 
   let list = requests.map((elem, idx) => (
     <li key={idx} className="mx-auto w-full flex justify-between p-2">
+     <Link
+              to={`/profile/${encodeURIComponent(elem.username)}`}
+              state={{ isFriend: false }}
+              className="text-black hover:text-yellow-700">
       <p className="w-1/3">{elem.username}</p>
+      </Link>
       <p className="w-1/3">{elem.email}</p>
       <div className="w-1/3 flex justify-around">
         <button
           onClick={() => handleAccept(elem.username)}
-          className="flex w-20 justify-center rounded-md bg-yellow-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          className="flex w-20 justify-center rounded-md bg-yellow-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
           <p className="text-bold text-grey-700">Accept</p>
         </button>
         <button
           onClick={() => handleReject(elem.username)}
-          className="flex w-20 justify-center rounded-md bg-yellow-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          className="flex w-20 justify-center rounded-md bg-yellow-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
           <p className="text-bold text-grey-700">Reject</p>
         </button>
       </div>
@@ -84,3 +90,5 @@ export default function SignupRequests() {
     </>
   );
 }
+
+export default SignupRequests;

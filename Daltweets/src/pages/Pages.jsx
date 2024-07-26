@@ -22,6 +22,7 @@ const Pages = () => {
           <NavBar />
           <main className="flex-1 pl-[17.666667%] p-4">
           <Routes>
+            <Route path="*" element={<HomePage />}/>
             <Route path="/home" element={<HomePage />} />
             <Route path="/friends" element={<Friends />} />
             <Route path="/create" element={<CreatePost />} />

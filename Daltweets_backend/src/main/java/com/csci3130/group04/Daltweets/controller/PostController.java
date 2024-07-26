@@ -93,11 +93,12 @@ public class PostController {
 
         return postResponseDTOs;
     }
-    @GetMapping("/{groupname}/groupPosts")
-    ResponseEntity<List<PostResponseDTO>> getAllGroupPosts(@PathVariable("groupname") String groupname ) {
+    @GetMapping("{username}/group/{groupname}/groupPosts")
+    ResponseEntity<List<PostResponseDTO>> getAllGroupPosts(@PathVariable("groupname") String groupname,@PathVariable("username") String username ) {
         if ( groupname == null ) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
+        User user = userService.getUserByName(username);
         List<User> groupmembers = groupService.getGroupMembers(groupname);
         if ( groupmembers == null ) {
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
@@ -107,7 +108,6 @@ public class PostController {
 
         for (Post post: groupposts)
         {
-            User user = post.getUser();
             int likeCount = postLikeService.getPostLikes(post);
             boolean postLikedByUser = postLikeService.postLikedByUser(user, post);
             int commentCount = postCommentService.getCommentCount(post);
@@ -276,16 +276,16 @@ public class PostController {
         return new ResponseEntity<>(topics,HttpStatus.OK);
     }
 
-    @GetMapping("/getPostsByTopic/{topicname}")
-    ResponseEntity<List<PostResponseDTO>> getPostsByTopic(@PathVariable("topicname") String topicname) {
+    @GetMapping("{username}/getPostsByTopic/{topicname}")
+    ResponseEntity<List<PostResponseDTO>> getPostsByTopic(@PathVariable("topicname") String topicname,@PathVariable("username") String username) {
         Topic topic = topicService.getTopicByName(topicname);
+        User user = userService.getUserByName(username);
         if ( topic == null ) {
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
         List<Post> posts = postTopicService.getPostByTopic(topic);
         List<PostResponseDTO> postResponseDTOs = new ArrayList<>();
         for (Post post: posts) {
-            User user = post.getUser();
             int likeCount = postLikeService.getPostLikes(post);
             boolean postLikedByUser = postLikeService.postLikedByUser(user, post);
             int commentCount = postCommentService.getCommentCount(post);

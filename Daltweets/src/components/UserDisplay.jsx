@@ -26,15 +26,15 @@ function UserDisplay({ username }) {
             <Link
               to={`/profile/${encodeURIComponent(username)}`}
               state={{ isFriend: false }}
-              className="text-blue-500 hover:text-blue-700">
-              <p className="text-black font-medium m-auto">{username}</p>
+              className="text-balck hover:text-yellow-700">
+              <p className="font-medium m-auto">{username}</p>
             </Link>
           </div>
           <div className="box-border h32 w-24 ml-24">
             {!isSent ? (
               <button
                 onClick={handleFollow}
-                className="flex w-full justify-center rounded-md bg-yellow-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                className="flex w-full justify-center rounded-md bg-yellow-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                 <p className="text-bold text-grey-700">Follow</p>
               </button>
             ) : (
